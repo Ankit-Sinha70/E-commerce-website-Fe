@@ -1,22 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchAllUsers, deleteUser } from "../../features/user/userSlice";
-import { Button } from "@/components/ui/button";
-import { Search, RotateCw, Trash2, Eye } from "lucide-react";
 import Loader from "@/component/common/Loader";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -25,8 +7,25 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useDebounce from "@/lib/useDebounce";
+import { Eye, RotateCw, Search, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import { deleteUser, fetchAllUsers } from "../../features/user/userSlice";
 
 const ManageUsers = () => {
   const dispatch = useDispatch();
@@ -364,7 +363,6 @@ const ManageUsers = () => {
               )}
               */}
               
-              {/* Example: 
               {selectedUser.createdAt && (
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
@@ -375,7 +373,7 @@ const ManageUsers = () => {
                   </div>
                 </div>
               )}
-              */}
+             
             </div>
           ) : (
             <div className="text-center py-8">

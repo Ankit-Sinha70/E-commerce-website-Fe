@@ -23,7 +23,7 @@ import {
   fetchMyOrders,
 } from "@/features/order/orderSlice";
 import { fetchPaymentDetailsByOrderId } from "@/features/payment/paymentSlice";
-import { format } from "date-fns";
+import { format, addDays, isBefore } from "date-fns";
 import { Eye, Package, RotateCcw, Truck, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,13 +41,8 @@ import {
 import { toast } from "sonner";
 import TrackOrderDialog from "@/component/TrackOrderDialog";
 import ReturnRequestModal from "@/component/ReturnRequestModal";
-
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-};
+import { formatCurrency } from "@/lib/currency";
+import { Button } from "@/components/ui/button";
 
 const capitalizeFirstLetter = (string) => {
   if (!string) return "";
@@ -222,7 +217,7 @@ const MyOrdersPage = () => {
                     <TableHead className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Items
                     </TableHead>
-                    <TableHead className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    <TableHead className="px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Actions
                     </TableHead>
                   </TableRow>
@@ -505,7 +500,7 @@ const MyOrdersPage = () => {
                           <p className="text-gray-700">
                             <strong>Payment Status:</strong>{" "}
                             <span
-                              className={`px-2 py-1 text-black rounded-full text-xs font-semibold ${getStatusClasses(
+                              className={`px-2 py-1 text-black rounded-full text-xs font-semibold {getStatusClasses(
                                 paymentDetails.paymentStatus
                               )}`}
                             >
@@ -637,17 +632,35 @@ const MyOrdersPage = () => {
                     </div>
                   ) : (selectedOrder.status?.toLowerCase() === "delivered" || selectedOrder.status?.toLowerCase() === "completed") && (
                     isReturnEligible(selectedOrder.deliveredAt) ? (
-                      <button
-                        className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                      <Button
+                        variant="outline"
+                        className="cursor-pointer"
                         onClick={() => handleReturnClick(selectedOrder)}
                       >
                         Request a Return
-                      </button>
+                      </Button>
                     ) : (
                       <div className="px-4 py-2 text-sm text-red-600 bg-red-50 rounded-md">
                         The 24-hour return window for this item has closed.
                       </div>
                     )
+                  )}
+                  {(selectedOrder.status?.toLowerCase() === "delivered" || selectedOrder.status?.toLowerCase() === "completed") && (
+                    <div className="mt-2 text-xs text-gray-500">
+                      {(() => {
+                        const deliveryDate = new Date(selectedOrder.deliveredAt);
+                        const returnDeadline = addDays(deliveryDate, 7);
+                        if (isBefore(new Date(), returnDeadline)) {
+                          return (
+                            <div>
+                              <p>Return window open until: <span className="font-semibold text-gray-700">{format(returnDeadline, 'PPP p')}</span></p>
+                              <p className="mt-1"> Note: Please keep the product in its original condition for a hassle-free return.</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
                   )}
                 </div>
                 <DialogFooter>
