@@ -136,7 +136,7 @@
     }
   }
 
-  @keyframes fade-in-up {
+  @keyframes fadeInSlideUp {
     from {
       opacity: 0;
       transform: translateY(20px);
@@ -164,7 +164,7 @@
   }
   .animate-fade-in-up {
     /* Set a default, but we'll override the duration/delay with inline styles */
-    animation: fade-in-up 0.5s ease-out forwards;
+    animation: fadeInSlideUp 1s ease-out forwards;
   }
   .animate-burst {
     animation: burst 0.6s ease-out forwards;

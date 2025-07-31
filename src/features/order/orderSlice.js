@@ -101,7 +101,7 @@ export const returnOrderRequest = createAsyncThunk(
           'Content-Type': 'multipart/form-data',
         },
       });
-      return response.data.order;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -333,9 +333,9 @@ const orderSlice = createSlice({
       })
       .addCase(returnOrderRequest.fulfilled, (state, action) => {
         state.returnRequestLoading = false;
-        const index = state.orders.findIndex((order) => order._id === action.payload._id);
+        const index = state.orders.findIndex((order) => order._id === action.payload.order._id);
         if (index !== -1) {
-          state.orders[index] = action.payload;
+          state.orders[index] = action.payload.order;
         }
       })
       .addCase(returnOrderRequest.rejected, (state, action) => {

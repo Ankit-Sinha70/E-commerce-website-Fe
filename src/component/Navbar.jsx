@@ -58,7 +58,7 @@ const Navbar = () => {
   const isAdmin = user?.role === "admin";
 
   const { items: cartItems } = useSelector((state) => state.cart);
-  const totalCartItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalCartItems = cartItems?.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
     if (accessToken && user?._id) {
