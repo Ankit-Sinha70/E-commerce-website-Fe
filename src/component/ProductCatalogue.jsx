@@ -56,15 +56,15 @@ const ProductCatalogue = ({ products, loading }) => {
   };
 
   return (
-    <section className="py-8 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 relative">
+    <section className="py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8 relative">
       <div className="w-full">
         {/* Section header */}
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 sm:mb-4 font-serif">
+          <h2 className=" kaushan-script-regular3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 sm:mb-4 font-serif">
             Our Premium Collection
           </h2>
           <div className="w-16 sm:w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mb-4 sm:mb-6 rounded-full" />
-          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-2">
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-2 kaushan-script-regular2">
             Discover our carefully curated selection of premium ice products,
             crafted to meet your highest standards
           </p>

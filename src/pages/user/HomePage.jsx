@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import HeroSection from "@/component/HeroSection";
 import ProductCatalogue from "@/component/ProductCatalogue";
 import ContactForm from "@/component/ContactForm";
+import FeaturedBrandsSlider from "@/component/FeatureBrand";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL; 
 const HomePage = () => {
@@ -33,6 +34,8 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <HeroSection />
+      {/* Featured Products Section */}
+      <FeaturedBrandsSlider />
       <ProductCatalogue products={products} loading={loading} />
       <ContactForm API_BASE_URL={API_BASE_URL} />
 
