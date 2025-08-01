@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/table";
 import {
   cancelOrder,
-  cancelReturnRequest,
   fetchMyOrders,
 } from "@/features/order/orderSlice";
 import { fetchPaymentDetailsByOrderId } from "@/features/payment/paymentSlice";
@@ -43,11 +42,13 @@ import TrackOrderDialog from "@/component/TrackOrderDialog";
 import ReturnRequestModal from "@/component/ReturnRequestModal";
 import { formatCurrency } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
+import ReturnRequest from "@/component/ReturnRequest";
+import { capitalizeFirstLetter } from "@/lib/orderUtils";
 
-const capitalizeFirstLetter = (string) => {
-  if (!string) return "";
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
+// export const capitalizeFirstLetter = (string) => {
+//   if (!string) return "";
+//   return string.charAt(0).toUpperCase() + string.slice(1);
+// };
 
 const getStatusClasses = (status) => {
   switch (status?.toLowerCase()) {
@@ -66,7 +67,7 @@ const getStatusClasses = (status) => {
   }
 };
 
-const OrderItemDetails = ({ item }) => {
+export const OrderItemDetails = ({ item }) => {
   const savings =
     item.originalPrice && item.originalPrice > item.price
       ? item.originalPrice - item.price
@@ -105,7 +106,7 @@ const OrderItemDetails = ({ item }) => {
 
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
-  const { orders, loading, cancelLoading, cancelError, } = useSelector(
+  const { orders, loading, cancelLoading, cancelError } = useSelector(
     (state) => state.order
   );
   const { user, accessToken } = useSelector((state) => state.auth);
@@ -117,7 +118,6 @@ const MyOrdersPage = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [trackDialogOpen, setTrackDialogOpen] = useState(false);
   const [isReturnModalOpen, setReturnModalOpen] = useState(false);
-  const [selectedOrderIdForReturn, setSelectedOrderIdForReturn] = useState(null);
 
   const isReturnEligible = (deliveredAt) => {
     if (!deliveredAt) return false;
@@ -154,21 +154,9 @@ const MyOrdersPage = () => {
 
   const handleReturnClick = (order) => {
     setSelectedOrder(order);
-    setSelectedOrderIdForReturn(order._id);
     setReturnModalOpen(true);
   };
 
-  const handleCancelReturn = async () => {
-    if (selectedOrderIdForReturn) {
-      try {
-        await dispatch(cancelReturnRequest(selectedOrderIdForReturn)).unwrap();
-        toast.success("Return request cancelled successfully!");
-      } catch (err) {
-        toast.error(err || "Failed to cancel return request");
-      }
-      setSelectedOrderIdForReturn(null);
-    }
-  };
 
   if (loading) {
     return <Loader message={"Loading Orders..."} />;
@@ -237,7 +225,7 @@ const MyOrdersPage = () => {
                         </TableCell>
                         <TableCell className="px-4 py-3 font-mono text-sm text-gray-700">
                           {order.items.length > 1
-                            ? `${order.items[0].name}, ...`
+                            ? `${order.items[0].name},...`
                             : order.items[0]?.name || "—"}
                         </TableCell>
                         <TableCell className="px-4 py-3 text-sm text-gray-600 text-left">
@@ -343,8 +331,7 @@ const MyOrdersPage = () => {
                               </button>
                             )} */}
                             {(order.status?.toLowerCase() === "delivered" ||
-                              order.status?.toLowerCase() === "completed") &&
-                              !order.returnRequest?.isRequested && (
+                              order.status?.toLowerCase() === "completed") && (
                                 isReturnEligible(order.deliveredAt) ? (
                                   <button
                                     className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-md"
@@ -353,7 +340,7 @@ const MyOrdersPage = () => {
                                     Return
                                   </button>
                                 ) : (
-                                  <p className="text-sm text-red-500 mt-4 font-semibold">
+                                  <p className="text-xs text-red-500 mt-2 font-semibold">
                                     The 24-hour return window for this item has closed.
                                   </p>
                                 )
@@ -361,51 +348,6 @@ const MyOrdersPage = () => {
                             {/* {order.returnRequest?.isRequested && (
                               <p>Return Status: {order.returnRequest.status}</p>
                             )} */}
-                            {order.returnRequest?.isRequested &&
-                              !['Picked', 'Refunded', 'Cancelled'].includes(order.returnRequest.status) && (
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <button
-                                      className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md"
-                                      onClick={() =>
-                                        setSelectedOrderIdForReturn(order._id)
-                                      }
-                                    >
-                                      <XCircle className="w-3 h-3 mr-1" />
-                                      Cancel Return
-                                    </button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
-                                        Cancel Return Request
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Are you sure you want to cancel this
-                                        return request? This action cannot be
-                                        undone.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel
-                                        onClick={() =>
-                                          setSelectedOrderIdForReturn(null)
-                                        }
-                                      >
-                                        No, keep return request
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        disabled={cancelLoading}
-                                        onClick={handleCancelReturn}
-                                      >
-                                        {cancelLoading
-                                          ? "Cancelling..."
-                                          : "Yes, cancel return request"}
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -602,35 +544,7 @@ const MyOrdersPage = () => {
                 <div className="mt-6 pt-4 border-t">
                   <h4 className="font-semibold mb-3 text-lg">Actions</h4>
                   {/* Return Request Logic */}
-                  {selectedOrder.returnRequest?.isRequested ? (
-                    <div className="p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md">
-                      <p className="font-bold">Return Status: {selectedOrder.returnRequest.status}</p>
-                      {/* <p>Your return request is being processed.</p> */}
-                      {!['Picked', 'Refunded', 'Cancelled'].includes(selectedOrder.returnRequest.status) && (
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <button className="mt-2 w-full text-left px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-100 rounded-md">
-                              Cancel Return Request
-                            </button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Cancel Return Request</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to cancel this return request? This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>No, keep request</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleCancelReturn(selectedOrder._id)}>
-                                Yes, cancel request
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      )}
-                    </div>
-                  ) : (selectedOrder.status?.toLowerCase() === "delivered" || selectedOrder.status?.toLowerCase() === "completed") && (
+                  {selectedOrder.status?.toLowerCase() === "delivered" || selectedOrder.status?.toLowerCase() === "completed" && (
                     isReturnEligible(selectedOrder.deliveredAt) ? (
                       <Button
                         variant="outline"
@@ -682,13 +596,6 @@ const MyOrdersPage = () => {
             estimatedDeliveryDate={selectedOrder.estimatedDeliveryDate}
           />
         )}
-        {/* {selectedOrder && (
-          <ReturnRequestModal
-            isOpen={returnDialogOpen}
-            onClose={() => setReturnDialogOpen(false)}
-            order={selectedOrder}
-          />
-        )} */}
         {selectedOrder && (
           <ReturnRequestModal
             isOpen={isReturnModalOpen}
@@ -697,6 +604,7 @@ const MyOrdersPage = () => {
           />
         )}
       </div>
+      <ReturnRequest />
     </div>
   );
 };

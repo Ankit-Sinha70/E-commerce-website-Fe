@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { X, MapPin, User, Phone, Mail, Home, Building } from "lucide-react";
+import { X, MapPin, User, Phone, Mail, Home, Building, Pencil, Trash2 } from "lucide-react";
 import {
   getShippingAddresses,
   createShippingAddress,
@@ -20,6 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { toast } from "sonner";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 // Address type options - make this dynamic
 const ADDRESS_TYPES = [
@@ -114,6 +116,7 @@ const ShippingAddressPage = () => {
     isDefault: false,
   });
   const [validationErrors, setValidationErrors] = useState({});
+  const [addressToDelete, setAddressToDelete] = useState(null);
 
   useEffect(() => {
     dispatch(getShippingAddresses());
@@ -246,21 +249,20 @@ const ShippingAddressPage = () => {
   };
 
   // Handler for clicking the "Delete" button for an address
-  const handleDeleteClick = async (addressId) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this address? This action cannot be undone."
-      )
-    ) {
-      return;
+  const handleConfirmDelete = async () => {
+    if (addressToDelete) {
+      dispatch(deleteShippingAddress(addressToDelete))
+        .unwrap()
+        .then(() => {
+          toast.success("Address deleted successfully!");
+          setAddressToDelete(null);
+        })
+        .catch((err) => {
+          toast.error(err || "Failed to delete address");
+          console.error("Failed to delete address:", err);
+          setAddressToDelete(null);
+        });
     }
-    dispatch(deleteShippingAddress(addressId))
-      .unwrap()
-      .then(() => {
-      })
-      .catch((err) => {
-        console.error("Failed to delete address:", err);
-      });
   };
 
   return (
@@ -625,17 +627,31 @@ const ShippingAddressPage = () => {
                     <Button
                     variant="outline"
                       onClick={() => handleEditClick(address)}
-                      className="flex-1 text-black text-sm py-2 px-4 rounded-lg shadow-md transition duration-200 transform hover:scale-105"
                     >
-                      Edit
+                      <Pencil className="w-4 h-4 mr-2" /> Edit
                     </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => handleDeleteClick(address._id)}
-                      className="flex-1 bg-red-400 hover:bg-red-500 text-white text-sm py-2 px-4 rounded-lg shadow-md transition duration-200 transform hover:scale-105"
-                    >
-                      Delete
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          onClick={() => setAddressToDelete(address._id)}
+                          variant="destructive"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" /> Delete
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete this address.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setAddressToDelete(null)}>Cancel</AlertDialogCancel>
+                          <Button variant="destructive" onClick={handleConfirmDelete}>Delete</Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </div>

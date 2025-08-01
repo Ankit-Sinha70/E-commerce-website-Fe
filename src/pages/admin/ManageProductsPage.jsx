@@ -1,23 +1,4 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import {
-  Search,
-  RotateCw,
-  Plus,
-  Edit,
-  Trash2,
-  PackageOpen,
-} from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import Loader from "@/component/common/Loader";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -26,23 +7,36 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Edit,
+  PackageOpen,
+  Plus,
+  RotateCw,
+  Search,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 import AddProductFormContent from "../../component/AddProductFormContent";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchProducts,
   deleteProduct,
+  fetchProducts,
 } from "../../features/product/productSlice";
 import useDebounce from "../../lib/useDebounce";
-import Loader from "@/component/common/Loader";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ManageProductsPage = () => {
   const dispatch = useDispatch();
