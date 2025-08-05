@@ -22,8 +22,8 @@ import {
   fetchMyOrders,
 } from "@/features/order/orderSlice";
 import { fetchPaymentDetailsByOrderId } from "@/features/payment/paymentSlice";
-import { format, addDays, isBefore } from "date-fns";
-import { Eye, Package, RotateCcw, Truck, XCircle } from "lucide-react";
+import { format, isBefore, addHours } from "date-fns";
+import { Eye, Package, Truck, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -42,8 +42,8 @@ import TrackOrderDialog from "@/component/TrackOrderDialog";
 import ReturnRequestModal from "@/component/ReturnRequestModal";
 import { formatCurrency } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
-import ReturnRequest from "@/component/ReturnRequest";
 import { capitalizeFirstLetter } from "@/lib/orderUtils";
+import ReturnRequest from "@/component/ReturnRequestModal";
 
 // export const capitalizeFirstLetter = (string) => {
 //   if (!string) return "";
@@ -318,31 +318,15 @@ const MyOrdersPage = () => {
                               </button>
                             )}
 
-                            {/* {(order.status?.toLowerCase() === "delivered" ||
-                              order.status?.toLowerCase() === "completed") && (
-                              <button
-                                className="inline-flex items-center px-1 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded-md"
-                                onClick={() =>
-                                  alert(`Reordering Order ID: ${order._id}`)
-                                }
-                              >
-                                <RotateCcw className="w-3 h-3 mr-1" />
-                                Reorder
-                              </button>
-                            )} */}
                             {(order.status?.toLowerCase() === "delivered" ||
                               order.status?.toLowerCase() === "completed") && (
-                                isReturnEligible(order.deliveredAt) ? (
+                                isReturnEligible(order.deliveredAt) && (
                                   <button
                                     className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-md"
                                     onClick={() => handleReturnClick(order)}
                                   >
                                     Return
                                   </button>
-                                ) : (
-                                  <p className="text-xs text-red-500 mt-2 font-semibold">
-                                    The 24-hour return window for this item has closed.
-                                  </p>
                                 )
                               )}
                             {/* {order.returnRequest?.isRequested && (
@@ -562,8 +546,9 @@ const MyOrdersPage = () => {
                   {(selectedOrder.status?.toLowerCase() === "delivered" || selectedOrder.status?.toLowerCase() === "completed") && (
                     <div className="mt-2 text-xs text-gray-500">
                       {(() => {
+                        if (!selectedOrder.deliveredAt) return null;
                         const deliveryDate = new Date(selectedOrder.deliveredAt);
-                        const returnDeadline = addDays(deliveryDate, 7);
+                        const returnDeadline = addHours(deliveryDate, 24);
                         if (isBefore(new Date(), returnDeadline)) {
                           return (
                             <div>
@@ -571,8 +556,13 @@ const MyOrdersPage = () => {
                               <p className="mt-1"> Note: Please keep the product in its original condition for a hassle-free return.</p>
                             </div>
                           );
+                        } else {
+                          return (
+                            <p className="font-semibold text-red-600">
+                              The return window for this item has passed.
+                            </p>
+                          );
                         }
-                        return null;
                       })()}
                     </div>
                   )}
