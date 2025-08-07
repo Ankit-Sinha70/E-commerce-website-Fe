@@ -42,8 +42,9 @@ import TrackOrderDialog from "@/component/TrackOrderDialog";
 import ReturnRequestModal from "@/component/ReturnRequestModal";
 import { formatCurrency } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
+import ReturnRequest from "@/component/ReturnRequest";
 import { capitalizeFirstLetter } from "@/lib/orderUtils";
-import ReturnRequest from "@/component/ReturnRequestModal";
+import { Link } from 'react-router-dom';
 
 // export const capitalizeFirstLetter = (string) => {
 //   if (!string) return "";
@@ -81,7 +82,11 @@ export const OrderItemDetails = ({ item }) => {
         className="w-16 h-16 object-cover rounded-md"
       />
       <div className="flex-grow">
-        <h4 className="font-semibold text-gray-800">{item.name}</h4>
+        <h4 className="font-semibold text-gray-800">
+          <Link to={`/product/${item.productId}`} className="text-blue-600 hover:underline">
+            {item.name}
+          </Link>
+        </h4>
         <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
         <p className="text-sm text-gray-600">
           Price: {formatCurrency(item.price)}
@@ -226,7 +231,7 @@ const MyOrdersPage = () => {
                         <TableCell className="px-4 py-3 font-mono text-sm text-gray-700">
                           {order.items.length > 1
                             ? `${order.items[0].name},...`
-                            : order.items[0]?.name || "—"}
+                            : <Link to={`/product/${order.items[0].productId}`} className="text-blue-600 hover:underline">{order.items[0]?.name || "—"}</Link>}
                         </TableCell>
                         <TableCell className="px-4 py-3 text-sm text-gray-600 text-left">
                           {format(orderDate, "MMM d, yyyy")}
@@ -426,7 +431,7 @@ const MyOrdersPage = () => {
                           <p className="text-gray-700">
                             <strong>Payment Status:</strong>{" "}
                             <span
-                              className={`px-2 py-1 text-black rounded-full text-xs font-semibold {getStatusClasses(
+                              className={`px-2 py-1 text-black rounded-full text-xs font-semibold ${getStatusClasses(
                                 paymentDetails.paymentStatus
                               )}`}
                             >

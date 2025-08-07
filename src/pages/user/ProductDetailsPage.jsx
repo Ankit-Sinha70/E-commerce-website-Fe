@@ -9,7 +9,11 @@ import {
   clearProduct,
   fetchProductById,
 } from "../../features/product/productSlice";
+import { fetchReviewsByProductId, clearReviews } from '../../features/review/reviewSlice';
 import Loader from "@/component/common/Loader";
+import ReviewList from "@/component/ReviewList/ReviewList";
+import ReviewForm from "@/component/ReviewForm/ReviewForm";
+import RatingsSummary from "@/component/RatingsSummary/RatingsSummary";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -19,6 +23,8 @@ const ProductDetailsPage = () => {
   const { product, loading, } = useSelector((state) => state.product);
   const { accessToken } = useSelector((state) => state.auth);
   const { loading: cartLoading } = useSelector((state) => state.cart);
+  const { reviews, status: reviewStatus } = useSelector((state) => state.reviews);
+  console.log('reviews', reviews)
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
@@ -41,11 +47,13 @@ const ProductDetailsPage = () => {
   useEffect(() => {
     if (id) {
       dispatch(fetchProductById({ id, accessToken: null }));
+      dispatch(fetchReviewsByProductId(id));
     }
     return () => {
       dispatch(clearProduct());
+      dispatch(clearReviews());
     };
-  }, [id]);
+  }, [id, dispatch]);
 
   const handleQuantityChange = (type) => {
     if (type === "increment") {
@@ -332,7 +340,7 @@ const ProductDetailsPage = () => {
                 }`}
                 onClick={() => setActiveTab('reviews')}
               >
-                Reviews (0)
+                Reviews ({reviews?.length})
               </button>
             </div>
           </div>
@@ -350,8 +358,16 @@ const ProductDetailsPage = () => {
             )}
             
             {activeTab === 'reviews' && (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No reviews yet.</p>
+              <div>
+                {reviewStatus === 'loading' ? (
+                  <Loader message="Loading reviews..." />
+                ) : (
+                  <>
+                    <RatingsSummary reviews={reviews} />
+                    <ReviewList reviews={reviews} />
+                    <ReviewForm productId={id} />
+                  </>
+                )}
               </div>
             )}
           </div>
