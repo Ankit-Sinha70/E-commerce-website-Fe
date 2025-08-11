@@ -68,7 +68,7 @@ const App = () => {
   useSocket(user?._id)
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-gray-100">
+    <div className="min-h-screen flex flex-col font-sans bg-[#111827]">
       <AppInitializer />
       <Toaster richColors position="top-right" />
       {!isAdminRoute &&

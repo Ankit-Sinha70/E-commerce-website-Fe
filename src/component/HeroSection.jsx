@@ -20,7 +20,7 @@ const HeroSection = () => {
       title: "Discover Premium Fashion for the Whole Family",
       subtitle: "Explore our curated collection of stylish clothing for men, women, and kids.",
       discount: "Up to 60% Off",
-      bgColor: "from-orange-400 to-green-400",
+       bgColor: "from-gray-500 to-gray-600",
       productImage: Image1,
       productType: "audio",
       icon: <Zap className="w-8 h-8" />
@@ -31,7 +31,7 @@ const HeroSection = () => {
       title: "Discover Premium Fashion for the Whole Family",
       subtitle: "Explore our curated collection of stylish clothing for men, women, and kids.",
       discount: "Up to 22% Off",
-      bgColor: "from-blue-400 to-green-300",
+       bgColor: "from-gray-500 to-gray-600",
       productImage: Image2,
       productType: "appliance",
       icon: <ShoppingBag className="w-8 h-8" />
@@ -42,18 +42,18 @@ const HeroSection = () => {
       title: "Discover Premium Fashion for the Whole Family",
       subtitle: "Explore our curated collection of stylish clothing for men, women, and kids.",
       discount: "Up to 40% Off",
-      bgColor: "from-purple-400 to-blue-400",
+       bgColor: "from-gray-500 to-gray-600",
       productImage: Image3,
       productType: "smartphone",
       icon: <Smartphone className="w-8 h-8" />
     },
     {
       id: 4,
-      brand: "SAMSUNG",
+      brand: "CAMERA",
       title: "Discover Premium Fashion for the Whole Family",
       subtitle: "Explore our curated collection of stylish clothing for men, women, and kids.",
       discount: "Up to 40% Off",
-      bgColor: "from-purple-400 to-blue-400",
+      bgColor: "from-gray-500 to-gray-600",
       productImage: Image4,
       productType: "smartphone",
       icon: <Smartphone className="w-8 h-8" />
@@ -77,7 +77,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen max-w-full overflow-hidden bg-gray-50 pt-16 md:pt-20 m-1 md:m-2 lg:m-3 rounded-xl">
+    <section className="relative min-h-screen max-w-full overflow-hidden bg-[#111827] pt-16 md:pt-20 m-1 md:m-2 lg:m-3 rounded-xl">
       {/* Main Slider */}
       <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden mt-0">
         {slides.map((slide, index) => (
@@ -90,15 +90,15 @@ const HeroSection = () => {
           >
             <div className={`w-full h-full bg-gradient-to-r ${slide.bgColor} flex items-center justify-between px-4 md:px-8 lg:px-16`}>
               {/* Left Content */}
-              <div className="flex-1 text-white z-10">
+              <div className="flex-1 text-gray-300 z-10">
                 <div className="flex items-center gap-2 mb-4">
                   {slide.icon}
                   <span className="text-2xl md:text-3xl font-bold">{slide.brand}</span>
                 </div>
-                <h2 className="font-bold text-white tracking-tight leading-snug kaushan-script-regular mb-2">
+                <h2 className="font-bold text-gray-300 tracking-tight leading-snug kaushan-script-regular mb-2">
                   {slide.title}
                 </h2>
-                <p className="text-xs sm:text-sm text-blue-100 mb-4 max-w-xl leading-relaxed kaushan-script-regular1 opacity-90">
+                <p className="text-xs sm:text-sm text-gray-300 mb-4 max-w-xl leading-relaxed kaushan-script-regular1 opacity-90">
                   {slide.subtitle}
                 </p>
                 <div className="flex items-center gap-2 mb-6">
@@ -108,7 +108,7 @@ const HeroSection = () => {
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-start items-start">
                   <Button
                     size="sm"
-                    className="w-full sm:w-auto bg-white text-blue-900 hover:bg-blue-50 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl text-xs sm:text-sm"
+                    className="w-full sm:w-auto bg-gray-400 text-gray-800 hover:bg-blue-50 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl text-xs sm:text-sm"
                   >
                     Shop Now
                     <ArrowRight className="ml-2 w-3 h-3 sm:w-4 sm:h-4" />
@@ -116,7 +116,7 @@ const HeroSection = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full sm:w-auto bg-white text-blue-900 hover:bg-blue-50 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl text-xs sm:text-sm"
+                    className="w-full sm:w-auto bg-gray-400 text-gray-800 hover:bg-blue-50 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl text-xs sm:text-sm"
                   >
                     Explore Collections
                   </Button>
@@ -131,7 +131,7 @@ const HeroSection = () => {
                     alt={`${slide.brand} Product`}
                     className="w-56 md:w-72 lg:w-96 h-40 md:h-56 lg:h-72 object-cover rounded-lg shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300"
                   />
-                  <div className="absolute -inset-4 bg-white/20 rounded-lg blur-xl" />
+                  <div className="absolute -inset-4 bg-white/10 rounded-lg blur-xl" />
                 </div>
               </div>
             </div>
@@ -172,12 +172,12 @@ const HeroSection = () => {
       </div>
 
       {/* Product Showcase Section */}
-      <div className="py-4 md:py-8 lg:py-8 px-4 md:px-8 lg:px-16 bg-white">
+      <div className="py-4 md:py-8 lg:py-8 px-4 md:px-8 lg:px-16 bg-[#111827]">
         <div className="text-center mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 kaushan-script-regular3">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-400 kaushan-script-regular3">
             Top Selling Products
           </h2>
-          <p className="text-gray-600 text-sm md:text-base lg:text-lg kaushan-script-regular2">
+          <p className="text-gray-400 text-sm md:text-base lg:text-lg kaushan-script-regular2">
             Latest Technology, Best Brands
           </p>
         </div>
@@ -254,7 +254,7 @@ const HeroSection = () => {
       </div>
 
       {/* Payment Partners */}
-      <div className="bg-gray-100 py-6 px-4 md:px-8 lg:px-16">
+      <div className="bg-[#111827] py-6 px-4 md:px-8 lg:px-16">
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
           <div className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg">
             <span className="font-bold">ICICI Bank</span>

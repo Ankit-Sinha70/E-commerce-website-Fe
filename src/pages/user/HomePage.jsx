@@ -32,7 +32,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-[#111827] w-full">
       <HeroSection />
       {/* Featured Products Section */}
       <FeaturedBrandsSlider />

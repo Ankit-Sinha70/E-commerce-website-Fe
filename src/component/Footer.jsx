@@ -4,7 +4,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-sky-400 to-sky-600 text-white py-16 px-4">
+    <footer className="bg-[#0f172a] border-t border-blue-500 text-slate-300 py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Location Section */}
@@ -37,9 +37,9 @@ const Footer = () => {
                 <h3 className="text-xl font-bold">Scan Me</h3>
               </div>
               
-              <div className="bg-white p-6 rounded-2xl inline-block shadow-lg">
+              <div className="bg-[#0f172a] p-6 rounded-2xl inline-block shadow-lg">
                 <div className="w-48 h-48 bg-black flex items-center justify-center rounded-xl">
-                  <div className="text-white text-center">
+                  <div className="text-slate-300 text-center">
                     <QrCode className="w-16 h-16 mx-auto mb-2" />
                     <p className="text-xs">QR Code</p>
                     <p className="text-xs">Scan for more info</p>

@@ -62,19 +62,19 @@ const ContactForm = ({ API_BASE_URL }) => {
   };
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-100 to-white">
+    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-[#111827]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 sm:mb-4 font-serif">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-300 mb-3 sm:mb-4 font-serif">
             Contact Us
           </h2>
           <div className="w-16 sm:w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mb-4 sm:mb-6 rounded-full" />
-          <p className="text-base sm:text-lg text-slate-600 px-2">
+          <p className="text-base sm:text-lg text-slate-300 px-2">
             Get in touch with us for your ice supply needs
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8 lg:p-12">
+        <div className="bg-[#111827] border border-blue-600 shadow-[0_4px_12px_rgba(59,130,246,0.2)] rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-12">
           <form
             onSubmit={handleSubmitContactForm}
             className="space-y-4 sm:space-y-6"
@@ -83,14 +83,14 @@ const ContactForm = ({ API_BASE_URL }) => {
               <div>
                 <label
                   htmlFor="contactName"
-                  className="block text-sm font-semibold text-slate-700 mb-2"
+                  className="block text-sm font-semibold text-slate-300 mb-2"
                 >
                   Name
                 </label>
                 <input
                   type="text"
                   id="contactName"
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-slate-300 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
                   placeholder="Your full name"
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
@@ -100,14 +100,14 @@ const ContactForm = ({ API_BASE_URL }) => {
               <div>
                 <label
                   htmlFor="contactEmail"
-                  className="block text-sm font-semibold text-slate-700 mb-2"
+                  className="block text-sm font-semibold text-slate-300 mb-2"
                 >
                   Email
                 </label>
                 <input
                   type="email"
                   id="contactEmail"
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-slate-300  border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
                   placeholder="your.email@example.com"
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
@@ -120,14 +120,14 @@ const ContactForm = ({ API_BASE_URL }) => {
               <div>
                 <label
                   htmlFor="contactPhone"
-                  className="block text-sm font-semibold text-slate-700 mb-2"
+                  className="block text-sm font-semibold text-slate-300 mb-2"
                 >
                   Phone
                 </label>
                 <input
                   type="tel"
                   id="contactPhone"
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-slate-300  border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
                   placeholder="+971-XX-XXX-XXXX"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
@@ -136,14 +136,14 @@ const ContactForm = ({ API_BASE_URL }) => {
               <div>
                 <label
                   htmlFor="contactSubject"
-                  className="block text-sm font-semibold text-slate-700 mb-2"
+                  className="block text-sm font-semibold text-slate-300 mb-2"
                 >
                   Subject
                 </label>
                 <input
                   type="text"
                   id="contactSubject"
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-slate-300  border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none text-sm sm:text-base"
                   placeholder="How can we help?"
                   value={contactSubject}
                   onChange={(e) => setContactSubject(e.target.value)}
@@ -155,14 +155,14 @@ const ContactForm = ({ API_BASE_URL }) => {
             <div>
               <label
                 htmlFor="contactMessage"
-                className="block text-sm font-semibold text-slate-700 mb-2"
+                className="block text-sm font-semibold text-slate-300 mb-2"
               >
                 Message
               </label>
               <textarea
                 rows={4}
                 id="contactMessage"
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none resize-none text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-slate-300 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none resize-none text-sm sm:text-base"
                 placeholder="Tell us about your ice supply requirements..."
                 value={contactMessage}
                 onChange={(e) => setContactMessage(e.target.value)}

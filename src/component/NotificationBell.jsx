@@ -77,7 +77,7 @@ const NotificationBell = () => {
           {notifications?.length > 0 && (
             <Link
               to="/user/notifications"
-              className="text-xs text-blue-600 hover:underline"
+              className="text-xs text-white hover:underline"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsOpen(false);
@@ -104,8 +104,8 @@ const NotificationBell = () => {
                 <DropdownMenuItem
                   className={`flex items-start gap-2 px-3 py-2.5 rounded-md transition cursor-pointer ${
                     !notification.isRead
-                      ? "bg-blue-50 hover:bg-blue-100"
-                      : "hover:bg-gray-50"
+                      ? "bg-gray-500 hover:bg-gray-400"
+                      : "hover:bg-gray-500"
                   }`}
                   onClick={() => handleNotificationClick(notification)}
                 >

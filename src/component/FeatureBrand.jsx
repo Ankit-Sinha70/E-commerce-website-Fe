@@ -132,7 +132,7 @@ const FeaturedBrandsSlider = () => {
 
   return (
     <div className="w-full max-w-8xl mx-auto px-2 py-2">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center">
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-400 mb-6 text-center">
         Featured Brands
       </h2>
 
@@ -140,7 +140,7 @@ const FeaturedBrandsSlider = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors duration-200 -ml-4"
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors duration-200 -ml-4"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-6 h-6 text-gray-700" />
@@ -148,7 +148,7 @@ const FeaturedBrandsSlider = () => {
 
         <button
           onClick={nextSlide}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors duration-200 -mr-4"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors duration-200 -mr-4"
           aria-label="Next slide"
         >
           <ChevronRight className="w-6 h-6 text-gray-700" />

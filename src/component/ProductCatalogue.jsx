@@ -78,7 +78,7 @@ const ProductCatalogue = ({ products, loading }) => {
   };
 
   return (
-    <section className="py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8 relative bg-gradient-to-br from-slate-300 to-white">
+    <section className="py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8 relative bg-[#111827]">
       <div className="w-full">
         {/* Section header */}
         <div className="text-center mb-2 sm:mb-4">
@@ -113,7 +113,7 @@ const ProductCatalogue = ({ products, loading }) => {
             {products?.map((product, index) => (
               <div
               key={product._id}
-              className="product-card group relative bg-[#2A223A] border border-[#2A223A] overflow-hidden shadow-lg transition-all duration-500 transform"
+              className="product-card group relative bg-[#1F2937] border-b-2 border-blue-800 overflow-hidden transition-all duration-500 transform"
               style={{
                 animationDelay: `${index * 100}ms`,
               }}
@@ -162,7 +162,7 @@ const ProductCatalogue = ({ products, loading }) => {
                   <div className="p-4 sm:p-6">
                     {/* Category and Rating */}
                     <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-200 mb-2 transition-colors duration-300">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-200 shadow-[0_4px_12px_rgba(59,130,246,0.2)] mb-2 transition-colors duration-300">
                       {product.name}
                     </h3>
                       {product.ratings > 0 && (
