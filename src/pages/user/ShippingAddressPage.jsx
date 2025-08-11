@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { X, MapPin, User, Phone, Mail, Home, Building, Pencil, Trash2 } from "lucide-react";
+import {
+  X,
+  MapPin,
+  User,
+  Phone,
+  Mail,
+  Home,
+  Building,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import {
   getShippingAddresses,
   createShippingAddress,
@@ -21,7 +31,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { toast } from "sonner";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Address type options - make this dynamic
 const ADDRESS_TYPES = [
@@ -36,7 +56,8 @@ const validateAddressForm = (formData) => {
 
   // Full name validation
   if (!formData.fullName || formData.fullName.trim().length < 2) {
-    errors.fullName = "Full name is required and must be at least 2 characters";
+    errors.fullName =
+      "Full name is required and must be at least 2 characters";
   } else if (formData.fullName.length > 50) {
     errors.fullName = "Name must be less than 50 characters";
   }
@@ -266,8 +287,14 @@ const ShippingAddressPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="container mx-auto max-w-7xl mt-22">
+    <div className="min-h-screen bg-[#111827] text-slate-300 py-24 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center mb-8 pt-20" style={{ marginTop: '-5rem' }}>
+          <p className="text-lg text-slate-400">
+            Manage your preferred shipping destinations.
+          </p>
+        </div>
 
         {/* Loading and Error Indicators */}
         {loading && <Loader message={"Loading Address..."} />}
@@ -277,7 +304,7 @@ const ShippingAddressPage = () => {
           <div className="text-left mb-4">
             <Button
               onClick={handleAddClick}
-              className="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-blue-700 hover:to-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 inline-flex items-center"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105 inline-flex items-center"
             >
               <MapPin className="h-5 w-5 mr-1" />
               Add New Address
@@ -286,15 +313,14 @@ const ShippingAddressPage = () => {
         )}
 
         <div className="text-left mb-2">
-          <p className="text-gray-600 mt-2">Manage your delivery addresses</p>
+          <p className="text-slate-400 mt-2">Manage your delivery addresses</p>
         </div>
         {/* Modal Overlay */}
         {/* Replace the div with shadcn/ui Dialog */}
         <Dialog open={showAddEditForm} onOpenChange={setShowAddEditForm}>
-          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl
-            [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl bg-gray-800 border border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Modal Header */}
-            <DialogHeader className="bg-gradient-to-r from-sky-300 to-sky-400 text-white p-6 rounded-t-2xl relative">
+            <DialogHeader className="bg-blue-900 text-white p-6 rounded-t-2xl relative">
               <div className="flex items-center">
                 <MapPin className="h-6 w-6 mr-3" />
                 <DialogTitle className="text-2xl font-bold">
@@ -308,7 +334,7 @@ const ShippingAddressPage = () => {
               <div className="space-y-6">
                 {/* Full Name */}
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                  <label className="flex items-center text-sm font-semibold text-slate-300 mb-2">
                     <User className="h-4 w-4 mr-2 text-blue-600" />
                     Full Name <span className="text-red-500 ml-1">*</span>
                   </label>
@@ -317,10 +343,10 @@ const ShippingAddressPage = () => {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                    className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
                       validationErrors.fullName
                         ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
+                        : ""
                     }`}
                     placeholder="Enter your full name"
                   />
@@ -333,7 +359,7 @@ const ShippingAddressPage = () => {
 
                 {/* Phone Number */}
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                  <label className="flex items-center text-sm font-semibold text-slate-300 mb-2">
                     <Phone className="h-4 w-4 mr-2 text-blue-600" />
                     Phone Number <span className="text-red-500 ml-1">*</span>
                   </label>
@@ -346,15 +372,15 @@ const ShippingAddressPage = () => {
                         target: {
                           name: "phoneNumber",
                           value: value,
-                          type: "text", 
-                          checked: false, 
+                          type: "text",
+                          checked: false,
                         },
                       })
                     }
-                    className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                    className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
                       validationErrors.phoneNumber
                         ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
+                        : ""
                     }`}
                     placeholder="Enter phone number"
                   />
@@ -367,7 +393,7 @@ const ShippingAddressPage = () => {
 
                 {/* Address Line */}
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                  <label className="flex items-center text-sm font-semibold text-slate-300 mb-2">
                     <MapPin className="h-4 w-4 mr-2 text-blue-600" />
                     Address Line <span className="text-red-500 ml-1">*</span>
                   </label>
@@ -376,10 +402,10 @@ const ShippingAddressPage = () => {
                     name="addressLine"
                     value={formData.addressLine}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                    className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
                       validationErrors.addressLine
                         ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
+                        : ""
                     }`}
                     placeholder="123 Main Street, Apt 4B"
                   />
@@ -393,7 +419,7 @@ const ShippingAddressPage = () => {
                 {/* City and State Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       City <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -401,10 +427,8 @@ const ShippingAddressPage = () => {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                        validationErrors.city
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300"
+                      className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
+                        validationErrors.city ? "border-red-500 bg-red-50" : ""
                       }`}
                       placeholder="New York"
                     />
@@ -415,7 +439,7 @@ const ShippingAddressPage = () => {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       State / Province{" "}
                       <span className="text-red-500">*</span>
                     </label>
@@ -424,10 +448,8 @@ const ShippingAddressPage = () => {
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                        validationErrors.state
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300"
+                      className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
+                        validationErrors.state ? "border-red-500 bg-red-50" : ""
                       }`}
                       placeholder="NY"
                     />
@@ -442,7 +464,7 @@ const ShippingAddressPage = () => {
                 {/* Postal Code and Country Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       Postal Code <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -450,10 +472,10 @@ const ShippingAddressPage = () => {
                       name="postalCode"
                       value={formData.postalCode}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                      className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
                         validationErrors.postalCode
                           ? "border-red-500 bg-red-50"
-                          : "border-gray-300"
+                          : ""
                       }`}
                       placeholder="10001"
                     />
@@ -464,7 +486,7 @@ const ShippingAddressPage = () => {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       Country <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -472,10 +494,8 @@ const ShippingAddressPage = () => {
                       name="country"
                       value={formData.country}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                        validationErrors.country
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300"
+                      className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
+                        validationErrors.country ? "border-red-500 bg-red-50" : ""
                       }`}
                       placeholder="United States"
                     />
@@ -489,15 +509,15 @@ const ShippingAddressPage = () => {
 
                 {/* Address Type */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">
                     Address Type <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {ADDRESS_TYPES.map((type) => {
                       const IconComponent = type.icon;
                       return (
-                        <Button 
-                        variant="outline"
+                        <Button
+                          variant="outline"
                           key={type.value}
                           type="button"
                           onClick={() =>
@@ -505,10 +525,10 @@ const ShippingAddressPage = () => {
                               target: { name: "type", value: type.value },
                             })
                           }
-                          className={` ${
+                          className={`text-slate-300 ${
                             formData.type === type.value
-                              ? "border-blue-600 bg-blue-100 text-blue-600"
-                              : "border-gray-300 hover:border-gray-400"
+                              ? "border-blue-500 bg-blue-900 text-white"
+                              : "border-gray-600 hover:border-gray-400"
                           }`}
                         >
                           <IconComponent className="h-5 w-5 mb-1" />
@@ -527,15 +547,15 @@ const ShippingAddressPage = () => {
                 </div>
 
                 {/* Set as Default */}
-                <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center p-4 bg-gray-700 rounded-lg">
                   <Input
                     type="checkbox"
                     name="isDefault"
                     checked={formData.isDefault}
                     onChange={handleInputChange}
-                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-600 rounded"
                   />
-                  <label className="ml-3 text-sm font-medium text-gray-700">
+                  <label className="ml-3 text-sm font-medium text-slate-300">
                     Set as default address
                   </label>
                 </div>
@@ -548,7 +568,7 @@ const ShippingAddressPage = () => {
                 type="button"
                 onClick={handleCancelClick}
                 disabled={loading}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </Button>
@@ -556,7 +576,7 @@ const ShippingAddressPage = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading
                   ? "Saving..."
@@ -572,8 +592,8 @@ const ShippingAddressPage = () => {
         {addresses?.length === 0 && !loading && !error && !showAddEditForm && (
           <div className="text-center py-16">
             <MapPin className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg">No shipping addresses found</p>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-slate-400 text-lg">No shipping addresses found</p>
+            <p className="text-slate-500 text-sm mt-2">
               Click "Add New Address" to create your first address
             </p>
           </div>
@@ -590,10 +610,10 @@ const ShippingAddressPage = () => {
             return (
               <div
                 key={address?._id}
-                className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 {address.isDefault && (
-                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center py-2">
+                  <div className="bg-blue-900 text-white text-center py-2">
                     <span className="text-sm font-semibold">
                       Default Address
                     </span>
@@ -602,14 +622,14 @@ const ShippingAddressPage = () => {
                 <div className="p-6">
                   <div className="flex items-center mb-4">
                     <TypeIcon className="h-6 w-6 text-blue-600 mr-3" />
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold text-slate-300">
                       {address?.fullName}
                     </h3>
-                    <span className="ml-2 text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                    <span className="ml-2 text-sm text-gray-500 bg-gray-700 px-2 py-1 rounded">
                       {address.type}
                     </span>
                   </div>
-                  <div className="space-y-2 text-gray-700">
+                  <div className="space-y-2 text-slate-400">
                     <p className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2 text-gray-400" />
                       {address?.addressLine}
@@ -625,8 +645,9 @@ const ShippingAddressPage = () => {
                   </div>
                   <div className="mt-6 flex space-x-3">
                     <Button
-                    variant="outline"
+                      variant="outline"
                       onClick={() => handleEditClick(address)}
+                      className="text-slate-300"
                     >
                       <Pencil className="w-4 h-4 mr-2" /> Edit
                     </Button>
@@ -635,20 +656,21 @@ const ShippingAddressPage = () => {
                         <Button
                           onClick={() => setAddressToDelete(address._id)}
                           variant="destructive"
+                          className="bg-red-900 border-red-700 text-red-300 hover:bg-red-800 hover:border-red-600"
                         >
                           <Trash2 className="w-4 h-4 mr-2" /> Delete
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="bg-gray-800 border border-gray-700">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
+                          <AlertDialogTitle className="text-slate-300">Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-slate-400">
                             This action cannot be undone. This will permanently delete this address.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel onClick={() => setAddressToDelete(null)}>Cancel</AlertDialogCancel>
-                          <Button variant="destructive" onClick={handleConfirmDelete}>Delete</Button>
+                          <AlertDialogCancel onClick={() => setAddressToDelete(null)} className="text-slate-300">Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-900 text-red-300">Delete</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>

@@ -15,53 +15,53 @@ import { Button } from '@/components/ui/button';
 const getStatusClasses = (status) => {
     switch (status?.toLowerCase()) {
         case "requested":
-            return "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border-amber-200";
+            return "bg-amber-700 text-amber-200 border-amber-600";
         case "approved":
-            return "bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 border-purple-200";
+            return "bg-purple-700 text-purple-200 border-purple-600";
         case "rejected":
-            return "bg-gradient-to-r from-red-100 to-pink-100 text-red-800 border-red-200";
+            return "bg-red-700 text-red-200 border-red-600";
         case "picked":
-            return "bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border-blue-200";
+            return "bg-blue-700 text-blue-200 border-blue-600";
         case "cancelled":
-            return "bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-200";
+            return "bg-gray-700 text-gray-200 border-gray-600";
         case "refunded":
-            return "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-200";
+            return "bg-green-700 text-green-200 border-green-600";
         default:
-            return "bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-200";
+            return "bg-gray-700 text-gray-200 border-gray-600";
     }
 };
 
 const getRefundStatusClasses = (status) => {
     switch (status?.toLowerCase()) {
         case "pending":
-            return "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border-amber-200";
+            return "bg-amber-700 text-amber-200 border-amber-600";
         case "initiated":
-            return "bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 border-purple-200";
+            return "bg-purple-700 text-purple-200 border-purple-600";
         case "succeeded":
-            return "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-200";
+            return "bg-green-700 text-green-200 border-green-600";
         case "failed":
-            return "bg-gradient-to-r from-red-100 to-pink-100 text-red-800 border-red-200";
+            return "bg-red-700 text-red-200 border-red-600";
         default:
-            return "bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-200";
+            return "bg-gray-700 text-gray-200 border-gray-600";
     }
 };
 
 const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
         case "requested":
-            return <Clock className="w-3 h-3" />;
+            return <Clock className="w-3 h-3 text-amber-200" />;
         case "approved":
-            return <CheckCircle className="w-3 h-3" />;
+            return <CheckCircle className="w-3 h-3 text-purple-200" />;
         case "rejected":
-            return <XCircle className="w-3 h-3" />;
+            return <XCircle className="w-3 h-3 text-red-200" />;
         case "picked":
-            return <Package className="w-3 h-3" />;
+            return <Package className="w-3 h-3 text-blue-200" />;
         case "cancelled":
-            return <Ban className="w-3 h-3" />;
+            return <Ban className="w-3 h-3 text-gray-200" />;
         case "refunded":
-            return <DollarSign className="w-3 h-3" />;
+            return <DollarSign className="w-3 h-3 text-green-200" />;
         default:
-            return <RefreshCw className="w-3 h-3" />;
+            return <RefreshCw className="w-3 h-3 text-gray-200" />;
     }
 };
 
@@ -71,12 +71,12 @@ const ReturnRequestCard = ({ returnRequest, onViewDetails, onCancelReturn }) => 
     const numberOfItems = returnRequest.items ? returnRequest.items.length : 0;
 
     return (
-        <div className="group relative overflow-hidden rounded-2xl bg-white border border-gray-200 hover:border-orange-300 shadow-sm hover:shadow-xl transition-all duration-300">
+        <div className="group relative overflow-hidden rounded-2xl bg-gray-800 border border-gray-700 hover:border-blue-500 shadow-md hover:shadow-lg transition-all duration-300">
             {/* Status Badge */}
             <div className="absolute top-4 right-4 z-10">
                 <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusClasses(returnRequest.status)}`}>
                     {getStatusIcon(returnRequest.status)}
-                    <span>{returnRequest.status}</span>
+                    <span className="text-slate-300">{returnRequest.status}</span>
                 </span>
             </div>
 
@@ -84,11 +84,11 @@ const ReturnRequestCard = ({ returnRequest, onViewDetails, onCancelReturn }) => 
                 {/* Return Request Header */}
                 <div className="mb-4">
                     <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-lg font-bold text-gray-900 truncate pr-4">
+                        <h3 className="text-lg font-bold text-slate-300 truncate pr-4">
                             Return Request
                         </h3>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500 space-x-4">
+                    <div className="flex items-center text-sm text-slate-400 space-x-4">
                         <span className="flex items-center">
                             <Calendar className="w-4 h-4 mr-1" />
                             {format(returnRequestDate, "MMM d, yyyy")}
@@ -110,16 +110,16 @@ const ReturnRequestCard = ({ returnRequest, onViewDetails, onCancelReturn }) => 
                                     alt={returnRequest.items[0].name}
                                     className="w-12 h-12 object-cover rounded-lg"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent rounded-lg"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-blue-500/20 to-transparent rounded-lg"></div>
                             </div>
                         )}
                         <div className="flex-grow">
-                            <p className="font-medium text-gray-900 truncate mb-1">
+                            <p className="font-medium text-slate-300 truncate mb-1">
                                 {returnRequest.items.length > 1
                                     ? `${returnRequest.items[0].name} +${returnRequest.items.length - 1} more`
                                     : returnRequest.items[0]?.name || "—"}
                             </p>
-                            <p className="text-lg font-bold text-orange-600">
+                            <p className="text-lg font-bold text-slate-300">
                                 {formatCurrency(returnRequest.refundAmount)}
                             </p>
                         </div>
@@ -128,12 +128,12 @@ const ReturnRequestCard = ({ returnRequest, onViewDetails, onCancelReturn }) => 
 
                 {/* Reason Preview */}
                 {returnRequest.reason && (
-                    <div className="mb-4 p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-100">
-                        <p className="text-sm text-gray-600 mb-1 flex items-center">
+                    <div className="mb-4 p-3 bg-gray-700 rounded-lg border border-gray-600">
+                        <p className="text-sm text-slate-400 mb-1 flex items-center">
                             <MessageCircle className="w-3 h-3 mr-1" />
                             Reason:
                         </p>
-                        <p className="text-sm font-medium text-gray-800 truncate">
+                        <p className="text-sm font-medium text-slate-300 truncate">
                             {returnRequest.reason}
                         </p>
                     </div>
@@ -146,7 +146,7 @@ const ReturnRequestCard = ({ returnRequest, onViewDetails, onCancelReturn }) => 
                             variant="outline"
                             size="sm"
                             onClick={() => onViewDetails(returnRequest)}
-                            className="flex-1 min-w-[120px] bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300"
+                            className="flex-1 min-w-[120px] bg-blue-900 border-blue-700 text-blue-300 hover:bg-blue-800 hover:border-blue-600"
                         >
                             <Eye className="w-4 h-4 mr-2" />
                             View Details
@@ -159,23 +159,23 @@ const ReturnRequestCard = ({ returnRequest, onViewDetails, onCancelReturn }) => 
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="bg-red-50 border-red-200 text-red-700 hover:bg-red-100 hover:border-red-300"
+                                    className="bg-red-900 border-red-700 text-red-300 hover:bg-red-800 hover:border-red-600"
                                     onClick={() => onCancelReturn(returnRequest._id)}
                                 >
                                     <XCircle className="w-4 h-4 mr-2" />
                                     Cancel
                                 </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="bg-gray-800 border border-gray-700">
                                 <AlertDialogHeader>
-                                    <AlertDialogTitle>Cancel Return Request</AlertDialogTitle>
-                                    <AlertDialogDescription>
+                                    <AlertDialogTitle className="text-slate-300">Cancel Return Request</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-slate-400">
                                         Are you sure you want to cancel this return request? This action cannot be undone.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                    <AlertDialogCancel>No, keep return request</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => onCancelReturn(returnRequest._id)}>
+                                    <AlertDialogCancel className="text-slate-300">No, keep return request</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => onCancelReturn(returnRequest._id)} className="bg-red-900 text-red-300">
                                         Yes, cancel return request
                                     </AlertDialogAction>
                                 </AlertDialogFooter>
@@ -257,13 +257,12 @@ const ReturnRequest = () => {
     // Empty state
     if (returnRequests?.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center text-center min-h-[60vh] bg-gradient-to-br from-orange-50 via-white to-red-50 rounded-2xl border border-gray-100">
+            <div className="flex flex-col items-center justify-center text-center min-h-[60vh] bg-gray-800 rounded-2xl border border-gray-700">
                 <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-400 rounded-full blur-2xl opacity-20 animate-pulse" />
-                    <RotateCcw className="relative w-24 h-24 text-orange-400 mb-6" />
+                    <RotateCcw className="relative w-24 h-24 text-blue-400 mb-6" />
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">No Return Requests</h2>
-                <p className="text-gray-600 text-lg mb-6 max-w-md">
+                <h2 className="text-3xl font-bold text-slate-300 mb-2">No Return Requests</h2>
+                <p className="text-slate-400 text-lg mb-6 max-w-md">
                     You haven't made any return requests yet. When you do, they'll appear here.
                 </p>
             </div>
@@ -287,7 +286,7 @@ const ReturnRequest = () => {
 
                 {/* Pagination Controls */}
                 {returnRequestsTotalPages > 1 && (
-                    <div className="flex items-center justify-center bg-white p-6 rounded-xl border border-gray-200">
+                    <div className="flex items-center justify-center bg-gray-800 p-6 rounded-xl border border-gray-700">
                         <PaginationDemo
                             currentPage={currentPage}
                             totalPages={returnRequestsTotalPages}
@@ -296,15 +295,15 @@ const ReturnRequest = () => {
                     </div>
                 )}
 
-                <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
+                <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto bg-gray-900 border border-gray-700 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-700 [&::-webkit-scrollbar-thumb]:bg-gray-500 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
                     {selectedReturnRequest && (
                         <>
-                            <DialogHeader className="border-b border-gray-200 pb-4">
-                                <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center">
-                                    <RotateCcw className="w-6 h-6 mr-2 text-orange-600" />
+                            <DialogHeader className="border-b border-gray-700 pb-4">
+                                <DialogTitle className="text-2xl font-bold text-slate-300 flex items-center">
+                                    <RotateCcw className="w-6 h-6 mr-2 text-blue-400" />
                                     Return Request Details
                                 </DialogTitle>
-                                <DialogDescription className="text-gray-600">
+                                <DialogDescription className="text-slate-400">
                                     Request ID: {selectedReturnRequest._id?.substring(0, 25)} • Created on{" "}
                                     {format(
                                         new Date(selectedReturnRequest.requestedAt),
@@ -315,15 +314,15 @@ const ReturnRequest = () => {
                             
                             <div className="py-6 space-y-8">
                                 {/* Status Overview */}
-                                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl">
+                                <div className="bg-gray-800 p-4 rounded-xl">
                                     <div className="flex items-center justify-between">
                                         <span className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold border ${getStatusClasses(selectedReturnRequest.status)}`}>
                                             {getStatusIcon(selectedReturnRequest.status)}
-                                            <span>{selectedReturnRequest.status}</span>
+                                            <span className="text-slate-300">{selectedReturnRequest.status}</span>
                                         </span>
                                         <div className="text-right">
-                                            <p className="text-sm text-gray-600">Refund Amount</p>
-                                            <p className="text-2xl font-bold text-orange-600">{formatCurrency(selectedReturnRequest.refundAmount)}</p>
+                                            <p className="text-sm text-slate-400">Refund Amount</p>
+                                            <p className="text-2xl font-bold text-slate-300">{formatCurrency(selectedReturnRequest.refundAmount)}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -331,23 +330,23 @@ const ReturnRequest = () => {
                                 {/* Return Reason & Comment */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                            <AlertTriangle className="w-5 h-5 mr-2 text-amber-600" />
+                                        <h3 className="text-xl font-bold text-slate-300 mb-4 flex items-center">
+                                            <AlertTriangle className="w-5 h-5 mr-2 text-amber-400" />
                                             Reason for Return
                                         </h3>
-                                        <div className="bg-gradient-to-br from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-200">
-                                            <p className="text-gray-800 font-medium">
+                                        <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                            <p className="text-slate-300 font-medium">
                                                 {selectedReturnRequest.reason || "Not specified"}
                                             </p>
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                            <MessageCircle className="w-5 h-5 mr-2 text-blue-600" />
+                                        <h3 className="text-xl font-bold text-slate-300 mb-4 flex items-center">
+                                            <MessageCircle className="w-5 h-5 mr-2 text-blue-400" />
                                             Comment
                                         </h3>
-                                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-200">
-                                            <p className="text-gray-800">
+                                        <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                            <p className="text-slate-300">
                                                 {selectedReturnRequest.comment || "No additional comments"}
                                             </p>
                                         </div>
@@ -356,8 +355,8 @@ const ReturnRequest = () => {
 
                                 {/* Return Items */}
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                        <Package className="w-5 h-5 mr-2 text-green-600" />
+                                    <h3 className="text-xl font-bold text-slate-300 mb-4 flex items-center">
+                                        <Package className="w-5 h-5 mr-2 text-green-400" />
                                         Return Items
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -369,27 +368,27 @@ const ReturnRequest = () => {
 
                                 {/* Pickup Address Information */}
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                        <MapPin className="w-5 h-5 mr-2 text-purple-600" />
+                                    <h3 className="text-xl font-bold text-slate-300 mb-4 flex items-center">
+                                        <MapPin className="w-5 h-5 mr-2 text-purple-400" />
                                         Pickup Address
                                     </h3>
-                                    <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-xl border border-purple-200">
+                                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <p className="text-sm text-gray-600 mb-1">Contact Person</p>
-                                                <p className="font-semibold text-gray-900">
+                                                <p className="text-sm text-slate-400 mb-1">Contact Person</p>
+                                                <p className="font-semibold text-slate-300">
                                                     {selectedReturnRequest?.pickUpAddress?.fullName || "Customer Name"}
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-gray-600 mb-1">Phone Number</p>
-                                                <p className="font-semibold text-gray-900">
+                                                <p className="text-sm text-slate-400 mb-1">Phone Number</p>
+                                                <p className="font-semibold text-slate-300">
                                                     {selectedReturnRequest?.pickUpAddress?.phoneNumber}
                                                 </p>
                                             </div>
                                             <div className="md:col-span-2">
-                                                <p className="text-sm text-gray-600 mb-1">Pickup Address</p>
-                                                <p className="font-semibold text-gray-900">
+                                                <p className="text-sm text-slate-400 mb-1">Pickup Address</p>
+                                                <p className="font-semibold text-slate-300">
                                                     {selectedReturnRequest?.pickUpAddress?.addressLine}, {selectedReturnRequest?.pickUpAddress?.city}, {selectedReturnRequest?.pickUpAddress?.state} {selectedReturnRequest?.pickUpAddress?.postalCode}, {selectedReturnRequest?.pickUpAddress?.country}
                                                 </p>
                                             </div>
@@ -399,27 +398,27 @@ const ReturnRequest = () => {
 
                                 {/* Refund Details */}
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                        <CreditCard className="w-5 h-5 mr-2 text-green-600" />
+                                    <h3 className="text-xl font-bold text-slate-300 mb-4 flex items-center">
+                                        <CreditCard className="w-5 h-5 mr-2 text-green-400" />
                                         Refund Details
                                     </h3>
-                                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
-                                                <p className="text-sm text-gray-600 mb-1">Refund Status</p>
+                                                <p className="text-sm text-slate-400 mb-1">Refund Status</p>
                                                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${getRefundStatusClasses(selectedReturnRequest?.status)}`}>
-                                                    {selectedReturnRequest?.status}
+                                                    <span className="text-slate-300">{selectedReturnRequest?.status}</span>
                                                 </span>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-gray-600 mb-1">Refund Amount</p>
-                                                <p className="font-bold text-lg text-gray-900">
+                                                <p className="text-sm text-slate-400 mb-1">Refund Amount</p>
+                                                <p className="font-bold text-lg text-slate-300">
                                                     {formatCurrency(selectedReturnRequest?.refundAmount)}
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-gray-600 mb-1">Refund Date</p>
-                                                <p className="font-semibold text-gray-900">
+                                                <p className="text-sm text-slate-400 mb-1">Refund Date</p>
+                                                <p className="font-semibold text-slate-300">
                                                     {selectedReturnRequest?.refundedAt 
                                                         ? format(new Date(selectedReturnRequest?.refundedAt), "MMM d, yyyy") 
                                                         : "Pending"
@@ -429,9 +428,9 @@ const ReturnRequest = () => {
                                         </div>
                                         
                                         {selectedReturnRequest?.refundStatus === "Failed" && (
-                                            <div className="mt-4 p-4 bg-red-100 border border-red-200 rounded-lg">
-                                                <p className="text-sm text-gray-600 mb-1">Refund Failed Reason</p>
-                                                <p className="font-medium text-red-800">
+                                            <div className="mt-4 p-4 bg-red-900 border border-red-700 rounded-lg">
+                                                <p className="text-sm text-red-300 mb-1">Refund Failed Reason</p>
+                                                <p className="font-medium text-red-300">
                                                     {selectedReturnRequest?.refundFailureReason || "Not specified"}
                                                 </p>
                                             </div>
@@ -441,17 +440,17 @@ const ReturnRequest = () => {
 
                                 {/* Timeline */}
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                        <Clock className="w-5 h-5 mr-2 text-indigo-600" />
+                                    <h3 className="text-xl font-bold text-slate-300 mb-4 flex items-center">
+                                        <Clock className="w-5 h-5 mr-2 text-purple-400" />
                                         Return Timeline
                                     </h3>
-                                    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200">
+                                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
                                         <div className="space-y-4">
                                             <div className="flex items-center space-x-3">
-                                                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                                                 <div>
-                                                    <p className="font-semibold text-gray-900">Return Request Created</p>
-                                                    <p className="text-sm text-gray-600">
+                                                    <p className="font-semibold text-slate-300">Return Request Created</p>
+                                                    <p className="text-sm text-slate-400">
                                                         {format(new Date(selectedReturnRequest.requestedAt), "MMMM d, yyyy 'at' hh:mm a")}
                                                     </p>
                                                 </div>
@@ -461,8 +460,8 @@ const ReturnRequest = () => {
                                                 <div className="flex items-center space-x-3">
                                                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                                                     <div>
-                                                        <p className="font-semibold text-gray-900">Refund Processed</p>
-                                                        <p className="text-sm text-gray-600">
+                                                        <p className="font-semibold text-slate-300">Refund Processed</p>
+                                                        <p className="text-sm text-slate-400">
                                                             {format(new Date(selectedReturnRequest.refundedAt), "MMMM d, yyyy 'at' hh:mm a")}
                                                         </p>
                                                     </div>
@@ -473,11 +472,11 @@ const ReturnRequest = () => {
                                 </div>
                             </div>
 
-                            <DialogFooter className="border-t border-gray-200 pt-4">
+                            <DialogFooter className="border-t border-gray-700 pt-4">
                                 <Button 
                                     variant="outline" 
                                     onClick={() => setIsDialogOpen(false)}
-                                    className="px-6"
+                                    className="px-6 text-slate-300"
                                 >
                                     Close
                                 </Button>

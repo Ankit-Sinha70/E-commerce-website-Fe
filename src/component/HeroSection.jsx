@@ -174,7 +174,7 @@ const HeroSection = () => {
       {/* Product Showcase Section */}
       <div className="py-4 md:py-8 lg:py-8 px-4 md:px-8 lg:px-16 bg-[#111827]">
         <div className="text-center mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-400 kaushan-script-regular3">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-300 kaushan-script-regular3">
             Top Selling Products
           </h2>
           <p className="text-gray-400 text-sm md:text-base lg:text-lg kaushan-script-regular2">
@@ -196,7 +196,7 @@ const HeroSection = () => {
               <img
                 src={Audiosystem}
                 alt="Audio System"
-                className="w-full h-32 md:h-40 object-cover rounded-lg"
+                className="w-full h-40 object-cover rounded-lg" // Adjusted height here
               />
             </div>
             <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 rounded-full">
@@ -243,7 +243,7 @@ const HeroSection = () => {
               <img
                 src={homeAppliances}
                 alt="Home Appliance"
-                className="w-full h-32 md:h-40 object-cover rounded-lg"
+                className="w-full h-40 object-cover rounded-lg" // Adjusted height here
               />
             </div>
             <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 rounded-full">

@@ -139,7 +139,7 @@ const Navbar = () => {
               {item.icon}
               {item.label}
               {item.to === "/cart" && totalCartItems > 0 && (
-                <span className="ml-1 bg-gray-300 text-white rounded-full px-2 py-0.5 text-xs font-bold relative bottom-[10px] right-[10px]">
+                <span className="ml-1bg-[#0f172a] border border-blue-500 text-white rounded-full px-2 py-0.5 text-xs font-bold relative bottom-[10px] right-[10px]">
                   {totalCartItems}
                 </span>
               )}
@@ -162,7 +162,7 @@ const Navbar = () => {
                       <img
                         src={user.avatar}
                         alt="User Avatar"
-                        className="w-8 h-8 rounded-full"
+                        className="w-12 h-12 rounded-full border-2 border-white"
                       />
                     ) : (
                       <UserCircle className="w-8 h-8" />

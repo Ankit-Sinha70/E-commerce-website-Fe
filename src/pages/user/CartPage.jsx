@@ -40,7 +40,6 @@ export default function CartPage() {
   const {
     items: cartItems,
     loading,
-    error,
   } = useSelector((state) => state.cart);
   const { accessToken, user } = useSelector((state) => state.auth);
   // Access shipping addresses from the store
@@ -272,19 +271,11 @@ export default function CartPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-red-50">
-        <p className="text-red-700 text-lg">Error loading data: {error}</p>
-      </div>
-    );
-  }
-
   if (!cartItems || cartItems.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a]">
         <ShoppingCart className="w-16 h-16 text-gray-400 mb-4" />
-        <p className="text-xl text-gray-700 mb-4">Your cart is empty.</p>
+        <p className="text-xl text-gray-300 mb-4">Your cart is empty.</p>
         <Link to="/" className="text-blue-600 hover:underline">
           Start shopping!
         </Link>
@@ -293,7 +284,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-16">
+    <div className="min-h-screen bg-[#0f172a] p-16">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex gap-8">
           {/* Left Column - Main Content */}
@@ -321,7 +312,7 @@ export default function CartPage() {
             {cartItems.map((item) => (
               <div
                 key={item?.productId?._id}
-                className="bg-white rounded-lg shadow-sm p-6 mb-6"
+                className="bg-[#0f172a] rounded-lg shadow-sm p-6 mb-6 border border-blue-500"
                 style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 18px 50px -10px" }}
               >
                 <div className="flex items-center gap-4">
@@ -339,17 +330,17 @@ export default function CartPage() {
 
                   {/* Product Details */}
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-900 mb-2">
+                    <h3 className="font-medium text-slate-300 mb-2">
                       {item?.productId?.name}
                     </h3>
                     <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl font-bold text-gray-900">
+                      <span className="text-xl font-bold text-slate-300">
                         {formatCurrency(item?.productId?.price)}
                       </span>
                     </div>
 
                     {/* Quantity Controls */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 text-slate-300">
                       <Button
                         variant="ghost"
                         className="cursor-pointer"
@@ -392,7 +383,7 @@ export default function CartPage() {
                     </button>
                     <div className="text-right">
                       <div className="text-sm text-gray-500 mb-1">Subtotal</div>
-                      <div className="text-xl font-bold text-gray-900">
+                      <div className="text-xl font-bold text-gray-300">
                         {formatCurrency(item?.productId?.price * item?.quantity)}
                       </div>
                     </div>
@@ -403,10 +394,10 @@ export default function CartPage() {
 
             {/* Recommendations Section */}
             <div
-              className="bg-white rounded-lg shadow-sm p-6"
+              className="bg-[#0f172a] border border-blue-500 rounded-lg shadow-sm p-6"
               style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 18px 50px -10px" }}
             >
-              <h3 className="text-lg font-medium text-gray-900 mb-6">
+              <h3 className="text-lg font-medium text-gray-300 mb-6">
                 You might also like
               </h3>
               <div className="grid grid-cols-4 gap-6">
@@ -419,10 +410,10 @@ export default function CartPage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-1">
+                  <h4 className="text-sm font-medium text-gray-300 mb-1">
                     Phone Case
                   </h4>
-                  <p className="text-sm font-semibold text-gray-900">{formatCurrency(24.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300">{formatCurrency(24.99)}</p>
                 </div>
 
                 {/* Bluetooth Speaker */}
@@ -434,40 +425,40 @@ export default function CartPage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-1">
+                  <h4 className="text-sm font-medium text-gray-300 mb-1">
                     Bluetooth Speaker
                   </h4>
-                  <p className="text-sm font-semibold text-gray-900"> {formatCurrency(89.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300"> {formatCurrency(89.99)}</p>
                 </div>
 
                 {/* Laptop Stand */}
                 <div className="text-center">
-                  <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-24 bg-gray-300 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                     <img
                       src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=100&h=96&fit=crop"
                       alt="Laptop Stand"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-1">
+                  <h4 className="text-sm font-medium text-gray-300 mb-1">
                     Laptop Stand
                   </h4>
-                  <p className="text-sm font-semibold text-gray-900"> {formatCurrency(49.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300"> {formatCurrency(49.99)}</p>
                 </div>
 
                 {/* USB Cable */}
                 <div className="text-center">
-                  <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-24 bg-gray-300 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                     <img
                       src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=96&fit=crop"
                       alt="USB Cable"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-1">
+                  <h4 className="text-sm font-medium text-gray-300 mb-1">
                     USB Cable
                   </h4>
-                  <p className="text-sm font-semibold text-gray-900"> {formatCurrency(14.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300"> {formatCurrency(14.99)}</p>
                 </div>
               </div>
             </div>
@@ -476,39 +467,39 @@ export default function CartPage() {
           {/* Right Column - Order Summary */}
           <div className="w-96 flex-shrink-0">
             <div
-              className="bg-white rounded-lg shadow-sm p-6 sticky top-8"
+              className="bg-[#0f172a] border border-blue-500 rounded-lg shadow-sm p-6 sticky top-8"
               style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 18px 50px -10px" }}
             >
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              <h2 className="text-lg font-semibold text-gray-300 mb-6">
                 Order Summary
               </h2>
 
               {/* Order Details */}
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">
+                  <span className="text-gray-300">
                     Subtotal ({totalItems} items)
                   </span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-300">
                     {formatCurrency(subtotal)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-300">Shipping</span>
                   <span className="font-semibold text-green-600">Free</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Tax</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-gray-300">Tax</span>
+                  <span className="font-semibold text-gray-300">
                     {formatCurrency(tax)}
                   </span>
                 </div>
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold text-gray-900">
+                    <span className="text-xl font-bold text-gray-300">
                       Total
                     </span>
-                    <span className="text-xl font-bold text-gray-900">
+                    <span className="text-xl font-bold text-gray-300">
                       {formatCurrency(total)}
                     </span>
                   </div>
@@ -516,7 +507,7 @@ export default function CartPage() {
               </div>
 
               <div className={`mb-6 ${guestId && !user ? "block" : "hidden"}`}>
-                <h3 className="text-md font-semibold text-gray-800 mb-3 flex items-center">
+                <h3 className="text-md font-semibold text-gray-300 mb-3 flex items-center">
                   Email
                 </h3>
                 {guestId && !user && (
@@ -525,19 +516,19 @@ export default function CartPage() {
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 border text-gray-300 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                     required />
                 )}
               </div>
 
               {/* Shipping Address Selection */}
-              <div className="mb-6">
-                <h3 className="text-md font-semibold text-gray-800 mb-3 flex items-center">
-                  <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+              <div className="mb-6 bg-[#0f172a]">
+                <h3 className="text-md font-semibold text-gray-300 mb-3 flex items-center">
+                  <MapPin className="h-4 w-4 mr-2 text-gray-300" />
                   Delivery Address
                 </h3>{guestId && !user && (
                   <Button onClick={() => setShowAddAddress(true)}>
-                    {selectedAddress ? "Edit Shipping Address" : "Add Shipping Address"}
+                    {selectedAddress ? "Edit Shipping Address" : "Add Shipping Address"} 
                   </Button>
                 )}
 
@@ -549,7 +540,7 @@ export default function CartPage() {
                   onSubmit={handleAddAddress}
                   initialData={selectedAddress}
                   isLoading={false}
-                  showDefaultOption={false} // Authenticated users can set default
+                  showDefaultOption={false}
                 />
 
                 {user && (shippingAddresses && shippingAddresses.length > 0 ? (
@@ -560,7 +551,7 @@ export default function CartPage() {
                     }}
                     value={selectedAddress?._id || ""}
                   >
-                    <SelectTrigger className="w-full [&>span]:line-clamp-1">
+                    <SelectTrigger className="w-full [&>span]:line-clamp-1 text-gray-300">
                       <SelectValue placeholder="Select a shipping address" />
                     </SelectTrigger>
                     <SelectContent>
@@ -570,30 +561,29 @@ export default function CartPage() {
                             <span className="font-medium">
                               {address.fullName} ({address.type}{address.isDefault ? " - Default" : ""})
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-300">
                               {address.addressLine}, {address.city}, {address.state} {address.postalCode}, {address.country}
                             </span>
                           </div>
-                          {console.log('address', address)}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 ) : (
-                  <p className="text-sm text-gray-500">No shipping addresses found. Please add one in your profile settings.</p>
+                  <p className="text-sm text-gray-300">No shipping addresses found. Please add one in your profile settings.</p>
                 ))}
                 {selectedAddress && (
-                  <div className="mt-4 p-4 border border-gray-200 rounded-md bg-gray-50 text-sm text-gray-700">
+                  <div className="mt-4 p-4 border bg-[#0f172a] border-gray-200 rounded-md text-sm text-gray-300">
                     <p className="flex items-center mb-1">
-                      <User className="h-4 w-4 mr-2 text-gray-500" />
+                      <User className="h-4 w-4 mr-2 text-gray-300" />
                       {selectedAddress.fullName}
                     </p>
                     <p className="flex items-center mb-1">
-                      <Phone className="h-4 w-4 mr-2 text-gray-500" />
+                      <Phone className="h-4 w-4 mr-2 text-gray-300" />
                       {selectedAddress.phoneNumber}
                     </p>
                     <p className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+                      <MapPin className="h-4 w-4 mr-2 text-gray-300" />
                       {selectedAddress.addressLine}, {selectedAddress.city}, {selectedAddress.state} {selectedAddress.postalCode}, {selectedAddress.country}
                     </p>
                   </div>
@@ -609,9 +599,9 @@ export default function CartPage() {
                     placeholder="Promo code"
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="flex-1 px-3 py-2 border text-gray-300 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
-                  <button className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-medium">
+                  <button className="px-4 py-2 text-gray-300 border border-gray-300 rounded-md hover:bg-gray-500 text-sm font-medium">
                     Apply
                   </button>
                 </div>
@@ -628,25 +618,25 @@ export default function CartPage() {
               </Button>
 
               {/* Security Badge */}
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-6">
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-300 mb-6">
                 <Lock className="w-4 h-4" />
                 <span>Secure checkout</span>
               </div>
 
               {/* Payment Methods */}
-              <div>
-                <p className="text-sm text-gray-600 mb-3">We accept</p>
+              <div className="cursor-pointer mb-4">
+                <p className="text-sm text-gray-300 mb-3">We accept</p>
                 <div className="flex gap-2">
-                  <div className="px-3 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
+                  <div className="px-3 hover:bg-gray-500 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
                     VISA
                   </div>
-                  <div className="px-3 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
+                  <div className="px-3 hover:bg-gray-500 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
                     MC
                   </div>
-                  <div className="px-3 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
+                  <div className="px-3 hover:bg-gray-500 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
                     AMEX
                   </div>
-                  <div className="px-3 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
+                  <div className="px-3 hover:bg-gray-500 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
                     PP
                   </div>
                 </div>

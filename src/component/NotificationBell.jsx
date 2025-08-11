@@ -56,12 +56,12 @@ const NotificationBell = () => {
       >
         <Button variant="ghost" size="icon" className="relative">
           {unreadCount > 0 ? (
-            <BellRing className="h-5 w-5 text-blue-600" />
+            <BellRing className="h-12 w-12 text-red-600" />
           ) : (
-            <Bell className="h-5 w-5" />
+            <Bell className="h-7 w-7" />
           )}
           {unreadCount > 0 && (
-            <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-xs">
+            <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-gray-400  text-white text-xs">
               {unreadCount}
             </span>
           )}
@@ -77,7 +77,7 @@ const NotificationBell = () => {
           {notifications?.length > 0 && (
             <Link
               to="/user/notifications"
-              className="text-xs text-white hover:underline"
+              className="text-xs text-white hover:underline "
               onClick={(e) => {
                 e.stopPropagation();
                 setIsOpen(false);

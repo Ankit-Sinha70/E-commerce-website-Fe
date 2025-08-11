@@ -1,35 +1,33 @@
-import React, { useEffect, useState } from "react"; // Import useState
-import { Button } from "@/components/ui/button";
-import { useSelector, useDispatch } from "react-redux";
-import { toast, Toaster } from "sonner"; // Keep toast for errors/removals
-import {
-  getUserWishList,
-  removeItemFromWishList,
-} from "@/features/wishlist/wishlistSlice";
-import { addItemToCart } from "../../features/cart/cartSlice";
 import Loader from "@/component/common/Loader";
+import { Button } from "@/components/ui/button";
 import {
-  // Import Dialog components
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose, // Added DialogClose for closing button
 } from "@/components/ui/dialog";
+import {
+  getUserWishList,
+  removeItemFromWishList,
+} from "@/features/wishlist/wishlistSlice";
+import { formatCurrency } from "@/lib/currency";
+import { ShoppingBag } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast, Toaster } from "sonner";
+import { addItemToCart } from "../../features/cart/cartSlice";
 
 const WishlistPage = () => {
   const dispatch = useDispatch();
   const { user, accessToken } = useSelector((state) => state.auth);
   const { wishlist, loading, error } = useSelector((state) => state.wishlist);
-  console.log("wishlist", wishlist);
 
-  // State for the Add to Cart confirmation dialog
   const [showAddToCartDialog, setShowAddToCartDialog] = useState(false);
   const [dialogProductName, setDialogProductName] = useState("");
   const [dialogProductQuantity, setDialogProductQuantity] = useState(0);
-
 
   useEffect(() => {
     if (!accessToken) {
@@ -76,110 +74,141 @@ const WishlistPage = () => {
       ).unwrap();
 
       if (addItemToCart.fulfilled.match(resultAction)) {
-        // Instead of toast, set state to open the dialog
         setDialogProductName(product.name);
         setDialogProductQuantity(quantity);
         setShowAddToCartDialog(true);
-        // Optional: Remove from wishlist after adding to cart
-        // const removeResult = await dispatch(removeItemFromWishList(product._id));
-        // if (removeItemFromWishList.fulfilled.match(removeResult)) {
-        //   toast.info(`${product.name} also removed from wishlist.`);
-        // }
       }
     } catch (error) {
       const errorMessage = error.message || "Failed to add product to cart.";
-      toast.error(errorMessage); // Still use toast for errors
+      toast.error(errorMessage);
       console.error("Failed to add to cart:", error);
     }
   };
 
   if (loading) {
-    return <Loader />;
+    return <Loader message="Loading Wishlist..." />;
   }
 
   const productsInWishlist = wishlist ? wishlist.products : [];
 
   return (
-    <div className="px-10 py-6">
-      <h2 className="text-3xl font-bold text-blue-700 mb-6">Your Wishlist</h2>
-      {productsInWishlist.length === 0 ? (
-        <div className="text-center py-10">
-          <p className="text-gray-600 text-lg mb-4">Your wishlist is empty.</p>
-          <Button onClick={() => (window.location.href = "/")}>
-            Continue Shopping
-          </Button>
+    <div className="min-h-screen bg-[#111827] text-slate-300 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold text-white mb-4">Your Wishlist</h2>
+          <p className="text-lg text-slate-400">
+            Items you've saved for later. Ready to make them yours?
+          </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {productsInWishlist.map((product) => (
-            <div
-              key={product._id}
-              className="border rounded-lg bg-white shadow p-4 flex flex-col"
-            >
-              <img
-                src={product?.image}
-                alt={product?.name}
-                className="w-full h-40 object-cover mb-3 rounded"
-                onError={(e) =>
-                  (e.currentTarget.src = "/src/assets/images/image_22_3.jpeg")
-                }
-              />
-              <h4 className="text-lg font-semibold mb-1">{product?.name}</h4>
-              <p className="text-sm text-gray-600 mb-2 flex-grow">
-                {product.description}
-              </p>
-              <p className="font-bold text-blue-600 mb-2">
-                {product.price} AED
-              </p>
-              <div className="flex justify-end items-center mt-auto">
-                <Button variant="ghost" onClick={() => handleAddToCart(product)}>
-                  Add to Cart
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => handleRemoveFromWishlist(product._id)}
-                  className="ml-2"
-                >
-                  Remove
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      <Toaster richColors position="top-right" />
 
-      {/* Add to Cart Confirmation Dialog */}
-      <Dialog open={showAddToCartDialog} onOpenChange={setShowAddToCartDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Item Added to Cart!</DialogTitle>
-            <DialogDescription>
-              {dialogProductName} has been added to your cart.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <p>Quantity: {dialogProductQuantity}</p>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Continue Shopping
-              </Button>
-            </DialogClose>
-            {/* You can add another button here, e.g., to go to cart */}
+        {productsInWishlist?.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-center min-h-[40vh] bg-gray-800 rounded-2xl border border-gray-700 p-8">
+            <div className="relative">
+              <ShoppingBag className="relative w-24 h-24 text-blue-400 mb-6" />
+            </div>
+            <p className="text-slate-400 text-lg mb-6 max-w-md">
+              Your wishlist is empty. Explore our products and add your
+              favorites!
+            </p>
             <Button
-              onClick={() => {
-                // Navigate to cart page if needed
-                setShowAddToCartDialog(false); // Close dialog
-                // window.location.href = "/cart"; // Example navigation
-              }}
+              onClick={() => (window.location.href = "/")}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold"
             >
-              Go to Cart
+              Continue Shopping
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {productsInWishlist?.map((product) => (
+              <div
+                key={product._id}
+                className="group relative overflow-hidden rounded-2xl bg-gray-800 border border-gray-700 hover:border-blue-500 shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                <div className="relative">
+                  <img
+                    src={product?.image}
+                    alt={product?.name}
+                    className="w-full h-64 object-cover rounded-t-2xl transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) =>
+                      (e.currentTarget.src =
+                        "/src/assets/images/image_22_3.jpeg")
+                    }
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-500/20 to-transparent"></div>
+                </div>
+                <div className="p-4">
+                  <h4 className="text-lg font-semibold text-slate-300 mb-2 truncate">
+                    {product?.name}
+                  </h4>
+                  <p className="text-sm text-slate-400 mb-3 line-clamp-2">
+                    {product.description}
+                  </p>
+                  <p className="font-bold text-blue-400 mb-3">
+                    {formatCurrency(product.price)}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleAddToCart(product)}
+                      className="text-blue-300 hover:bg-blue-700"
+                    >
+                      Add to Cart
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => handleRemoveFromWishlist(product._id)}
+                      className="text-red-300 hover:bg-red-700"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <Toaster richColors position="top-right" />
+
+        {/* Add to Cart Confirmation Dialog */}
+        <Dialog open={showAddToCartDialog} onOpenChange={setShowAddToCartDialog}>
+          <DialogContent className="sm:max-w-[425px] bg-gray-800 border border-gray-700 rounded-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-slate-300">
+                Item Added to Cart!
+              </DialogTitle>
+              <DialogDescription className="text-slate-400">
+                {dialogProductName} has been added to your cart.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <p className="text-slate-300">
+                Quantity: {dialogProductQuantity}
+              </p>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="text-slate-300 bg-gray-700 hover:bg-gray-600"
+                >
+                  Continue Shopping
+                </Button>
+              </DialogClose>
+              <Button
+                onClick={() => {
+                  setShowAddToCartDialog(false);
+                  window.location.href = "/cart";
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                Go to Cart
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };

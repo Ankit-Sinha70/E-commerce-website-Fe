@@ -271,12 +271,12 @@ const ViewProfilePage = () => {
   };
 
   return (
-    <div className="bg-gray-50/50 font-sans mt-16">
+    <div className="bg-[#0f172a] text-slate-300 font-sans mt-16">
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-300">
               {isEditing
                 ? "Edit Profile"
                 : `Welcome, ${
@@ -284,7 +284,7 @@ const ViewProfilePage = () => {
                       formData.name.split(" ")[0]?.slice(1) || "User"
                   }`}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">Tue, 07 June 2022</p>
+            <p className="text-sm text-gray-300 mt-1">Tue, 07 June 2022</p>
           </div>
           <div className="mt-4 sm:mt-0">
             {!isEditing ? (

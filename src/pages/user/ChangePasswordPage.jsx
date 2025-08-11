@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { changePassword, clearChangePasswordState } from "@/features/auth/authSlice";
+import { changePassword, clearChangePasswordState, logout } from "@/features/auth/authSlice";
 import { toast } from "sonner";
 import { CheckCircle, Eye, EyeOff, Shield, X, Sparkles, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { logout } from "@/features/auth/authSlice";
 
 const ChangePasswordPage = () => {
   const dispatch = useDispatch();
@@ -79,14 +78,14 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-100 to-blue-200">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-blue-100">
-        <h2 className="text-3xl font-extrabold text-center text-sky-700 mb-2">Change Password</h2>
+    <div className="min-h-screen flex items-center justify-center bg-[#111827] text-slate-300">
+      <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
+        <h2 className="text-3xl font-extrabold text-center text-blue-400 mb-2">Change Password</h2>
         <p className="text-center text-gray-500 mb-6">Keep your account secure by updating your password regularly.</p>
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Old Password */}
           <div>
-            <label htmlFor="oldPassword" className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="oldPassword" className="block text-sm font-semibold text-gray-300 mb-1">
               Old Password
             </label>
             <div className="relative">
@@ -94,7 +93,7 @@ const ChangePasswordPage = () => {
                 id="oldPassword"
                 name="oldPassword"
                 type={showOld ? "text" : "password"}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none transition pr-10"
+                className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10 bg-gray-700 border-gray-600 text-slate-300"
                 value={form.oldPassword}
                 onChange={handleChange}
                 autoComplete="current-password"
@@ -104,7 +103,7 @@ const ChangePasswordPage = () => {
               <button
                 type="button"
                 tabIndex={-1}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-sky-500"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500"
                 onClick={() => setShowOld((v) => !v)}
               >
                 {showOld ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -113,7 +112,7 @@ const ChangePasswordPage = () => {
           </div>
           {/* New Password */}
           <div>
-            <label htmlFor="newPassword" className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="newPassword" className="block text-sm font-semibold text-gray-300 mb-1">
               New Password
             </label>
             <div className="relative">
@@ -121,7 +120,7 @@ const ChangePasswordPage = () => {
                 id="newPassword"
                 name="newPassword"
                 type={showNew ? "text" : "password"}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none transition pr-10"
+                className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10 bg-gray-700 border-gray-600 text-slate-300"
                 value={form.newPassword}
                 onChange={handleChange}
                 autoComplete="new-password"
@@ -131,7 +130,7 @@ const ChangePasswordPage = () => {
               <button
                 type="button"
                 tabIndex={-1}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-sky-500"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500"
                 onClick={() => setShowNew((v) => !v)}
               >
                 {showNew ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -140,7 +139,7 @@ const ChangePasswordPage = () => {
           </div>
           {/* Confirm New Password */}
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-300 mb-1">
               Confirm New Password
             </label>
             <div className="relative">
@@ -148,7 +147,7 @@ const ChangePasswordPage = () => {
                 id="confirmPassword"
                 name="confirmPassword"
                 type={showConfirm ? "text" : "password"}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none transition pr-10"
+                className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10 bg-gray-700 border-gray-600 text-slate-300"
                 value={form.confirmPassword}
                 onChange={handleChange}
                 autoComplete="new-password"
@@ -158,7 +157,7 @@ const ChangePasswordPage = () => {
               <button
                 type="button"
                 tabIndex={-1}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-sky-500"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500"
                 onClick={() => setShowConfirm((v) => !v)}
               >
                 {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -167,7 +166,7 @@ const ChangePasswordPage = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-bold py-2 rounded-lg shadow transition disabled:opacity-60"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg shadow transition disabled:opacity-60"
             disabled={changePasswordStatus === "loading"}
           >
             {changePasswordStatus === "loading" ? "Changing..." : "Change Password"}
@@ -178,7 +177,7 @@ const ChangePasswordPage = () => {
       {/* Enhanced Success Dialog */}
       {showDialog && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in-0 duration-300">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden relative transform animate-in fade-in-0 zoom-in-95 duration-300">
+          <div className="bg-gray-900 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden relative transform animate-in fade-in-0 zoom-in-95 duration-300 border border-gray-700">
             {/* Animated background decoration */}
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 via-blue-500 to-purple-600"></div>
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-100/30 to-blue-100/30 rounded-full -translate-y-16 translate-x-16"></div>
@@ -225,19 +224,19 @@ const ChangePasswordPage = () => {
 
               {/* Title and Description */}
               <div className="text-center mb-8 space-y-3">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-300 to-gray-100 bg-clip-text text-transparent mb-2">
                   Password Updated!
                 </h2>
                 <div className="w-16 h-1 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-4"></div>
-                <p className="text-gray-600 leading-relaxed text-lg">
+                <p className="text-gray-400 leading-relaxed text-lg">
                   Your password has been changed successfully.
                 </p>
-                <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-xl p-4 mt-4">
-                  <div className="flex items-center space-x-2 text-blue-700">
+                <div className="bg-gradient-to-r from-blue-900/10 to-green-900/10 border border-blue-900/20 rounded-xl p-4 mt-4">
+                  <div className="flex items-center space-x-2 text-blue-300">
                     <Lock size={16} />
                     <span className="text-sm font-medium">Enhanced Security</span>
                   </div>
-                  <p className="text-sm text-blue-600 mt-1">
+                  <p className="text-sm text-blue-400 mt-1">
                     For maximum security, you can choose to sign out from all devices.
                   </p>
                 </div>
@@ -259,7 +258,7 @@ const ChangePasswordPage = () => {
                 <Button
                   onClick={handleSignOutAll}
                   variant="outline"
-                  className="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 hover:text-red-700 font-semibold py-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] text-base bg-white shadow-sm"
+                  className="w-full border-2 border-red-200 text-red-300 hover:bg-red-900/10 hover:border-red-300 hover:text-red-400 font-semibold py-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] text-base bg-transparent shadow-sm"
                 >
                   Sign out from all devices
                 </Button>
