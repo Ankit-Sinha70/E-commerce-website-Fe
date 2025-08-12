@@ -117,11 +117,10 @@ const Navbar = () => {
         className="flex items-center font-bold text-xl transition-transform duration-300 ease-in-out hover:-translate-y-1"
       >
         <img
-          src="./../assets/logo.png"
+          src="./src/assets/logo/logo.png"
           alt="Logo"
-          className="h-16 w-16 mr-2"
+          className="h-16 w-16"
         />
-        NaturalIce
       </Link>
 
       <ul className="hidden md:flex items-center gap-6">

@@ -23,7 +23,7 @@ const Footer = () => {
                 <div className="w-full h-48 bg-slate-200 rounded-xl flex items-center justify-center text-slate-600">
                   <div className="text-center">
                     <MapPin className="w-12 h-12 mx-auto mb-2 text-red-500" />
-                    <p className="font-semibold">Ice Natural Ice Industry LLC</p>
+                    <p className="font-semibold">Trendiya Llc</p>
                     <p className="text-sm">Al Quoz Industrial Area 3, Dubai</p>
                   </div>
                 </div>
