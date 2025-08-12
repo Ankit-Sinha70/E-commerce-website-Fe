@@ -3,6 +3,16 @@ import { AlertTriangle, ChevronDown, Mail, UserPen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const FormField = ({
   label,
@@ -14,12 +24,16 @@ const FormField = ({
   onChange,
 }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-600 mb-1">
+    <Label
+      htmlFor={name}
+      className="block text-sm font-medium text-gray-600 mb-1"
+    >
       {label}
-    </label>
+    </Label>
     <div className="relative">
-      <input
+      <Input
         type="text"
+        id={name}
         value={value || ""}
         placeholder={placeholder}
         readOnly={readOnly}
@@ -57,27 +71,27 @@ const ProfileLoadingSkeleton = () => (
       </div>
     </div>
     {/* Card Skeleton */}
-    <div className="bg-white rounded-2xl shadow-sm">
-      <div className="h-36 bg-gray-200 rounded-t-2xl"></div>
-      <div className="p-8">
+    <Card className="bg-gray-800 border border-gray-700 rounded-2xl shadow-md">
+      <div className="h-36 bg-gray-700 rounded-t-2xl"></div>
+      <CardContent className="p-8">
         <div className="flex items-end -mt-20">
-          <div className="w-32 h-32 rounded-full bg-gray-300 border-4 border-white"></div>
+          <div className="w-32 h-32 rounded-full bg-gray-600 border-4 border-gray-800"></div>
           <div className="flex-grow ml-6">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-8 bg-gray-700 rounded w-1/3 mb-2"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/2"></div>
           </div>
-          <div className="h-11 bg-gray-200 rounded-lg w-24"></div>
+          <div className="h-11 bg-gray-700 rounded-lg w-24"></div>
         </div>
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
           {[...Array(6)].map((_, i) => (
             <div key={i}>
-              <div className="h-5 bg-gray-200 rounded w-1/4 mb-2"></div>
-              <div className="h-12 bg-gray-200 rounded-lg"></div>
+              <div className="h-5 bg-gray-700 rounded w-1/4 mb-2"></div>
+              <div className="h-12 bg-gray-700 rounded-lg"></div>
             </div>
           ))}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   </div>
 );
 
@@ -183,7 +197,7 @@ const ViewProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="bg-gray-50/50 min-h-screen font-sans">
+      <div className="bg-[#0f172a] min-h-screen font-sans">
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">
           <ProfileLoadingSkeleton />
         </div>
@@ -193,9 +207,9 @@ const ViewProfilePage = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center text-center">
+      <div className="flex flex-col items-center justify-center text-center min-h-screen bg-[#0f172a] text-slate-300">
         <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-800">
+        <h2 className="text-2xl font-bold text-slate-300">
           Failed to Load Profile
         </h2>
         <p className="text-gray-500 mt-2">Error: {error}</p>
@@ -208,7 +222,7 @@ const ViewProfilePage = () => {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] bg-[#0f172a] text-slate-300">
         <p className="text-gray-600 text-lg">
           No profile data available. Please log in to view your profile.
         </p>
@@ -276,82 +290,79 @@ const ViewProfilePage = () => {
         {/* Header */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-300">
+            <h1 className="text-2xl lg:text-3xl font-bold text-slate-300">
               {isEditing
                 ? "Edit Profile"
                 : `Welcome, ${
                     formData.name.split(" ")[0]?.charAt(0).toUpperCase() +
-                      formData.name.split(" ")[0]?.slice(1) || "User"
+                    formData.name.split(" ")[0]?.slice(1) || "User"
                   }`}
             </h1>
-            <p className="text-sm text-gray-300 mt-1">Tue, 07 June 2022</p>
+            <p className="text-sm text-gray-500 mt-1">Tue, 07 June 2022</p>
           </div>
           <div className="mt-4 sm:mt-0">
             {!isEditing ? (
-              <button
+              <Button
                 onClick={() => setIsEditing(true)}
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
                 <UserPen className="mr-2 h-5 w-5" />
                 Edit Profile
-              </button>
+              </Button>
             ) : (
               <div className="flex space-x-3">
-                <button
+                <Button
                   onClick={handleSave}
                   className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Save Changes"}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleCancel}
+                  variant="outline"
                   className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                   disabled={loading}
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             )}
           </div>
         </header>
 
         {/* Main Profile Card */}
-        <div className="bg-white rounded-2xl shadow-sm">
-          <div className="h-28 bg-gradient-to-r from-blue-300 via-indigo-500 to-yellow-300 rounded-t-2xl relative" />
-          <div className="p-6 sm:p-8">
-            {/* Profile Info Header */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-end">
-              <div className="relative">
-                <img
-                  src={imagePreview}
-                  alt={formData.name}
-                  className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg bg-gray-200"
-                />
-                {isEditing && (
-                  <label className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                    <span className="text-xs text-blue-600">Edit</span>
-                  </label>
-                )}
-              </div>
-              <div className="flex-grow mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {formData.name.charAt(0).toUpperCase() +
-                    formData.name.slice(1)}
-                </h2>
-                <p className="text-gray-500 mt-1">{formData.email}</p>
-              </div>
-              <div className="mt-4 sm:mt-0"></div>
+        <Card className="bg-gray-800 border border-gray-700 rounded-2xl shadow-md">
+          <CardHeader className="flex flex-col items-center">
+            <div className="relative">
+              <img
+                src={imagePreview}
+                alt={formData.name}
+                className="w-32 h-32 rounded-full border-4 border-gray-800 object-cover shadow-lg bg-gray-600"
+              />
+              {isEditing && (
+                <label className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                  <span className="text-xs text-blue-600">Edit</span>
+                </label>
+              )}
             </div>
-
+            <CardTitle className="mt-4 text-2xl font-bold text-slate-300">
+              {formData.name.charAt(0).toUpperCase() +
+                formData.name.slice(1)}
+            </CardTitle>
+            <CardDescription className="text-gray-500">
+              {formData.email}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
             {/* Form Section */}
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               <FormField
                 label="Full Name"
                 value={formData.name}
@@ -377,17 +388,17 @@ const ViewProfilePage = () => {
             </div>
 
             {/* Email Address Section */}
-            <div className="mt-10 pt-8 border-t border-gray-200">
-              <h3 className="text-lg font-bold text-gray-800">
+            <div className="mt-10 pt-8 border-t border-gray-700">
+              <h3 className="text-lg font-bold text-slate-300">
                 My email Address
               </h3>
-              <div className="mt-4 p-4 bg-blue-50/50 rounded-lg flex items-center justify-between">
+              <div className="mt-4 p-4 bg-gray-700 rounded-lg flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-blue-100 rounded-full">
-                    <Mail size={20} className="text-blue-600" />
+                  <div className="p-3 bg-gray-600 rounded-full">
+                    <Mail size={20} className="text-blue-400" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-700">
+                    <p className="font-semibold text-slate-300">
                       {formData.email}
                     </p>
                     <p className="text-sm text-gray-500">
@@ -396,15 +407,16 @@ const ViewProfilePage = () => {
                   </div>
                 </div>
               </div>
-              <button
-                className="mt-4 w-full bg-blue-50 text-blue-700 font-semibold py-3 rounded-lg hover:bg-blue-100 transition-colors"
+              {/* <Button
+                variant="secondary"
+                className="mt-4 w-full bg-gray-600 text-slate-300 font-semibold py-3 rounded-lg hover:bg-gray-500 transition-colors"
                 disabled
               >
                 + Add Email Address
-              </button>
+              </Button> */}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

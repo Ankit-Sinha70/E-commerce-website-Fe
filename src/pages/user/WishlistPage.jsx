@@ -92,11 +92,11 @@ const WishlistPage = () => {
   const productsInWishlist = wishlist ? wishlist.products : [];
 
   return (
-    <div className="min-h-screen bg-[#111827] text-slate-300 py-6">
+    <div className="min-h-screen bg-[#111827] text-slate-300 py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-white mb-4">Your Wishlist</h2>
+          <h2 className="text-4xl font-bold text-white mb-8">Your Wishlist</h2>
           <p className="text-lg text-slate-400">
             Items you've saved for later. Ready to make them yours?
           </p>

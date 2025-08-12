@@ -21,7 +21,6 @@ import {
 import { cn } from "@/lib/utils";
 import {
   ClipboardList,
-  Edit,
   Heart,
   Home,
   LogIn,
@@ -140,7 +139,7 @@ const Navbar = () => {
               {item.label}
               {item.to === "/cart" && totalCartItems > 0 && (
                 <span className="ml-1bg-[#0f172a] border border-blue-500 text-white rounded-full px-2 py-0.5 text-xs font-bold relative bottom-[10px] right-[10px]">
-                  {totalCartItems}
+                  {cartItems?.length}
                 </span>
               )}
             </Link>
@@ -187,14 +186,14 @@ const Navbar = () => {
                     </svg>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                <DropdownMenuContent className="w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg">
+                  <DropdownMenuLabel className="text-sm font-bold text-slate-300 px-4 py-2">My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-gray-700" />
                   <DropdownMenuItem asChild>
                     <Link
                       to="/profile/view"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center"
+                      className="flex items-center text-sm text-gray-400 hover:bg-gray-700 hover:text-slate-300 px-4 py-2 transition-colors duration-200"
                     >
                       <User className="mr-2 h-4 w-4" /> View Profile
                     </Link>
@@ -203,7 +202,7 @@ const Navbar = () => {
                     <Link
                       to="/profile/orders"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center"
+                      className="flex items-center text-sm text-gray-400 hover:bg-gray-700 hover:text-slate-300 px-4 py-2 transition-colors duration-200"
                     >
                       <ClipboardList className="mr-2 h-4 w-4" /> My Orders
                     </Link>
@@ -212,7 +211,7 @@ const Navbar = () => {
                     <Link
                       to="/profile/wishlist"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center"
+                      className="flex items-center text-sm text-gray-400 hover:bg-gray-700 hover:text-slate-300 px-4 py-2 transition-colors duration-200"
                     >
                       <Heart className="mr-2 h-4 w-4" /> Wishlist
                     </Link>
@@ -221,7 +220,7 @@ const Navbar = () => {
                     <Link
                       to="/profile/shipping"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center"
+                      className="flex items-center text-sm text-gray-400 hover:bg-gray-700 hover:text-slate-300 px-4 py-2 transition-colors duration-200"
                     >
                       <MapPin className="mr-2 h-4 w-4" /> Shipping Address
                     </Link>
@@ -230,38 +229,35 @@ const Navbar = () => {
                     <Link
                       to="/profile/change-password"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center"
+                      className="flex items-center text-sm text-gray-400 hover:bg-gray-700 hover:text-slate-300 px-4 py-2 transition-colors duration-200"
                     >
                       <Lock className="mr-2 h-4 w-4" /> Change Password
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <AlertDialog
-                    open={showLogoutDialog}
-                    onOpenChange={setShowLogoutDialog}
-                  >
+                  <DropdownMenuSeparator className="bg-gray-700" />
+                  <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
                     <AlertDialogTrigger asChild>
                       <DropdownMenuItem
                         onSelect={(e) => e.preventDefault()}
-                        className="text-red-600 focus:bg-red-50 flex items-center"
+                        className="text-red-600 hover:bg-red-500 hover:text-white focus:bg-red-50 flex items-center text-sm px-4 py-2 transition-colors duration-200"
                       >
                         <LogOut className="mr-2 h-4 w-4" /> Logout
                       </DropdownMenuItem>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="max-w-md">
+                    <AlertDialogContent className="bg-gray-800 border border-gray-700 rounded-2xl shadow-lg">
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <AlertDialogTitle className="text-lg font-semibold text-slate-300">Confirm Logout</AlertDialogTitle>
+                        <AlertDialogDescription className="text-sm text-gray-500">
                           Are you sure you want to log out of your account?
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel asChild>
-                          <Button variant="outline">Cancel</Button>
+                          <Button variant="outline" className="text-gray-400">Cancel</Button>
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={performLogout}
-                          className="bg-red-500 hover:bg-red-600"
+                          className="bg-red-500 hover:bg-red-600 text-white"
                         >
                           Logout
                         </AlertDialogAction>
@@ -407,20 +403,20 @@ const Navbar = () => {
                         <LogOut className="inline-block w-5 h-5 mr-2" /> Logout
                       </button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="max-w-md">
+                    <AlertDialogContent className="bg-gray-800 border border-gray-700 rounded-2xl shadow-lg">
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <AlertDialogTitle className="text-lg font-semibold text-slate-300">Confirm Logout</AlertDialogTitle>
+                        <AlertDialogDescription className="text-sm text-gray-500">
                           Are you sure you want to log out of your account?
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel asChild>
-                          <Button variant="outline">Cancel</Button>
+                          <Button variant="outline" className="text-gray-400">Cancel</Button>
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={performLogout}
-                          className="bg-red-500 hover:bg-red-600"
+                          className="bg-red-500 hover:bg-red-600 text-white"
                         >
                           Logout
                         </AlertDialogAction>

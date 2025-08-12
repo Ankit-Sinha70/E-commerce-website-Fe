@@ -291,16 +291,16 @@ export default function CartPage() {
           <div className="flex-1">
             {/* Header */}
             <div
-              className="flex items-center justify-between mb-8 p-4 rounded-lg"
+              className="flex items-center justify-between mb-8 p-4 rounded-lg border border-blue-500"
               style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 18px 50px -10px" }}
             >
               <div className="flex items-center gap-3">
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
-                <h1 className="text-2xl font-medium text-gray-500">
+                <ChevronLeft className="w-5 h-5 text-gray-300" />
+                <h1 className="text-2xl font-medium text-gray-300">
                   Your Cart
                 </h1>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-300">
                 <span>Items :-</span>
                 <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium">
                   {totalItems}
@@ -354,7 +354,7 @@ export default function CartPage() {
                       >
                         <Minus className="w-4 h-4" />
                       </Button>
-                      <span className="font-medium text-gray-500">
+                      <span className="font-medium text-gray-300">
                         {item.quantity}
                       </span>
                       <Button

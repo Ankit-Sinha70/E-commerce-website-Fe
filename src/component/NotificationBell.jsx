@@ -68,16 +68,13 @@ const NotificationBell = () => {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        className="w-80 max-h-96 overflow-y-auto"
-        align="end"
-      >
-        <div className="flex items-center justify-between px-2 py-1.5">
-          <DropdownMenuLabel className="px-0">Notifications</DropdownMenuLabel>
+      <DropdownMenuContent className="w-80 max-h-96 overflow-y-auto bg-gray-800 border border-gray-700 rounded-md shadow-lg text-slate-300 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" align="end">
+        <div className="flex items-center justify-between px-3 py-2">
+          <DropdownMenuLabel className="text-sm font-bold text-slate-300">Notifications</DropdownMenuLabel>
           {notifications?.length > 0 && (
             <Link
               to="/user/notifications"
-              className="text-xs text-white hover:underline "
+              className="text-xs text-blue-500 hover:underline"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsOpen(false);
@@ -87,58 +84,40 @@ const NotificationBell = () => {
             </Link>
           )}
         </div>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-gray-700" />
 
         {loading ? (
-          <DropdownMenuItem className="flex justify-center items-center text-sm text-gray-600">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <DropdownMenuItem className="flex justify-center items-center text-sm text-gray-500">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin text-blue-500" />
             Loading...
           </DropdownMenuItem>
         ) : notifications?.length > 0 ? (
           <>
             {notifications?.map((notification) => (
-              <div
+              <DropdownMenuItem
                 key={notification._id}
-                className="flex flex-col p-2 cursor-pointer"
+                className={`flex items-start gap-2 px-3 py-2 rounded-md transition-colors duration-200 cursor-pointer ${
+                  !notification.isRead ? "bg-gray-500 hover:bg-gray-600" : "hover:bg-gray-700"
+                }`}
+                onClick={() => handleNotificationClick(notification)}
               >
-                <DropdownMenuItem
-                  className={`flex items-start gap-2 px-3 py-2.5 rounded-md transition cursor-pointer ${
-                    !notification.isRead
-                      ? "bg-gray-500 hover:bg-gray-400"
-                      : "hover:bg-gray-500"
-                  }`}
-                  onClick={() => handleNotificationClick(notification)}
-                >
-                  <div className="flex-grow">
-                    <p className="font-medium text-sm">{notification.title}</p>
-                    <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">
-                      {notification.message}
-                    </p>
-                    <p className="text-[10px] text-gray-400 mt-1">
-                      {formatDistanceToNow(new Date(notification.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </p>
-                  </div>
-
-                  {/* <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 flex-shrink-0 text-gray-400 hover:text-red-500 hover:bg-transparent"
-                    onClick={(e) => handleDelete(e, notification._id)}
-                    aria-label="Delete notification"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button> */}
-                </DropdownMenuItem>
-              </div>
+                <div className="flex-grow">
+                  <p className="font-medium text-sm text-slate-300">{notification.title}</p>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{notification.message}</p>
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    {formatDistanceToNow(new Date(notification.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </p>
+                </div>
+              </DropdownMenuItem>
             ))}
 
             {notifications?.length > 0 && (
               <div className="text-center py-2">
                 <Link
                   to="/user/notifications"
-                  className="text-xs text-blue-600 hover:underline"
+                  className="text-xs text-blue-500 hover:underline"
                   onClick={(e) => e.stopPropagation()}
                 >
                   View all {notifications?.length} notifications
@@ -151,7 +130,7 @@ const NotificationBell = () => {
             <p className="text-sm text-gray-500">No new notifications.</p>
             <Link
               to="/user/notifications"
-              className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+              className="text-xs text-blue-500 hover:underline mt-1 inline-block"
               onClick={(e) => e.stopPropagation()}
             >
               View notification history
