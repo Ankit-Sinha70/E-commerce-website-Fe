@@ -13,6 +13,8 @@ export const fetchOrders = createAsyncThunk(
       if (params.name) query.append("name", params.name);
       if (params.status) query.append("status", params.status);
       if (params.date) query.append("date", params.date);
+      if (params.page) query.append("page", params.page);
+      if (params.limit) query.append("limit", params.limit);
       const queryString = query.toString() ? `?${query.toString()}` : "";
       const response = await axios.get(
         `${API_URL}/api/order/orders${queryString}`
@@ -27,7 +29,7 @@ export const fetchOrders = createAsyncThunk(
 // Fetch my orders
 export const fetchMyOrders = createAsyncThunk(
   "order/fetchMyOrders",
-  async ({ userId, accessToken }, { rejectWithValue }) => {
+  async ({ userId, accessToken, page = 1, limit = 10 }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
         `${API_URL}/api/order/user-orders/${userId}`,
@@ -35,9 +37,16 @@ export const fetchMyOrders = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
+          params: { page, limit },
         }
       );
-      return response.data;
+      return {
+        orders: response.data.orders,
+        page: response.data.page,
+        totalPages: response.data.totalPages,
+        totalItems: response.data.totalItems,
+        limit: response.data.limit,
+      };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -132,7 +141,7 @@ export const cancelReturnRequest = createAsyncThunk(
       const response = await axios.patch(
         `${API_URL}/api/order/cancel-return-request/${orderId}`
       );
-      return response.data.returnRequest;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -142,24 +151,40 @@ export const cancelReturnRequest = createAsyncThunk(
 // ADMIN: Fetch all return requests
 export const fetchAllReturnRequests = createAsyncThunk(
   "order/fetchAllReturnRequests",
-  async (_, { rejectWithValue }) => {
+  async ({ page = 1 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/api/order/return-request`);
-      return response.data.returnRequest;
+      const response = await axios.get(`${API_URL}/api/order/return-request`, {
+        params: { page },
+      });
+      console.log(response?.data, "jjjj")
+      // Match the backend response structure
+      return {
+        data: response?.data?.returnRequest || [], 
+        totalPages: response?.data?.totalPages || 1,
+        page: response?.data?.page || 1,
+        totalItems: response?.data?.totalItems || 0
+      };
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch return requests");
     }
   }
 );
 
 export const fetchUserReturnRequest = createAsyncThunk(
   "order/fetchUserReturnRequest",
-  async (userId, { rejectWithValue }) => {
+  async ({ userId, page = 1, limit = 10 }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/order/user-return-request/${userId}`
+        `${API_URL}/api/order/user-return-request/${userId}`,
+        { params: { page, limit } }
       );
-      return response.data.returnRequests;
+      return {
+        data: response.data.returnRequests || [],
+        page: response.data.page || page,
+        totalPages: response.data.totalPages || 1,
+        totalItems: response.data.totalItems || 0,
+        limit: response.data.limit || limit,
+      };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -170,14 +195,12 @@ export const fetchUserReturnRequest = createAsyncThunk(
 export const updateReturnRequestStatus = createAsyncThunk(
   "order/updateReturnRequestStatus",
   async ({ returnRequestId, status }, { rejectWithValue }) => {
-    console.log("returnRequestId", returnRequestId);
-    console.log("status", status);
     try {
       const response = await axios.patch(
         `${API_URL}/api/order/update-return-request/${returnRequestId}`,
         { status }
       );
-      return response.data.order;
+      return response.data.returnOrder;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -214,6 +237,74 @@ export const trackOrder = createAsyncThunk(
   }
 );
 
+// Fetch recent orders for admin dashboard
+export const fetchRecentOrders = createAsyncThunk(
+  "order/fetchRecentOrders",
+  // we expect an object with accessToken (string) optional pageSize
+  async ({ accessToken, limit = 5 } = {}, { rejectWithValue }) => {
+    try {
+      const config = accessToken
+        ? { headers: { Authorization: `Bearer ${accessToken}` } }
+        : {};
+      const response = await axios.get(
+        `${API_URL}/api/order/recent-orders?limit=${limit}`,
+        config
+      );
+      // backend returns { success: true, orders: [...] } per earlier code — adjust if different
+      return response.data.orders ?? response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+// Fetch yearly revenue for admin dashboard
+export const fetchYearlyRevenue = createAsyncThunk(
+  "order/fetchYearlyRevenue",
+  async ({ accessToken }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/order/revenue`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data.totalRevenue;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+// Add this thunk to fetch sales overview
+export const getSalesOverview = createAsyncThunk(
+  'orders/getSalesOverview',
+  async ({ accessToken }, thunkAPI) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/order/sales-overview`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch sales overview');
+    }
+  }
+);
+
+// Initiate return refund
+export const initiateReturnRefund = createAsyncThunk(
+  'orders/initiateReturnRefund',
+  async (returnOrderId, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/payment/initiate-refund/returned-order/${returnOrderId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
@@ -243,6 +334,26 @@ const orderSlice = createSlice({
     returnRequests: [],
     returnRequestsLoading: false,
     returnRequestsError: null,
+    returnRequestsTotalPages: 0,
+    returnRequestsCurrentPage: 1,
+    returnRequestsLimit: 10,
+    returnRequestsTotalItems: 0,
+    recentOrders: [],
+    recentOrdersLoading: false,
+    recentOrdersError: null,
+    yearlyRevenue: 0,
+    yearlyRevenueLoading: false,
+    yearlyRevenueError: null,
+    salesOverview: [],
+    salesOverviewLoading: false,
+    salesOverviewError: null,
+    initiateReturnRefundLoading: false,
+    initiateReturnRefundError: null,
+    // My orders pagination
+    myOrdersTotalPages: 1,
+    myOrdersCurrentPage: 1,
+    myOrdersLimit: 10,
+    myOrdersTotalItems: 0,
   },
   reducers: {
     clearOrders: (state) => {
@@ -273,7 +384,7 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.orders = action.payload.orders;
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
@@ -286,11 +397,20 @@ const orderSlice = createSlice({
       })
       .addCase(fetchMyOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload.orders;
+        const sorted = (action.payload.orders || []).slice().sort((a, b) => {
+          const aDate = new Date(a?.createdAt || a?.orderDate || 0);
+          const bDate = new Date(b?.createdAt || b?.orderDate || 0);
+          return bDate - aDate;
+        });
+        state.orders = sorted;
+        state.myOrdersCurrentPage = action.payload.page;
+        state.myOrdersLimit = action.payload.limit;
+        state.myOrdersTotalPages = action.payload.totalPages;
+        state.myOrdersTotalItems = action.payload.totalItems;
       })
       .addCase(fetchMyOrders.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message;
+        state.error = action.payload || action.error?.message || null;
       })
 
       // Fetch single order
@@ -379,11 +499,23 @@ const orderSlice = createSlice({
       })
       .addCase(returnOrderRequest.fulfilled, (state, action) => {
         state.returnRequestLoading = false;
-        const index = state.orders.findIndex(
-          (order) => order._id === action.payload.order._id
-        );
-        if (index !== -1) {
-          state.orders[index] = action.payload.order;
+        const { returnOrder } = action.payload;
+        const orderIndex = state.orders.findIndex((o) => o._id === returnOrder.orderId);
+
+        if (orderIndex !== -1) {
+          const orderToUpdate = state.orders[orderIndex];
+          // Update item quantities immutably
+          const updatedItems = orderToUpdate.items.map(item => {
+            const returnedItem = returnOrder.items.find(ri => ri.productId === item.productId);
+            if (returnedItem) {
+              return {
+                ...item,
+                returnedQuantity: (item.returnedQuantity || 0) + returnedItem.quantity,
+              };
+            }
+            return item;
+          });
+          state.orders[orderIndex] = { ...orderToUpdate, items: updatedItems };
         }
       })
       .addCase(returnOrderRequest.rejected, (state, action) => {
@@ -414,10 +546,14 @@ const orderSlice = createSlice({
       .addCase(fetchAllReturnRequests.pending, (state) => {
         state.returnRequestsLoading = true;
       })
-      .addCase(fetchAllReturnRequests.fulfilled, (state, action) => {
-        state.returnRequestsLoading = false;
-        state.returnRequests = action.payload;
-      })
+     // In orderSlice.js
+.addCase(fetchAllReturnRequests.fulfilled, (state, action) => {
+  state.returnRequestsLoading = false;
+  state.returnRequests = action.payload.data || [];  // Ensure this is an array
+  state.returnRequestsTotalPages = action.payload.totalPages || 1;
+  state.returnRequestsCurrentPage = action.payload.page || 1;
+  state.returnRequestsError = null;
+})
       .addCase(fetchAllReturnRequests.rejected, (state, action) => {
         state.returnRequestsLoading = false;
         state.returnRequestsError = action.payload;
@@ -425,14 +561,19 @@ const orderSlice = createSlice({
 
       .addCase(fetchUserReturnRequest.pending, (state) => {
         state.returnRequestsLoading = true;
+        state.returnRequestsError = null;
       })
       .addCase(fetchUserReturnRequest.fulfilled, (state, action) => {
         state.returnRequestsLoading = false;
-        state.returnRequests = action.payload;
+        state.returnRequests = action.payload.data || [];
+        state.returnRequestsTotalPages = action.payload.totalPages || 1;
+        state.returnRequestsCurrentPage = action.payload.page || 1;
+        state.returnRequestsLimit = action.payload.limit || state.returnRequestsLimit;
+        state.returnRequestsTotalItems = action.payload.totalItems || 0;
       })
       .addCase(fetchUserReturnRequest.rejected, (state, action) => {
         state.returnRequestsLoading = false;
-        state.returnRequestsError = action.payload;
+        state.returnRequestsError = action.payload || action.error?.message || null;
       })
 
       // ADMIN: Update return request status
@@ -476,10 +617,62 @@ const orderSlice = createSlice({
       .addCase(trackOrder.rejected, (state, action) => {
         state.trackingLoading = false;
         state.trackingError = action.payload;
-      });
+      })
+      // Fetch recent orders
+      .addCase(fetchRecentOrders.pending, (state) => {
+        state.recentOrdersLoading = true;
+        state.recentOrdersError = null;
+      })
+      .addCase(fetchRecentOrders.fulfilled, (state, action) => {
+        state.recentOrdersLoading = false;
+        state.recentOrders = action.payload || [];
+      })
+      .addCase(fetchRecentOrders.rejected, (state, action) => {
+        state.recentOrdersLoading = false;
+        state.recentOrdersError = action.payload || action.error?.message;
+      })
+      // Fetch yearly revenue
+      .addCase(fetchYearlyRevenue.pending, (state) => {
+        state.yearlyRevenueLoading = true;
+        state.yearlyRevenueError = null;
+      })
+      .addCase(fetchYearlyRevenue.fulfilled, (state, action) => {
+        state.yearlyRevenueLoading = false;
+        state.yearlyRevenue = action.payload;
+      })
+      .addCase(fetchYearlyRevenue.rejected, (state, action) => {
+        state.yearlyRevenueLoading = false;
+        state.yearlyRevenueError = action.payload;
+      })
+      // Fetch sales overview
+      .addCase(getSalesOverview.pending, state => {
+        state.salesOverviewLoading = true;
+        state.salesOverviewError = null;
+      })
+      .addCase(getSalesOverview.fulfilled, (state, action) => {
+        state.salesOverviewLoading = false;
+        state.salesOverview = action.payload || [];
+      })
+      .addCase(getSalesOverview.rejected, (state, action) => {
+        state.salesOverviewLoading = false;
+        state.salesOverviewError = action.payload;
+      })
+      // Initiate return refund
+      .addCase(initiateReturnRefund.pending, (state) => {
+        state.initiateReturnRefundLoading = true;
+        state.initiateReturnRefundError = null;
+      })
+      .addCase(initiateReturnRefund.fulfilled, (state) => {
+        state.initiateReturnRefundLoading = false;
+        // Optionally update state based on response
+      })
+      .addCase(initiateReturnRefund.rejected, (state, action) => {
+        state.initiateReturnRefundLoading = false;
+        state.initiateReturnRefundError = action.payload;
+      });      
   },
 });
 
-export const { clearOrders, clearOrder, clearReturnStatus, clearTracking } =
-  orderSlice.actions;
+export const { clearOrders, clearOrder, clearReturnStatus, clearTracking } = orderSlice.actions;
+
 export default orderSlice.reducer;

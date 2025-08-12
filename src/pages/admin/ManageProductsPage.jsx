@@ -37,10 +37,13 @@ import {
   fetchProducts,
 } from "../../features/product/productSlice";
 import useDebounce from "../../lib/useDebounce";
+import { formatCurrency } from "@/lib/currency";
+import PaginationDemo from "@/component/common/Pagination";
 
 const ManageProductsPage = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.product);
+  console.log("products", products);
   const { categories } = useSelector((state) => state.category);
 
   const [searchInput, setSearchInput] = useState("");
@@ -51,6 +54,8 @@ const ManageProductsPage = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showDeleteConfirmDialog, setShowDeleteConfirmDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchProductsData = async () => {
     const token = localStorage.getItem("accessToken");
@@ -60,13 +65,25 @@ const ManageProductsPage = () => {
       });
       return;
     }
-    dispatch(
+    const resultAction = await dispatch(
       fetchProducts({
         accessToken: token,
         searchTerm: debouncedSearchTerm,
         category: filterCategory,
+        page: currentPage,
+        limit: 10,
       })
     );
+
+    if (fetchProducts.fulfilled.match(resultAction)) {
+      console.log("API Response Payload:", resultAction.payload);
+      const totalPagesFromResponse = resultAction.payload.pages;
+      if (totalPagesFromResponse) {
+        setTotalPages(totalPagesFromResponse);
+      } else {
+        setTotalPages(1);
+      }
+    }
   };
 
   useEffect(() => {
@@ -74,39 +91,18 @@ const ManageProductsPage = () => {
     if (error) {
       toast.error("Error fetching products", { description: error });
     }
-  }, [debouncedSearchTerm, filterCategory, dispatch, error]);
-
-  // const productCategories = [
-  //   "Ice Tubes",
-  //   "Ice Cubes",
-  //   "Crushed Ice",
-  //   "Flakes Ice",
-  //   "Solid Ice",
-  //   "Ice Ball",
-  //   "Ice Sculpture",
-  //   "Custom Ice",
-  //   "Ice Cup",
-  //   "Dry Ice",
-  //   "Block Ice",
-  //   "Arctic Ice",
-  //   "Luxury Box",
-  //   "Freezers",
-  //   "Machines",
-  // ].sort();
+  }, [debouncedSearchTerm, filterCategory, currentPage, dispatch]);
 
   const handleSearch = () => {
+    setCurrentPage(1);
     fetchProductsData();
   };
 
   const resetFilters = () => {
     setSearchInput("");
     setFilterCategory("All");
+    setCurrentPage(1);
   };
-
-  // const handleEdit = (product) => {
-  //   setEditingProduct(product);
-  //   setIsModalOpen(true);
-  // };
 
   const handleDelete = (product) => {
     setProductToDelete(product);
@@ -151,12 +147,16 @@ const ManageProductsPage = () => {
     fetchProductsData();
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md">
+    <div className="bg-[#0f172a] rounded-2xl text-slate-300 min-h-screen">
+      <div className="max-w-9xl mx-auto bg-[rgba(30,30,47,0.6)] backdrop-blur-lg border-r border-white/10 text-white rounded-lg shadow-xl p-4 lg:p-6">
         {/* Header */}
-        <div className="p-4 lg:p-6 border-b border-gray-200">
-          <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-4 lg:mb-6">
+        <div className="border-b border-gray-700 pb-4 lg:pb-6">
+          <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 lg:mb-6">
             Products Management
           </h2>
 
@@ -168,7 +168,7 @@ const ManageProductsPage = () => {
                 <Input
                   type="text"
                   placeholder="Search by name or description..."
-                  className="flex-1 rounded-r-none border-r-0"
+                  className="flex-1 rounded-r-none border-r-0 bg-gray-800 text-white border-gray-700 shadow-md focus:ring-blue-500 focus:border-blue-500"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyPress={(e) => {
@@ -179,7 +179,7 @@ const ManageProductsPage = () => {
                 />
                 <Button
                   onClick={handleSearch}
-                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-l-none px-4"
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-l-none px-4 shadow-md"
                 >
                   <Search className="h-4 w-4" />
                   <span className="hidden sm:inline ml-2">Search</span>
@@ -191,7 +191,7 @@ const ManageProductsPage = () => {
             <div>
               <Button
                 onClick={resetFilters}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-md"
               >
                 <RotateCw className="h-4 w-4 mr-2" />
                 Reset Filters
@@ -201,7 +201,7 @@ const ManageProductsPage = () => {
             {/* Add Product Button */}
             <div>
               <Button
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 h-auto whitespace-nowrap"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 h-auto whitespace-nowrap shadow-md"
                 onClick={() => {
                   setEditingProduct(null);
                   setIsModalOpen(true);
@@ -216,7 +216,7 @@ const ManageProductsPage = () => {
 
         {/* Dialog for Add/Edit Product */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="no-scrollbar">
+          <DialogContent className="bg-gray-800 text-slate-300 shadow-xl rounded-lg no-scrollbar">
             <DialogHeader>
               <DialogTitle>
                 {editingProduct ? "Edit Product" : "Add New Product"}
@@ -247,10 +247,10 @@ const ManageProductsPage = () => {
           ) : (
             <>
               {/* Desktop Table View */}
-              <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-                <table className="min-w-full bg-white">
-                  <thead>
-                    <tr className="bg-gray-800 text-white text-left">
+              <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
+                <table className="min-w-full bg-gray-800">
+                  <thead className="text-white text-left">
+                    <tr className="bg-gray-700">
                       <th className="px-6 py-4 font-medium">Image</th>
                       <th className="px-6 py-4 font-medium">Product Name</th>
                       <th className="px-6 py-4 font-medium">Category</th>
@@ -263,30 +263,30 @@ const ManageProductsPage = () => {
                     {products?.map((product) => (
                       <tr
                         key={product._id}
-                        className="border-b last:border-b-0 hover:bg-gray-50 transition-colors"
+                        className="border-b border-gray-700 last:border-b-0 hover:bg-gray-700 transition-colors"
                       >
                         <td className="px-6 py-4">
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                            className="w-16 h-16 object-cover rounded-lg shadow-md"
                           />
                         </td>
                         <td className="px-6 py-4">
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-white">
                             {product.name}
                           </div>
                           <div className="text-sm text-gray-500 truncate max-w-xs">
                             {product.description}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-400">
                           {product?.category?.name}
                         </td>
-                        <td className="px-6 py-4 font-medium text-gray-900">
-                          ${product.price.toFixed(2)}
+                        <td className="px-6 py-4 font-medium text-gray-300">
+                          {formatCurrency(product.price)}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-400">
                           {product.stock}
                         </td>
                         <td className="px-6 py-4">
@@ -297,7 +297,7 @@ const ManageProductsPage = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
+                                  className="text-blue-500 hover:text-blue-400 hover:bg-blue-900/20 shadow-md"
                                   onClick={() => {
                                     setEditingProduct(product);
                                     setIsModalOpen(true);
@@ -306,7 +306,7 @@ const ManageProductsPage = () => {
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                                 <p>Edit Product</p>
                               </TooltipContent>
                             </Tooltip>
@@ -317,13 +317,13 @@ const ManageProductsPage = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="text-red-600 hover:text-red-800 hover:bg-red-100"
+                                  className="text-red-500 hover:text-red-400 hover:bg-red-900/20 shadow-md"
                                   onClick={() => handleDelete(product)}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                                 <p>Delete Product</p>
                               </TooltipContent>
                             </Tooltip>
@@ -340,16 +340,16 @@ const ManageProductsPage = () => {
                 {products?.map((product) => (
                   <div
                     key={product._id}
-                    className="bg-white border border-gray-200 rounded-lg shadow-sm p-4"
+                    className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-4"
                   >
                     <div className="flex space-x-4">
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-20 h-20 object-cover rounded-lg shadow-sm flex-shrink-0"
+                        className="w-20 h-20 object-cover rounded-lg shadow-md flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 truncate">
+                        <h3 className="font-medium text-white truncate">
                           {product.name}
                         </h3>
                         <p className="text-sm text-gray-500 mt-1 line-clamp-2">
@@ -357,31 +357,31 @@ const ManageProductsPage = () => {
                         </p>
                         <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <span className="text-gray-500">Category:</span>
-                            <span className="ml-1 text-gray-900">
+                            <span className="text-gray-400">Category:</span>
+                            <span className="ml-1 text-gray-300">
                               {product.category.name}
                             </span>
                           </div>
                           <div>
-                            <span className="text-gray-500">Price:</span>
-                            <span className="ml-1 font-medium text-gray-900">
-                              ${product.price.toFixed(2)}
+                            <span className="text-gray-400">Price:</span>
+                            <span className="ml-1 font-medium text-gray-300">
+                              {formatCurrency(product.price)}
                             </span>
                           </div>
                           <div>
-                            <span className="text-gray-500">Stock:</span>
-                            <span className="ml-1 text-gray-900">
+                            <span className="text-gray-400">Stock:</span>
+                            <span className="ml-1 text-gray-300">
                               {product.stock}
                             </span>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="flex justify-end space-x-2 mt-4 pt-4 border-t border-gray-100">
+                    <div className="flex justify-end space-x-2 mt-4 pt-4 border-t border-gray-700">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        className="text-blue-500 hover:text-blue-400 hover:bg-blue-900/20 shadow-md"
                         onClick={() => {
                           setEditingProduct(product);
                           setIsModalOpen(true);
@@ -393,7 +393,7 @@ const ManageProductsPage = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                        className="text-red-500 hover:text-red-400 hover:bg-red-900/20 shadow-md"
                         onClick={() => handleDelete(product)}
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
@@ -402,6 +402,13 @@ const ManageProductsPage = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="mt-8">
+                <PaginationDemo
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
             </>
           )}
@@ -412,12 +419,12 @@ const ManageProductsPage = () => {
         open={showDeleteConfirmDialog}
         onOpenChange={setShowDeleteConfirmDialog}
       >
-        <AlertDialogContent className="w-96">
+        <AlertDialogContent className="bg-gray-800 text-slate-300 shadow-xl rounded-lg w-96">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete{" "}
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-blue-500">
                 "{productToDelete?.name}"
               </span>{" "}
               and remove its data from our servers.
@@ -426,6 +433,7 @@ const ManageProductsPage = () => {
           <AlertDialogFooter>
             <Button
               variant="outline"
+              className="text-gray-400 hover:bg-gray-700 hover:text-gray-300 shadow-md"
               onClick={() => {
                 setShowDeleteConfirmDialog(false);
                 setProductToDelete(null);
@@ -433,12 +441,20 @@ const ManageProductsPage = () => {
             >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
+            <Button
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700 text-white shadow-md"
+              onClick={confirmDelete}
+            >
               Delete
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+       {/* Blue Effect Background */}
+      {(isModalOpen || showDeleteConfirmDialog) && (
+        <div className="fixed inset-0 bg-blue-900 opacity-50 z-40"></div>
+      )}
     </div>
   );
 };

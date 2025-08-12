@@ -7,7 +7,6 @@ import {
   PackageOpen,
   XCircle,
   CheckCircle2,
-  X,
   Search,
   RotateCcw,
 } from "lucide-react";
@@ -43,7 +42,6 @@ import {
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { Toaster } from "../../components/ui/sonner";
-
 import {
   getCategories,
   createCategory,
@@ -58,6 +56,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import PaginationDemo from "@/component/common/Pagination";
 
 const ManageCategory = () => {
   const dispatch = useDispatch();
@@ -74,26 +73,33 @@ const ManageCategory = () => {
   const [searchInput, setSearchInput] = React.useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 500);
   const [filterStatus, setFilterStatus] = React.useState("all");
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
 
   const fetchCategoriesData = async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      console.warn("No access token found for fetching categories.");
       toast.warning("Authentication required. Please log in.");
       return;
     }
-    dispatch(
+    const resultAction = await dispatch(
       getCategories({
         accessToken: token,
         searchTerm: debouncedSearchTerm,
         status: filterStatus,
+        page: currentPage,
+        limit: 10,
       })
     );
+
+    if (getCategories.fulfilled.match(resultAction)) {
+      setTotalPages(resultAction.payload.totalPages || 1);
+    }
   };
 
   useEffect(() => {
     fetchCategoriesData();
-  }, [dispatch, debouncedSearchTerm, filterStatus]);
+  }, [dispatch, debouncedSearchTerm, filterStatus, currentPage]);
 
   const hasCategories = categories && categories.length > 0;
 
@@ -116,7 +122,6 @@ const ManageCategory = () => {
   const handleSubmitCategory = () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      console.warn("No access token found for creating/updating category.");
       toast.warning("Authentication required. Please log in.");
       return;
     }
@@ -142,7 +147,6 @@ const ManageCategory = () => {
           toast.success("Category updated successfully!");
         })
         .catch((err) => {
-          console.error("Failed to update category:", err);
           toast.error(
             `Failed to update category: ${err.message || "Unknown error"}`
           );
@@ -156,7 +160,6 @@ const ManageCategory = () => {
           toast.success("Category created successfully!");
         })
         .catch((err) => {
-          console.error("Failed to create category:", err);
           toast.error(
             `Failed to create category: ${err.message || "Unknown error"}`
           );
@@ -173,7 +176,6 @@ const ManageCategory = () => {
     if (categoryToDelete) {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.warn("No access token found for deleting category.");
         toast.warning("Authentication required. Please log in.");
         return;
       }
@@ -188,7 +190,6 @@ const ManageCategory = () => {
           toast.success("Category deleted successfully!");
         })
         .catch((err) => {
-          console.error("Failed to delete category:", err);
           toast.error(
             `Failed to delete category: ${err.message || "Unknown error"}`
           );
@@ -200,7 +201,6 @@ const ManageCategory = () => {
     const newStatus = category.status === "Active" ? "Inactive" : "Active";
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      console.warn("No access token found for updating category status.");
       toast.warning("Authentication required. Please log in.");
       return;
     }
@@ -217,7 +217,6 @@ const ManageCategory = () => {
         toast.success(`Category status updated to ${newStatus}.`);
       })
       .catch((err) => {
-        console.error("Failed to toggle category status:", err);
         toast.error(
           `Failed to update status: ${err.message || "Unknown error"}`
         );
@@ -226,7 +225,6 @@ const ManageCategory = () => {
 
   useEffect(() => {
     if (error) {
-      console.error("Category operation error:", error);
       toast.error(
         `Category operation error: ${error.message || "Unknown error"}`
       );
@@ -234,19 +232,24 @@ const ManageCategory = () => {
   }, [error]);
 
   const handleSearch = () => {
+    setCurrentPage(1);
     fetchCategoriesData();
   };
 
   const resetFilters = () => {
     setSearchInput("");
     setFilterStatus("all");
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md">
-        <div className="p-4 lg:p-6 border-b border-gray-200">
-          <h2 className="text-3xl font-bold tracking-tight">
+    <div className="bg-[#0f172a] text-slate-300 min-h-screen">
+        <div className="p-4 lg:p-6 border-b border-gray-700">
+          <h2 className="text-3xl font-bold tracking-tight text-white">
             Categories Management
           </h2>
 
@@ -255,14 +258,14 @@ const ManageCategory = () => {
               <div className="flex">
                 <Input
                   type="text"
-                  placeholder="Search by name or description..."
-                  className="flex-1 rounded-r-none border-r-0"
+                  placeholder="Search by name..."
+                  className="flex-1 rounded-r-none border-r-0 bg-gray-800 text-white border-gray-700 shadow-md focus:ring-blue-500 focus:border-blue-500"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                 />
                 <Button
                   onClick={handleSearch}
-                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-l-none px-4"
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-l-none px-4 shadow-md"
                 >
                   <Search className="h-4 w-4" />
                   <span className="hidden sm:inline ml-2">Search</span>
@@ -272,10 +275,10 @@ const ManageCategory = () => {
 
             <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-full md:w-[180px]">
+                <SelectTrigger className="w-full md:w-[180px] bg-gray-800 text-white border-gray-700 shadow-md">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-gray-700 text-white">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="Active">Active</SelectItem>
                   <SelectItem value="Inactive">Inactive</SelectItem>
@@ -284,7 +287,7 @@ const ManageCategory = () => {
               <Button
                 variant="outline"
                 onClick={resetFilters}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white w-full sm:w-auto"
+                className="bg-yellow-500 hover:bg-yellow-600 text-white w-full sm:w-auto shadow-md"
               >
                 <RotateCcw className="mr-2 h-4 w-4" /> Reset Filters
               </Button>
@@ -295,19 +298,19 @@ const ManageCategory = () => {
                 <DialogTrigger asChild>
                   <Button
                     onClick={handleAddCategoryClick}
-                    className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
+                    className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto shadow-md"
                   >
                     <Plus className="mr-1 h-4 w-4" /> Add Category
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="bg-gray-800 text-slate-300 shadow-xl rounded-lg sm:max-w-[425px]">
                   <DialogHeader>
-                    <DialogTitle>
+                    <DialogTitle className="text-white">
                       {editingCategory
                         ? "Edit Category"
                         : "Create New Category"}
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="text-gray-400">
                       {editingCategory
                         ? "Make changes to your category here."
                         : "Add a new category to your application."}
@@ -323,7 +326,7 @@ const ManageCategory = () => {
                         value={categoryName}
                         onChange={(e) => setCategoryName(e.target.value)}
                         placeholder="Enter category name"
-                        className="w-full"
+                        className="w-full bg-gray-700 text-white border-gray-600 shadow-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                     <div className="space-y-2">
@@ -335,7 +338,7 @@ const ManageCategory = () => {
                         value={categoryDescription}
                         onChange={(e) => setCategoryDescription(e.target.value)}
                         placeholder="Enter category description"
-                        className="w-full"
+                        className="w-full bg-gray-700 text-white border-gray-600 shadow-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                     <div className="space-y-2">
@@ -346,10 +349,10 @@ const ManageCategory = () => {
                         value={categoryStatus}
                         onValueChange={setCategoryStatus}
                       >
-                        <SelectTrigger id="status" className="w-full">
+                        <SelectTrigger id="status" className="w-full bg-gray-700 text-white border-gray-600 shadow-md">
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-gray-700 text-white">
                           <SelectItem value="Active">Active</SelectItem>
                           <SelectItem value="Inactive">Inactive</SelectItem>
                         </SelectContent>
@@ -358,11 +361,11 @@ const ManageCategory = () => {
                   </div>
                   <DialogFooter>
                     <DialogClose asChild>
-                      <Button variant="outline">Cancel</Button>
+                      <Button variant="outline" className="text-gray-400 shadow-md">Cancel</Button>
                     </DialogClose>
                     <Button
                       type="submit"
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white shadow-md"
                       onClick={handleSubmitCategory}
                     >
                       {editingCategory ? "Update Category" : "Create Category"}
@@ -385,10 +388,10 @@ const ManageCategory = () => {
             </div>
           ) : (
             <>
-              <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-                <table className="min-w-full bg-white">
+              <div className="overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
+                <table className="min-w-full bg-gray-800">
                   <thead className="text-center">
-                    <tr className="bg-gray-800 text-white text-left">
+                    <tr className="bg-gray-700 text-white text-left">
                       <th className="px-6 py-3 text-sm font-semibold uppercase tracking-wider">
                         Category Name
                       </th>
@@ -413,16 +416,16 @@ const ManageCategory = () => {
                     {categories?.map((category) => (
                       <tr
                         key={String(category?._id)}
-                        className="border-b last:border-b-0 hover:bg-gray-50 transition-colors"
+                        className="border-b border-gray-700 last:border-b-0 hover:bg-gray-700 transition-colors"
                       >
                         <td className="px-6 py-4">
-                          <div className="font-bold text-gray-900">
+                          <div className="font-bold text-white">
                             {category?.name?.charAt(0)?.toUpperCase() +
                               category?.name?.slice(1)}
                           </div>
                         </td>
                         <td className="px-6 py-4 hidden md:table-cell">
-                          <div className="text-sm text-gray-700 max-w-xs truncate">
+                          <div className="text-sm text-gray-400 max-w-xs truncate">
                             {category?.description
                               ? category?.description
                                   ?.charAt(0)
@@ -442,13 +445,13 @@ const ManageCategory = () => {
                             {category?.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-400">
                           {new Date(category?.createdAt).toLocaleDateString(
                             "en-US",
                             { year: "numeric", month: "short", day: "numeric" }
                           )}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-400">
                           {new Date(category?.updatedAt).toLocaleDateString(
                             "en-US",
                             { year: "numeric", month: "short", day: "numeric" }
@@ -456,29 +459,29 @@ const ManageCategory = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex space-x-2 justify-end">
-                            {/* Edit */}
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="outline"
-                                  className="cursor-pointer text-blue-600 hover:text-blue-800 p-1 rounded-md hover:bg-blue-100 transition-colors"
+                                <Button
+                                  variant="outline"
+                                  className="text-blue-500 hover:text-blue-400 hover:bg-blue-900/20 p-1 rounded-md transition-colors shadow-md"
                                   onClick={() => handleEdit(category)}
                                 >
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                                 <p>Edit Category</p>
                               </TooltipContent>
                             </Tooltip>
 
-                            {/* Toggle Status */}
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="outline"
-                                  className={`cursor-pointer p-1 rounded-md transition-colors ${
+                                <Button
+                                  variant="outline"
+                                  className={`p-1 rounded-md transition-colors shadow-md ${
                                     category?.status === "Active"
-                                      ? "text-red-600 hover:text-red-800 hover:bg-red-100"
-                                      : "text-green-600 hover:text-green-800 hover:bg-green-50"
+                                      ? "text-red-500 hover:text-red-400 hover:bg-red-900/20"
+                                      : "text-green-500 hover:text-green-400 hover:bg-green-900/20"
                                   }`}
                                   onClick={() => handleToggleStatus(category)}
                                 >
@@ -489,7 +492,7 @@ const ManageCategory = () => {
                                   )}
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                                 <p>
                                   {category?.status === "Active"
                                     ? "Deactivate Category"
@@ -498,17 +501,17 @@ const ManageCategory = () => {
                               </TooltipContent>
                             </Tooltip>
 
-                            {/* Delete */}
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="outline"
-                                  className="cursor-pointer text-red-600 hover:text-red-800 p-1 rounded-md hover:bg-red-100 transition-colors"
+                                <Button
+                                  variant="outline"
+                                  className="text-red-500 hover:text-red-400 hover:bg-red-900/20 p-1 rounded-md transition-colors shadow-md"
                                   onClick={() => handleDelete(category)}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                                 <p>Delete Category</p>
                               </TooltipContent>
                             </Tooltip>
@@ -519,27 +522,33 @@ const ManageCategory = () => {
                   </tbody>
                 </table>
               </div>
+              <div className="mt-8">
+                <PaginationDemo
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
             </>
           )}
         </div>
-      </div>
 
       <AlertDialog
         open={isDeleteConfirmModalOpen}
         onOpenChange={setIsDeleteConfirmModalOpen}
       >
-        <AlertDialogContent className="w-96">
+        <AlertDialogContent className="bg-gray-800 text-slate-300 shadow-xl rounded-lg w-96">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-white">Confirm Deletion</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
               Are you sure you want to delete the category "
               {categoryToDelete?.name}"? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel variant="default">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="text-gray-400 shadow-md">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-600 hover:bg-red-500"
+              className="bg-red-600 hover:bg-red-700 text-white shadow-md"
               onClick={confirmDelete}
             >
               Delete

@@ -21,8 +21,9 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { capitalizeFirstLetter } from "@/lib/orderUtils";
+import { isRefundProceed } from "@/pages/admin/ReturnRequestTable";
 
-const statusOrder = ["Pending", "Approved", "Picked", "Refunded"];
+// const statusOrder = ["Pending", "Approved", "Picked", "Refunded"];
 
 const getStatusBadgeVariant = (status) => {
   switch (status?.toLowerCase()) {
@@ -42,12 +43,12 @@ const getStatusBadgeVariant = (status) => {
 const TimelineItem = ({ status, date, isLast = false }) => (
   <div className="relative pl-8">
     {!isLast && (
-      <div className="absolute left-[10px] top-5 -bottom-4 w-0.5 bg-gray-200"></div>
+      <div className="absolute left-[10px] top-5 -bottom-4 w-0.5 bg-gray-700"></div>
     )}
     <div className="flex items-center">
       <div
         className={`w-5 h-5 rounded-full flex items-center justify-center ${
-          date ? "bg-green-500" : "bg-gray-300"
+          date ? "bg-green-500" : "bg-gray-500"
         }`}
       >
         {date && (
@@ -67,11 +68,7 @@ const TimelineItem = ({ status, date, isLast = false }) => (
         )}
       </div>
       <div className="ml-4">
-        <p
-          className={`font-semibold ${
-            date ? "text-gray-800" : "text-gray-500"
-          }`}
-        >
+        <p className={`font-semibold ${date ? "text-white" : "text-gray-400"}`}>
           {status}
         </p>
         <p className="text-sm text-gray-500">
@@ -90,19 +87,21 @@ const ReturnRequestDetailsModal = ({
   returnRequest,
   onUpdateStatus,
 }) => {
+  console.log("returnRequestjjjj", returnRequest);
   if (!isOpen || !returnRequest) return null;
 
-  console.log("returnRequest", returnRequest);
+  console.log("returnRequesttttt", returnRequest);
 
   const renderActionButtons = () => {
     const { _id, status } = returnRequest;
 
-    if (status === "Pending") {
+    if (status === "Requested") {
       return (
         <>
           <Button
             size="sm"
             variant="success"
+            className="bg-green-600 hover:bg-green-700 text-white shadow-md"
             onClick={() => onUpdateStatus(_id, "Approved")}
           >
             Approve
@@ -110,6 +109,7 @@ const ReturnRequestDetailsModal = ({
           <Button
             size="sm"
             variant="destructive"
+            className="bg-red-600 hover:bg-red-700 text-white shadow-md"
             onClick={() => onUpdateStatus(_id, "Rejected")}
           >
             Reject
@@ -118,17 +118,33 @@ const ReturnRequestDetailsModal = ({
       );
     }
 
-    const currentIndex = statusOrder.indexOf(status);
-    if (currentIndex > -1 && currentIndex < statusOrder.length - 1) {
-      const nextStatus = statusOrder[currentIndex + 1];
+    if (status === "Approved") {
       return (
-        <Button
-          size="sm"
-          variant="default"
-          onClick={() => onUpdateStatus(_id, nextStatus)}
-        >
-          Mark as {nextStatus}
-        </Button>
+        <>
+          <Button
+            size="sm"
+            variant="default"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+            onClick={() => onUpdateStatus(_id, "Picked")}
+          >
+            Mark as Picked
+          </Button>
+        </>
+      );
+    }
+
+    if (status === "Picked" && !isRefundProceed(returnRequest?.refundStatus)) {
+      return (
+        <>
+          <Button
+            size="sm"
+            variant="default"
+            className="bg-purple-600 hover:bg-purple-700 text-white shadow-md"
+            onClick={() => onUpdateStatus(_id, "InitiateRefund")}
+          >
+            Initiate Refund
+          </Button>
+        </>
       );
     }
 
@@ -137,10 +153,12 @@ const ReturnRequestDetailsModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl lg:max-w-4xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <DialogContent className="sm:max-w-2xl lg:max-w-4xl bg-gray-800 text-slate-300 shadow-xl rounded-lg border border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <DialogHeader>
-          <DialogTitle>Return Request Details</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white">
+            Return Request Details
+          </DialogTitle>
+          <DialogDescription className="text-gray-400">
             Return Request ID: {returnRequest._id}
           </DialogDescription>
         </DialogHeader>
@@ -150,29 +168,34 @@ const ReturnRequestDetailsModal = ({
           <div className="md:col-span-2 space-y-6">
             {/* Order Info */}
             <div>
-              <h3 className="font-semibold text-lg mb-2">Order Information</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-lg">
-                <p>
+              <h3 className="font-semibold text-lg mb-2 text-white">
+                Order Information
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-gray-700 border border-gray-600 p-4 rounded-lg">
+                <p className="text-gray-300">
                   <strong>Order Status:</strong>{" "}
                   <Badge
                     variant={getStatusBadgeVariant(
-                      returnRequest.orderId.status
+                      returnRequest?.orderId?.status
                     )}
                   >
-                    {capitalizeFirstLetter(returnRequest.orderId.status)}
+                    {capitalizeFirstLetter(returnRequest?.orderId?.status)}
                   </Badge>
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Total Amount:</strong>{" "}
-                  {formatCurrency(returnRequest.orderId.totalAmount)}
+                  {formatCurrency(returnRequest?.orderId?.totalAmount)}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Delivery Date:</strong>{" "}
-                  {returnRequest.orderId.deliveredAt
-                    ? format(new Date(returnRequest.orderId.deliveredAt), "PPP")
+                  {returnRequest?.orderId?.deliveredAt
+                    ? format(
+                        new Date(returnRequest?.orderId?.deliveredAt),
+                        "PPP"
+                      )
                     : "N/A"}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Ordered Items:</strong>{" "}
                   {returnRequest?.orderId?.items?.length}
                 </p>
@@ -181,36 +204,44 @@ const ReturnRequestDetailsModal = ({
 
             {/* Ordered Items */}
             <div>
-              <h3 className="font-semibold text-lg mb-2">Ordered Items</h3>
-              <Table>
+              <h3 className="font-semibold text-lg mb-2 text-white">
+                Ordered Items
+              </h3>
+              <Table className="bg-gray-800 text-slate-300">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Price</TableHead>
+                    <TableHead className="text-white">Product</TableHead>
+                    <TableHead className="text-white">Quantity</TableHead>
+                    <TableHead className="text-white">Price</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {returnRequest.items.map(
+                  {returnRequest?.items?.map(
                     (item) => (
                       console.log(item, "item"),
                       (
                         <TableRow key={item._id}>
-                          <TableCell className="flex items-center">
+                          <TableCell className="flex items-center text-gray-300">
                             <img
                               src={item?.image}
                               alt={item?.name}
                               className="w-12 h-12 object-cover rounded-md mr-4"
                             />
                             <div>
-                              <p className="font-medium">{item?.name}</p>
+                              <p className="font-medium text-white">
+                                {item?.name}
+                              </p>
                               <p className="text-xs text-gray-500">
                                 {item?.category?.name}
                               </p>
                             </div>
                           </TableCell>
-                          <TableCell>{item.quantity}</TableCell>
-                          <TableCell>{formatCurrency(item.price)}</TableCell>
+                          <TableCell className="text-gray-300">
+                            {item?.quantity}
+                          </TableCell>
+                          <TableCell className="text-gray-300">
+                            {formatCurrency(item?.price)}
+                          </TableCell>
                         </TableRow>
                       )
                     )
@@ -221,24 +252,24 @@ const ReturnRequestDetailsModal = ({
 
             {/* Return Request Info */}
             <div>
-              <h3 className="font-semibold text-lg mb-2">
+              <h3 className="font-semibold text-lg mb-2 text-white">
                 Return Request Information
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-lg">
-                <p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-gray-700 border border-gray-600 p-4 rounded-lg">
+                <p className="text-gray-300">
                   <strong>Reason:</strong> {returnRequest.reason}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Comment:</strong>{" "}
                   {returnRequest.comment || "No comment provided."}
                 </p>
                 {returnRequest.imageUrl && (
-                  <div>
+                  <div className="text-gray-300">
                     <strong>Return Image:</strong>
                     <img
                       src={returnRequest.imageUrl}
                       alt="Return visual proof"
-                      className="mt-2 w-full max-w-md h-auto rounded-lg border"
+                      className="mt-2 w-full max-w-md h-auto rounded-lg border border-gray-600"
                     />
                   </div>
                 )}
@@ -250,15 +281,17 @@ const ReturnRequestDetailsModal = ({
           <div className="space-y-6">
             {/* User Info */}
             <div>
-              <h3 className="font-semibold text-lg mb-2">User Information</h3>
-              <div className="text-sm bg-gray-50 p-4 rounded-lg space-y-1">
-                <p>
+              <h3 className="font-semibold text-lg mb-2 text-white">
+                User Information
+              </h3>
+              <div className="text-sm bg-gray-700 border border-gray-600 p-4 rounded-lg space-y-1">
+                <p className="text-gray-300">
                   <strong>Name:</strong> {returnRequest.user?.name}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Email:</strong> {returnRequest.user?.email}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Phone:</strong>{" "}
                   {returnRequest.pickUpAddress?.phoneNumber}
                 </p>
@@ -267,7 +300,9 @@ const ReturnRequestDetailsModal = ({
 
             {/* Return Timeline */}
             <div>
-              <h3 className="font-semibold text-lg mb-3">Return Timeline</h3>
+              <h3 className="font-semibold text-lg mb-3 text-white">
+                Return Timeline
+              </h3>
               <div className="space-y-4">
                 <TimelineItem
                   status="Requested"
@@ -303,13 +338,15 @@ const ReturnRequestDetailsModal = ({
             {/* Pickup Agent */}
             {returnRequest.pickUpAgent && (
               <div>
-                <h3 className="font-semibold text-lg mb-2">Pickup Agent</h3>
-                <div className="text-sm bg-gray-50 p-4 rounded-lg space-y-1">
-                  <p>
-                    <strong>Name:</strong> {returnRequest.pickUpAgent.name}
+                <h3 className="font-semibold text-lg mb-2 text-white">
+                  Pickup Agent
+                </h3>
+                <div className="text-sm bg-gray-700 border border-gray-600 p-4 rounded-lg space-y-1">
+                  <p className="text-gray-300">
+                    <strong>Name:</strong> {returnRequest?.pickUpAgent?.name}
                   </p>
-                  <p>
-                    <strong>Phone:</strong> {returnRequest.pickUpAgent.phone}
+                  <p className="text-gray-300">
+                    <strong>Phone:</strong> {returnRequest?.pickUpAgent?.phone}
                   </p>
                 </div>
               </div>
@@ -317,10 +354,14 @@ const ReturnRequestDetailsModal = ({
           </div>
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row sm:justify-between items-center pt-4 border-t">
+        <DialogFooter className="flex-col sm:flex-row sm:justify-between items-center pt-4 border-t border-gray-700">
           <div className="flex gap-2 flex-wrap">{renderActionButtons()}</div>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              type="button"
+              variant="secondary"
+              className="bg-gray-600 hover:bg-gray-700 text-white shadow-md"
+            >
               Close
             </Button>
           </DialogClose>

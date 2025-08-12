@@ -7,17 +7,15 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const getCategories = createAsyncThunk(
   "category/getCategories",
   async (
-    { accessToken, searchTerm = "", status = "All" },
+    { accessToken, searchTerm = "", status = "all", page = 1, limit = 10 },
     { rejectWithValue }
   ) => {
     try {
       const query = new URLSearchParams();
-      if (searchTerm) {
-        query.append("name", searchTerm);
-      }
-      if (status && status !== "All") {
-        query.append("status", status);
-      }
+      if (searchTerm) query.append("name", searchTerm);
+      if (status && status !== "all") query.append("status", status);
+      query.append("page", page);
+      query.append("limit", limit);
 
       const response = await axios.get(
         `${API_URL}/api/category?${query.toString()}`,
@@ -29,12 +27,7 @@ export const getCategories = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching categories:", error);
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Failed to fetch categories";
-      return rejectWithValue(errorMessage);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
@@ -178,11 +171,10 @@ const categorySlice = createSlice({
       // Get All Categories
       .addCase(getCategories.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(getCategories.fulfilled, (state, action) => {
         state.loading = false;
-        state.categories = action.payload;
+        state.categories = action.payload.categories;
         state.error = null;
       })
       .addCase(getCategories.rejected, (state, action) => {

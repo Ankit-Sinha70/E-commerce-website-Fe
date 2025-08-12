@@ -24,7 +24,7 @@ function getStatusBadge(status) {
 
 const OrderCardList = ({ orders, onViewDetails, onUpdateStatus }) => (
   <div className="lg:hidden space-y-4">
-    {orders.map((order) => (
+    {orders?.map((order) => (
       <div
         key={order._id}
         className="bg-white border border-gray-200 rounded-lg shadow-sm p-4"

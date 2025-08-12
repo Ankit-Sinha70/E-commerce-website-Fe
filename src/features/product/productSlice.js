@@ -6,10 +6,12 @@ const API_URL = import.meta.env.VITE_API_URL;
 // GET all products
 export const fetchProducts = createAsyncThunk(
   "product/fetchProducts",
-  async ({ accessToken, searchTerm = "", category = "All" }) => {
+  async ({ accessToken, searchTerm = "", category = "All", page = 1, limit = 10 }) => {
     const query = new URLSearchParams();
     if (searchTerm) query.append("name", searchTerm);
     if (category && category !== "All") query.append("category", category);
+    query.append("page", page);
+    query.append("limit", limit);
 
     const response = await axios.get(
       `${API_URL}/api/product/list?${query.toString()}`,
@@ -20,7 +22,7 @@ export const fetchProducts = createAsyncThunk(
       }
     );
 
-    return response.data.products;
+    return response.data;
   }
 );
 
@@ -114,11 +116,11 @@ const productSlice = createSlice({
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload;
+        state.products = action.payload.products;
+        state.error = null;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;

@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
+  Ban,
 } from "lucide-react";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
@@ -52,12 +53,17 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       path: "/admin/manage-return-requests",
       icon: <RotateCcw className="h-5 w-5" />,
     },
+    {
+      name: "Cancelled Orders",
+      path: "/admin/cancelled-orders",
+      icon: <Ban className="h-5 w-5" />,
+    },
   ];
 
   const getLinkClass = (path) => {
     return location.pathname.startsWith(path)
-      ? "bg-sky-300 font-semibold hover:border-l-4 hover:border-white"
-      : "hover:bg-gradient-to-r hover:from-white/50 hover:to-white/10 hover:shadow-md hover:scale-[1.02]";
+      ? "bg-[#475569] font-semibold hover:border-l-4 hover:border-white"
+      : "hover:bg-[#334155] hover:shadow-md hover:scale-[1.02]";
   };
 
   return (
@@ -65,10 +71,10 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       <aside
         className={`${
           isCollapsed ? "w-20" : "w-64"
-        } bg-sky-400 text-slate-50 p-4 shadow-xl lg:shadow-md
+        } bg-[#1e293b] text-slate-50 p-4 shadow-xl lg:shadow-md
           transition-all duration-300 ease-in-out z-20
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          fixed top-0 left-0 h-screen overflow-y-hidden
+          fixed top-0 left-0 h-screen overflow-y-auto
           lg:static lg:translate-x-0 lg:h-full lg:flex-shrink-0`}
       >
         {/* Toggle Collapse Button */}
@@ -78,7 +84,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="text-white hover:bg-sky-500 p-1 rounded"
+            className="text-white hover:bg-[#334155] p-1 rounded"
           >
             {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>

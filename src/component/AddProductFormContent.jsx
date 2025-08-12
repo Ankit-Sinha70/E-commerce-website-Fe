@@ -1,15 +1,8 @@
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { getCategories } from "@/features/category/categorySlice";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -57,7 +50,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
           if (byId) {
             categoryToSet = String(byId._id);
           } else {
-            const byName = categories.find(
+            const byName = categories?.find(
               (cat) =>
                 cat.name.toLowerCase() ===
                 String(initialData.category).toLowerCase()
@@ -206,8 +199,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
   // };
 
   // Get the selected category name for display
-    categories?.find((cat) => cat._id === form.category)?.name || "";
-  
+  categories?.find((cat) => cat._id === form.category)?.name || "";
 
   return (
     <div className="relative">
@@ -263,7 +255,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             className="w-full border rounded p-2"
           >
             <option value="">Select Category</option>
-            {categories.map((cat) => (
+            {categories?.map((cat) => (
               <option key={cat._id} value={cat._id}>
                 {cat.name}
               </option>

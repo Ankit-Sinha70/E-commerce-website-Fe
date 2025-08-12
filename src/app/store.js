@@ -15,7 +15,7 @@ import notificationReducer from "../features/notification/notificationSlice";
 import paymentReducer from '../features/payment/paymentSlice';
 import reviewReducer from '../features/review/reviewSlice';
 
-const rootReducer = combineReducers({
+const appReducer  = combineReducers({
   auth: authReducer,
   user: userReducer,
   cart: cartReducer,
@@ -30,11 +30,20 @@ const rootReducer = combineReducers({
   reviews: reviewReducer,
 });
 
+const rootReducer = (state, action) => {
+  if (action.type === "auth/logout") {
+    storage.removeItem("persist:root");
+    return appReducer(undefined, action);
+  }
+  return appReducer(state, action);
+};
+
+
 // Configuration for redux-persist
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'cart', 'shippingAddress','category','payment','order','recentOrders','user','product','reviews']
+  whitelist: [ 'cart', 'shippingAddress','category','payment','order','recentOrders','user','product','reviews']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

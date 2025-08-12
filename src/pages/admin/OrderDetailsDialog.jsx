@@ -40,122 +40,122 @@ const OrderDetailsDialog = ({ open, onOpenChange, order }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl md:max-w-2xl lg:max-w-3xl overflow-y-auto max-h-[90vh] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <DialogContent className="max-w-xl md:max-w-2xl lg:max-w-3xl overflow-y-auto max-h-[90vh] bg-gray-900 text-white shadow-xl rounded-lg border border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-800 ">
-            Order Details - <span className="text-blue-600">{order?._id}</span>
+          <DialogTitle className="text-2xl font-bold text-white">
+            Order Details - <span className="text-blue-500">{order?._id}</span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-400">
             Comprehensive information about the selected order.
           </DialogDescription>
         </DialogHeader>
         {order ? (
           <div
             ref={orderDetailsRef}
-            className="pdf-export bg-white rounded-lg p-6 space-y-6"
+            className="pdf-export rounded-lg p-6 space-y-6"
           >
             {/* Customer Information */}
-            <section className="border rounded-lg p-4 bg-gray-50">
-              <h2 className="flex items-center text-lg font-semibold mb-2">
+            <section className="border rounded-lg p-4 bg-gray-800 border-gray-700 shadow-md text-gray-300">
+              <h2 className="flex items-center text-lg font-semibold mb-2 text-white">
                 <User className="h-5 w-5 mr-2 text-blue-500" />
                 Customer Information
               </h2>
-              <div className="text-gray-700 space-y-1">
+              <div className="text-gray-400 space-y-1">
                 <div>
-                  <span className="font-semibold">Name:</span>{" "}
+                  <span className="font-semibold text-gray-300">Name:</span>{" "}
                   {order?.user?.name}
                 </div>
                 <div>
-                  <span className="font-semibold">Email:</span>{" "}
+                  <span className="font-semibold text-gray-300">Email:</span>{" "}
                   {order?.user?.email}
                 </div>
                 <div>
-                  <span className="font-semibold">Order Date:</span>{" "}
+                  <span className="font-semibold text-gray-300">Order Date:</span>{" "}
                   {new Date(order.updatedAt).toLocaleString()}
                 </div>
               </div>
             </section>
 
             {/* Delivery Address */}
-            <section className="border rounded-lg p-4 bg-gray-50">
-              <h2 className="flex items-center text-lg font-semibold mb-2">
+            <section className="border rounded-lg p-4 bg-gray-800 border-gray-700 shadow-md text-gray-300">
+              <h2 className="flex items-center text-lg font-semibold mb-2 text-white">
                 <MapPin className="h-5 w-5 mr-2 text-red-500" />
                 Delivery Address
               </h2>
-              <div className="text-gray-700 space-y-1">
+              <div className="text-gray-400 space-y-1">
                 <div>
-                  <span className="font-semibold">Name:</span>{" "}
+                  <span className="font-semibold text-gray-300">Name:</span>{" "}
                   {order?.shippingAddress?.fullName}
                 </div>
                 <div>
-                  <span className="font-semibold">Address:</span>{" "}
+                  <span className="font-semibold text-gray-300">Address:</span>{" "}
                   {order?.shippingAddress?.addressLine}
                 </div>
                 <div>
-                  <span className="font-semibold">City:</span>{" "}
+                  <span className="font-semibold text-gray-300">City:</span>{" "}
                   {order?.shippingAddress?.city}
                 </div>
                 <div>
-                  <span className="font-semibold">State:</span>{" "}
+                  <span className="font-semibold text-gray-300">State:</span>{" "}
                   {order?.shippingAddress?.state}
                 </div>
                 <div>
-                  <span className="font-semibold">Country:</span>{" "}
+                  <span className="font-semibold text-gray-300">Country:</span>{" "}
                   {order?.shippingAddress?.country}
                 </div>
                 <div>
-                  <span className="font-semibold">Postal Code:</span>{" "}
+                  <span className="font-semibold text-gray-300">Postal Code:</span>{" "}
                   {order?.shippingAddress?.postalCode}
                 </div>
                 <div>
-                  <span className="font-semibold">Phone:</span>{" "}
+                  <span className="font-semibold text-gray-300">Phone:</span>{" "}
                   {order?.shippingAddress?.phoneNumber}
                 </div>
               </div>
             </section>
 
             {/* Order Items */}
-            <section className="border rounded-lg p-4 bg-gray-50">
-              <h2 className="flex items-center text-lg font-semibold mb-2">
+            <section className="border rounded-lg p-4 bg-gray-800 border-gray-700 shadow-md text-gray-300">
+              <h2 className="flex items-center text-lg font-semibold mb-2 text-white">
                 <Package className="h-5 w-5 mr-2 text-green-500" />
                 Order Items
               </h2>
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="bg-gray-100">
-                    <th className="p-2 border">Image</th>
-                    <th className="p-2 border">Name</th>
-                    <th className="p-2 border">Category</th>
-                    <th className="p-2 border">Product ID</th>
-                    <th className="p-2 border">Qty</th>
-                    <th className="p-2 border">Price</th>
-                    <th className="p-2 border">Subtotal</th>
+                  <tr className="bg-gray-700 text-white">
+                    <th className="p-2 border border-gray-600">Image</th>
+                    <th className="p-2 border border-gray-600">Name</th>
+                    <th className="p-2 border border-gray-600">Category</th>
+                    <th className="p-2 border border-gray-600">Product ID</th>
+                    <th className="p-2 border border-gray-600">Qty</th>
+                    <th className="p-2 border border-gray-600">Price</th>
+                    <th className="p-2 border border-gray-600">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody>
                   {order.items && order.items.length > 0 ? (
                     order.items.map((item, idx) => (
-                      <tr key={item._id || idx} className="text-center">
-                        <td className="p-2 border">
+                      <tr key={item._id || idx} className="text-center text-gray-300">
+                        <td className="p-2 border border-gray-600">
                           <img
                             src={item.image}
                             alt={item.name}
-                            className="w-12 h-12 object-cover rounded"
+                            className="w-12 h-12 object-cover rounded shadow-md"
                           />
                         </td>
-                        <td className="p-2 border">{item.name}</td>
-                        <td className="p-2 border">{item.category}</td>
-                        <td className="p-2 border">{item.productId}</td>
-                        <td className="p-2 border">{item.quantity}</td>
-                        <td className="p-2 border">{item.price} AED</td>
-                        <td className="p-2 border font-semibold">
+                        <td className="p-2 border border-gray-600">{item.name}</td>
+                        <td className="p-2 border border-gray-600">{item.category}</td>
+                        <td className="p-2 border border-gray-600">{item.productId}</td>
+                        <td className="p-2 border border-gray-600">{item.quantity}</td>
+                        <td className="p-2 border border-gray-600">{item.price} AED</td>
+                        <td className="p-2 border border-gray-600 font-semibold">
                           {(item.quantity * item.price).toFixed(2)} AED
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className="p-2 border text-gray-500">
+                      <td colSpan={7} className="p-2 border border-gray-600 text-gray-500">
                         No items found for this order.
                       </td>
                     </tr>
@@ -165,12 +165,12 @@ const OrderDetailsDialog = ({ open, onOpenChange, order }) => {
             </section>
 
             {/* Order Summary */}
-            <section className="border rounded-lg p-4 bg-gray-50 flex flex-col md:flex-row justify-between items-center">
-              <div className="text-xl font-bold text-gray-800">
+            <section className="border rounded-lg p-4 bg-gray-800 border-gray-700 shadow-md flex flex-col md:flex-row justify-between items-center text-gray-300">
+              <div className="text-xl font-bold text-white">
                 Order Total:{" "}
-                <span className="text-blue-700">{order.totalAmount} AED</span>
+                <span className="text-blue-500">{order.totalAmount} AED</span>
               </div>
-              <div className="text-lg font-semibold text-gray-800 mt-2 md:mt-0">
+              <div className="text-lg font-semibold text-white mt-2 md:mt-0">
                 Current Status:{" "}
                 <span
                   className={`ml-2 px-4 py-1 rounded-full font-bold ${getStatusBadge(
@@ -188,14 +188,14 @@ const OrderDetailsDialog = ({ open, onOpenChange, order }) => {
         <DialogFooter className="mt-6">
           <Button
             onClick={handleExportToPDF}
-            className="bg-purple-600 hover:bg-purple-700 text-white flex items-center"
+            className="bg-purple-600 hover:bg-purple-700 text-white flex items-center shadow-md"
             disabled={exporting}
           >
             <FileText className="h-4 w-4 mr-2" />{" "}
             {exporting ? "Exporting..." : "Export to PDF"}
           </Button>
           <DialogClose asChild>
-            <Button type="button" variant="outline">
+            <Button type="button" variant="outline" className="text-gray-400">
               Close
             </Button>
           </DialogClose>

@@ -6,9 +6,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 // Fetch all users (admin only)
 export const fetchAllUsers = createAsyncThunk(
   "user/fetchAllUsers",
-  async ({ name = "", accessToken }, { rejectWithValue }) => {
+  async ({ name = "", page = 1, accessToken }, { rejectWithValue }) => {
     try {
-      const params = {};
+      const params = { page };
       if (name) params.name = name;
       const response = await axios.get(`${API_URL}/api/user/all-users`, {
         headers: {
@@ -16,8 +16,8 @@ export const fetchAllUsers = createAsyncThunk(
         },
         params,
       });
-      // The backend returns { success, message, data }
-      return response.data.data;
+      // The backend returns the full pagination object
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         return rejectWithValue(
@@ -64,6 +64,9 @@ const initialState = {
   error: null,
   profile: null,
   deleteSuccess: null,
+  totalPages: 0,
+  currentPage: 1,
+  totalItems: 0,
 };
 
 const userSlice = createSlice({
@@ -93,7 +96,10 @@ const userSlice = createSlice({
       })
       .addCase(fetchAllUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload;
+        state.users = action.payload.data;
+        state.totalPages = action.payload.totalPages;
+        state.totalItems = action.payload.totalItems;
+        state.currentPage = action.payload.page;
         state.error = null;
       })
       .addCase(fetchAllUsers.rejected, (state, action) => {

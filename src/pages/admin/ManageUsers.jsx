@@ -1,4 +1,22 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector }  from "react-redux";
+import { fetchAllUsers, deleteUser } from "../../features/user/userSlice";
+import { Button } from "@/components/ui/button";
+import { Search, RotateCw, Trash2, Eye } from "lucide-react";
 import Loader from "@/component/common/Loader";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -7,30 +25,46 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import useDebounce from "@/lib/useDebounce";
-import { Eye, RotateCw, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-import { deleteUser, fetchAllUsers } from "../../features/user/userSlice";
+import useDebounce from "@/lib/useDebounce";
+
+const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      onPageChange(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      onPageChange(currentPage + 1);
+    }
+  };
+
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  return (
+    <div className="flex items-center justify-center space-x-4 mt-6">
+      <Button onClick={handlePrevious} disabled={currentPage === 1} variant="outline" className="shadow-md">
+        Previous
+      </Button>
+      <span className="text-sm font-medium text-slate-300">
+        Page {currentPage} of {totalPages}
+      </span>
+      <Button onClick={handleNext} disabled={currentPage === totalPages} variant="outline" className="shadow-md">
+        Next
+      </Button>
+    </div>
+  );
+};
 
 const ManageUsers = () => {
   const dispatch = useDispatch();
-  const { users, loading } = useSelector((state) => state.user);
+  const { users, loading, totalPages } = useSelector((state) => state.user);
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchInput = useDebounce(searchInput, 500);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -59,7 +93,7 @@ const ManageUsers = () => {
       ).unwrap();
       toast.success("User deleted successfully");
       // Optionally, refresh the user list
-      dispatch(fetchAllUsers(accessToken));
+      dispatch(fetchAllUsers({ name: debouncedSearchInput, page: currentPage, accessToken }));
     } catch (err) {
       // Optionally, show a toast here for error
       toast.error(typeof err === "string" ? err : err.message);
@@ -72,22 +106,31 @@ const ManageUsers = () => {
     localStorage.getItem("accessToken");
 
   useEffect(() => {
+    // When search input changes, reset to page 1
+    setCurrentPage(1);
+  }, [debouncedSearchInput]);
+
+  useEffect(() => {
     if (accessToken) {
-      // Pass the search param as "name"
-      dispatch(fetchAllUsers({ name: debouncedSearchInput, accessToken }));
+      dispatch(
+        fetchAllUsers({ 
+          name: debouncedSearchInput, 
+          page: currentPage, 
+          accessToken 
+        })
+      );
     }
-  }, [dispatch, accessToken, debouncedSearchInput]);
+  }, [dispatch, accessToken, debouncedSearchInput, currentPage]);
   // Remove the client-side filtering:
   // const filteredUsers = users?.filter(...);
   // Instead, just use the users from Redux:
   const filteredUsers = users;
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md">
+    <div className="bg-[#0f172a] text-slate-300 min-h-screen">
         {/* Header */}
-        <div className="p-4 lg:p-6 border-b border-gray-200">
-          <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-4 lg:mb-6">
+        <div className="p-4 lg:p-6 border-b border-gray-700">
+          <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 lg:mb-6">
             Users Management
           </h2>
 
@@ -98,12 +141,12 @@ const ManageUsers = () => {
                 <Input
                   type="text"
                   placeholder="Search by name or email..."
-                  className="flex-1 rounded-r-none border-r-0 border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 rounded-r-none border-r-0 bg-gray-800 text-white border-gray-700 shadow-md focus:ring-blue-500 focus:border-blue-500"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                 />
                 <Button
-                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-l-none px-4"
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-l-none px-4 shadow-md"
                   onClick={() => {}} // No-op for now
                 >
                   <Search className="h-4 w-4" />
@@ -114,7 +157,7 @@ const ManageUsers = () => {
             <div>
               <Button
                 onClick={() => setSearchInput("")}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-md"
               >
                 <RotateCw className="h-4 w-4 mr-2" />
                 Reset Filters
@@ -135,10 +178,10 @@ const ManageUsers = () => {
           ) : (
             <>
               {/* Desktop Table View */}
-              <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-                <table className="min-w-full bg-white">
+              <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
+                <table className="min-w-full bg-gray-800">
                   <thead>
-                    <tr className="bg-gray-800 text-white text-left">
+                    <tr className="bg-gray-700 text-white text-left">
                       <th className="px-6 py-4 font-medium">Avatar</th>
                       <th className="px-6 py-4 font-medium">Name</th>
                       <th className="px-6 py-4 font-medium">Email</th>
@@ -151,7 +194,7 @@ const ManageUsers = () => {
                     {filteredUsers?.map((user) => (
                       <tr
                         key={user._id}
-                        className="border-b last:border-b-0 hover:bg-gray-50 transition-colors"
+                        className="border-b last:border-b-0 hover:bg-gray-700 transition-colors"
                       >
                         <td className="px-6 py-4">
                           <img
@@ -160,17 +203,17 @@ const ManageUsers = () => {
                             className="w-12 h-12 object-cover rounded-full shadow-sm"
                           />
                         </td>
-                        <td className="px-6 py-4 font-medium text-gray-900">
+                        <td className="px-6 py-4 font-medium text-white">
                           {user.name}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-400">
                           {user.email}
                         </td>
-                        <td className="px-6 py-4 text-gray-700 capitalize">
+                        <td className="px-6 py-4 text-gray-400 capitalize">
                           {user.role}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
-                          {user.status == "active" ? (
+                        <td className="px-6 py-4 text-gray-400">
+                          {user.status == "Active" || user.status == "active" ? (
                             <span className="text-green-600 font-semibold">
                               Active
                             </span>
@@ -188,13 +231,13 @@ const ManageUsers = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
+                                  className="text-blue-500 hover:text-blue-400 hover:bg-blue-900/20 shadow-md"
                                   onClick={() => handleViewUser(user)}
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                                 <p>View User</p>
                               </TooltipContent>
                             </Tooltip>
@@ -204,13 +247,13 @@ const ManageUsers = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="text-red-600 hover:text-red-800 hover:bg-red-100"
+                                  className="text-red-500 hover:text-red-400 hover:bg-red-900/20 shadow-md"
                                   onClick={() => handleDelete(user)}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                                 <p>Delete User</p>
                               </TooltipContent>
                             </Tooltip>
@@ -227,7 +270,7 @@ const ManageUsers = () => {
                 {filteredUsers?.map((user) => (
                   <div
                     key={user._id}
-                    className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex items-center"
+                    className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-4 flex items-center"
                   >
                     <img
                       src={user.avatar || "/default-avatar.png"}
@@ -235,29 +278,29 @@ const ManageUsers = () => {
                       className="w-14 h-14 object-cover rounded-full shadow-sm mr-4"
                     />
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 truncate">
+                      <h3 className="font-medium text-white truncate">
                         {user.name}
                       </h3>
                       <p className="text-sm text-gray-500 mt-1 truncate">
                         {user.email}
                       </p>
                       <div className="mt-2 flex items-center gap-2 text-sm">
-                        <span className="capitalize">{user.role}</span>
+                        <span className="capitalize text-gray-400">{user.role}</span>
                         <span
                           className={
-                            user.status === "active"
+                            user.status == "Active"
                               ? "text-green-600 font-semibold"
                               : "text-red-600 font-semibold"
                           }
                         >
-                          {user.status === "active" ? "Active" : "Inactive"}
+                          {user.status == "Active" || user.status == "active" ? "Active" : "Inactive"}
                         </span>
                       </div>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 ml-2"
+                      className="text-blue-500 hover:text-blue-400 hover:bg-blue-900/20 shadow-md"
                       onClick={() => handleViewUser(user)}
                     >
                       <Eye className="h-4 w-4" />
@@ -265,7 +308,7 @@ const ManageUsers = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50 ml-2"
+                      className="text-red-500 hover:text-red-400 hover:bg-red-900/20 shadow-md"
                       onClick={() => handleDelete(user)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -273,15 +316,21 @@ const ManageUsers = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Pagination Controls */}
+              <PaginationComponent 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </>
           )}
         </div>
-      </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-lg max-w-[95vw] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-w-[95vw] max-h-[90vh] overflow-y-auto bg-gray-800 text-slate-300 shadow-xl rounded-lg border border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <DialogHeader className="text-center pb-6">
-            <DialogTitle className="text-2xl font-bold text-gray-900">
+            <DialogTitle className="text-2xl font-bold text-white">
               User Profile
             </DialogTitle>
           </DialogHeader>
@@ -296,55 +345,73 @@ const ManageUsers = () => {
                     alt={selectedUser.name}
                     className="w-60 h-60 sm:w-44 sm:h-40 object-cover rounded-full shadow-lg border-4 border-white ring-4 ring-blue-100"
                   />
-                  <div className={`absolute -bottom-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-full border-4 border-white shadow-lg ${
-                    selectedUser.status === "active" ? "bg-green-500" : "bg-red-500"
-                  }`}></div>
+                  <div
+                    className={`absolute -bottom-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-full border-4 border-white shadow-lg ${
+                      selectedUser.status === "Active" ||
+                      selectedUser.status === "active"
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                    }`}
+                  ></div>
                 </div>
                 
                 <div className="space-y-2">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white">
                     {selectedUser.name}
                   </h2>
-                  <p className="text-lg text-gray-600 break-all">
+                  <p className="text-lg text-gray-500 break-all">
                     {selectedUser.email}
                   </p>
                 </div>
               </div>
 
               {/* Details Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-gray-200">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-gray-700">
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">
                     Role
                   </div>
-                  <div className="mt-2 text-lg font-semibold text-gray-900 capitalize">
+                  <div className="mt-2 text-lg font-semibold text-white capitalize">
                     {selectedUser.role}
                   </div>
                 </div>
                 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">
                     Status
                   </div>
                   <div className="mt-2 flex items-center">
-                    <div className={`w-3 h-3 rounded-full mr-2 ${
-                      selectedUser.status === "active" ? "bg-green-500" : "bg-red-500"
-                    }`}></div>
-                    <span className={`text-lg font-semibold ${
-                      selectedUser.status === "active" ? "text-green-600" : "text-red-600"
-                    }`}>
-                      {selectedUser.status === "active" ? "Active" : "Inactive"}
+                    <div
+                      className={`w-3 h-3 rounded-full mr-2 ${
+                        selectedUser.status === "Active" ||
+                        selectedUser.status === "active"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      }`}
+                    ></div>
+                    <span
+                      className={`text-lg font-semibold ${
+                        selectedUser.status === "Active" ||
+                        selectedUser.status === "active"
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {selectedUser.status === "Active" ||
+                      selectedUser.status === "active"
+                        ? "Active"
+                        : "Inactive"}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Additional Information */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
+              <div className="bg-gray-700 rounded-lg p-4">
+                <div className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-2">
                   User ID
                 </div>
-                <div className="text-sm text-gray-700 font-mono bg-white px-3 py-2 rounded border break-all">
+                <div className="text-sm text-gray-500 font-mono bg-gray-800 px-3 py-2 rounded border border-gray-600 break-all">
                   {selectedUser._id}
                 </div>
               </div>
@@ -364,16 +431,15 @@ const ManageUsers = () => {
               */}
               
               {selectedUser.createdAt && (
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <div className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-2">
                     Created
                   </div>
-                  <div className="text-lg text-gray-900">
+                  <div className="text-lg text-white">
                     {new Date(selectedUser.createdAt).toLocaleString()}
                   </div>
                 </div>
               )}
-             
             </div>
           ) : (
             <div className="text-center py-8">
@@ -387,12 +453,12 @@ const ManageUsers = () => {
         open={showDeleteConfirmDialog}
         onOpenChange={setShowDeleteConfirmDialog}
       >
-        <AlertDialogContent className="w-96">
+        <AlertDialogContent className="w-96 bg-gray-800 text-slate-300 shadow-xl rounded-lg border border-gray-700">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-white">Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
               This action cannot be undone. This will permanently delete{" "}
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-blue-500">
                 "{userToDelete?.name}"
               </span>{" "}
               and remove their data from our servers.
@@ -401,6 +467,7 @@ const ManageUsers = () => {
           <AlertDialogFooter>
             <Button
               variant="outline"
+              className="text-gray-400 shadow-md"
               onClick={() => {
                 setShowDeleteConfirmDialog(false);
                 setUserToDelete(null);
@@ -408,7 +475,7 @@ const ManageUsers = () => {
             >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
+            <Button variant="destructive" className="bg-red-600 hover:bg-red-700 text-white shadow-md" onClick={confirmDelete}>
               Delete
             </Button>
           </AlertDialogFooter>

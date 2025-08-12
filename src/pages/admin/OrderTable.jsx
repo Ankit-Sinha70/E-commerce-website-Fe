@@ -33,10 +33,10 @@ const OrderTable = ({
   onUpdateStatus,
   onDeleteOrder,
 }) => (
-  <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-    <table className="min-w-full bg-white">
+  <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
+    <table className="min-w-full bg-gray-800">
       <thead>
-        <tr className="bg-gray-800 text-white text-center p-2">
+        <tr className="bg-gray-700 text-white text-center p-2">
           <td className="px-8 py-1 font-sm">Order ID</td>
           <td className="px-8 py-1 font-sm">Name</td>
           <td className="px-8 py-1 font-sm">Email</td>
@@ -48,27 +48,27 @@ const OrderTable = ({
         </tr>
       </thead>
       <tbody className="text-center">
-        {orders.map((order) => (
+        {orders?.map((order) => (
           <tr
             key={order._id}
-            className="border-b last:border-b-0 hover:bg-gray-100 transition-colors"
+            className="border-b border-gray-700 last:border-b-0 hover:bg-gray-700 transition-colors"
           >
-            <td className="px-6 py-4 text-sm font-medium text-gray-900">
+            <td className="px-6 py-4 text-sm font-medium text-white">
               {order._id}
             </td>
-            <td className="px-2 py-1 text-sm font-medium text-gray-900">
+            <td className="px-2 py-1 text-sm font-medium text-white">
               {order?.user?.name}
             </td>
-            <td className="px-6 py-4 text-sm text-gray-700">
+            <td className="px-6 py-4 text-sm text-gray-400">
               {order?.user?.email}
             </td>
-            <td className="px-6 py-4 text-sm text-gray-700">
+            <td className="px-6 py-4 text-sm text-gray-400">
               {new Date(order.createdAt).toLocaleString()}
             </td>
-            <td className="px-6 py-4 text-sm text-gray-700">
+            <td className="px-6 py-4 text-sm text-gray-400">
               {order.totalAmount} AED
             </td>
-            <td className="px-6 py-4 text-sm text-gray-700">
+            <td className="px-6 py-4 text-sm text-gray-400">
               {order.items.length}
             </td>
             <td className="px-6 py-4">{getStatusBadge(order.status)}</td>
@@ -80,13 +80,13 @@ const OrderTable = ({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-200"
+                      className="text-blue-500 hover:text-blue-400 hover:bg-blue-900/20 shadow-md"
                       onClick={() => onViewDetails(order)}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                     <p>View Order Details</p>
                   </TooltipContent>
                 </Tooltip>
@@ -97,13 +97,13 @@ const OrderTable = ({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-green-600 hover:text-green-800 hover:bg-green-200"
+                      className="text-green-500 hover:text-green-400 hover:bg-green-900/20 shadow-md"
                       onClick={() => onUpdateStatus(order._id, order.status)}
                     >
                       <Truck className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                     <p>Update Order Status</p>
                   </TooltipContent>
                 </Tooltip>
@@ -114,13 +114,13 @@ const OrderTable = ({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-red-600 hover:text-red-800 hover:bg-red-200"
+                      className="text-red-500 hover:text-red-400 hover:bg-red-900/20 shadow-md"
                       onClick={() => onDeleteOrder && onDeleteOrder(order._id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent className="bg-gray-800 text-gray-300 border border-gray-700 rounded-md shadow-md">
                     <p>Delete Order</p>
                   </TooltipContent>
                 </Tooltip>
