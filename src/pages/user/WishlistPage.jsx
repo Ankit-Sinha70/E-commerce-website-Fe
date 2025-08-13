@@ -17,7 +17,7 @@ import { formatCurrency } from "@/lib/currency";
 import { ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast, Toaster } from "sonner";
+import { toast } from "react-toastify";
 import { addItemToCart } from "../../features/cart/cartSlice";
 
 const WishlistPage = () => {
@@ -31,7 +31,9 @@ const WishlistPage = () => {
 
   useEffect(() => {
     if (!accessToken) {
-      toast.info("Please log in to view your wishlist.");
+      toast.info("Please log in to view your wishlist.", {
+        className: "toast-info",
+      });
       return;
     }
     dispatch(getUserWishList());
@@ -39,24 +41,32 @@ const WishlistPage = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      toast.error(error, {
+        className: "toast-danger",
+      });
     }
   }, [error]);
 
   const handleRemoveFromWishlist = async (productId) => {
     if (!accessToken) {
-      toast.error("Please log in to remove items from wishlist.");
+      toast.error("Please log in to remove items from wishlist.", {
+        className: "toast-danger",
+      });
       return;
     }
     const resultAction = await dispatch(removeItemFromWishList(productId));
     if (removeItemFromWishList.fulfilled.match(resultAction)) {
-      toast.success("Item removed from wishlist!");
+      toast.success("Item removed from wishlist!", {
+        className: "toast-success",
+      });
     }
   };
 
   const handleAddToCart = async (product) => {
     if (!user || !accessToken) {
-      toast.error("Please log in to add items to cart.");
+      toast.error("Please log in to add items to cart.", {
+        className: "toast-danger",
+      });
       return;
     }
 
@@ -80,7 +90,9 @@ const WishlistPage = () => {
       }
     } catch (error) {
       const errorMessage = error.message || "Failed to add product to cart.";
-      toast.error(errorMessage);
+      toast.error(errorMessage, {
+        className: "toast-danger",
+      });
       console.error("Failed to add to cart:", error);
     }
   };
@@ -168,7 +180,6 @@ const WishlistPage = () => {
             ))}
           </div>
         )}
-        <Toaster richColors position="top-right" />
 
         {/* Add to Cart Confirmation Dialog */}
         <Dialog open={showAddToCartDialog} onOpenChange={setShowAddToCartDialog}>

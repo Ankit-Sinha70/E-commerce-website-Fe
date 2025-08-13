@@ -3,13 +3,14 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Toaster } from "@/components/ui/sonner";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from "react-redux";
 import { persistor, store } from "./app/store";
 import axios from "axios";
 import { logout, refreshToken } from "./features/auth/authSlice.js";
 import { PersistGate } from "redux-persist/integration/react";
+import { ToastContainer } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const axiosToIntercept = axios;
@@ -120,6 +121,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </PersistGate>
       </Provider>
     </BrowserRouter>
-    <Toaster />
+    <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      pauseOnHover
+      progressStyle={{ background: "#000000" }}
+    />
   </>
 );

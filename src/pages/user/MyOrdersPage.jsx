@@ -34,7 +34,7 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -350,9 +350,9 @@ const MyOrdersComponent = () => {
   const handleCancelOrder = async (orderId) => {
     try {
       await dispatch(cancelOrder(orderId)).unwrap();
-      toast.success("Order cancelled successfully!");
+      toast.success("Order cancelled successfully!", { className: "toast-success" });
     } catch (err) {
-      toast.error(err || "Failed to cancel order");
+      toast.error(err || "Failed to cancel order", { className: "toast-danger" });
     }
   };
 

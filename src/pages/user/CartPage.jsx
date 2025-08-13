@@ -9,9 +9,9 @@ import {
   MapPin, 
   User, 
   Phone, 
+  CheckCircle,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
 import {
   fetchCartItems,
   removeCartItem,
@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import AddressDialog from "@/component/AddressDialog";
 import { formatCurrency } from "@/lib/currency";
+import { toast } from "react-toastify";
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -124,7 +125,9 @@ export default function CartPage() {
         `Quantity ${actionText} for ${updatedItem?.productId?.name || "item"}.`
       );
     } catch (err) {
-      toast.error("An unexpected error occurred while updating quantity.");
+      toast.error("An unexpected error occurred while updating quantity.", {
+        className: "toast-danger",
+      });
       console.error("Unexpected error in handleQuantityChange:", err);
     }
   };
@@ -135,10 +138,11 @@ export default function CartPage() {
       return;
     }
     if (!user || !accessToken) {
-      toast.error("Please log in to remove cart items.");
+      toast.error("Please log in to remove cart items.", {
+        className: "toast-danger",
+      });
       return;
     }
-
     try {
       const resultAction = await dispatch(
         removeCartItem({ productId, accessToken, userId: user._id })
@@ -146,7 +150,16 @@ export default function CartPage() {
 
       if (removeCartItem.fulfilled.match(resultAction)) {
         toast.success(
-          resultAction.payload.message || "Item removed from cart!"
+          resultAction.payload.message || "Item removed from cart!",
+          {
+            className: "toast-success", 
+            icon: <CheckCircle className="w-4 h-4" />,
+            style: {
+              borderRadius: "8px",
+              background: "#1F2937", // Tailwind gray-800
+              color: "#fff",
+            },
+          }
         );
         dispatch(fetchCartItems({ accessToken }));
       } else if (removeCartItem.rejected.match(resultAction)) {
@@ -154,11 +167,15 @@ export default function CartPage() {
           resultAction.payload ||
           resultAction.error.message ||
           "Failed to remove item.";
-        toast.error(`Error: ${errorMessage}`);
+          toast.error(`Error: ${errorMessage}`, {
+          className: "toast-danger",
+        });
         console.error("Failed to remove from cart:", errorMessage);
       }
     } catch (err) {
-      toast.error("An unexpected error occurred while removing item.");
+      toast.error("An unexpected error occurred while removing item.", {
+        className: "toast-danger",
+      });
       console.error("Unexpected error in handleRemoveItem:", err);
     }
   };
@@ -179,12 +196,16 @@ export default function CartPage() {
   const handleCheckout = async () => {
 
     if (!cartItems || cartItems.length === 0) {
-      toast.info("Your cart is empty. Add items before checking out.");
+      toast.info("Your cart is empty. Add items before checking out.", {
+        className: "toast-info",
+      });
       return;
     }
 
     if (!selectedAddress) {
-      toast.error("Please select a shipping address to proceed.");
+      toast.error("Please select a shipping address to proceed.", {
+        className: "toast-danger",
+      });
       return;
     }
 
@@ -259,13 +280,16 @@ export default function CartPage() {
       window.location.href = data.url;
     } catch (err) {
       toast.error(
-        err.message || "Failed to initiate checkout. Please try again."
+        err.message || "Failed to initiate checkout. Please try again.",
+        {
+          className: "toast-danger",
+        }
       );
       console.error("Checkout error:", err);
     }
   };
 
-  if (loading) {
+  if (loading && (!cartItems || cartItems.length === 0)) {
     return (
       <Loader message={"Loading Cart Items and Addresses..."} />
     );
@@ -611,7 +635,7 @@ export default function CartPage() {
               <Button
                 onClick={handleCheckout}
                 className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 mb-4"
-                disabled={!selectedAddress || !email} // Disable if no address is selected
+                disabled={!selectedAddress || !email}
               >
                 Proceed to Checkout
                 <span className="text-lg">→</span>

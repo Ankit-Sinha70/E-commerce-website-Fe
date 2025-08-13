@@ -33,7 +33,7 @@ const ReviewList = ({ reviews }) => {
   return (
     <div className="mt-4">
       {reviews.length === 0 ? (
-        <p className="text-center text-gray-500 py-8">No reviews yet. Be the first to review!</p>
+        <p className="text-center text-gray-300">No reviews yet. Be the first to review!</p>
       ) : (
         <div>
           {reviews.map((review) => (
@@ -42,9 +42,9 @@ const ReviewList = ({ reviews }) => {
                 <span className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-sm flex items-center">
                   {review.rating} <i className="fas fa-star text-xs ml-1"></i>
                 </span>
-                <p className="font-semibold ml-3">{review.comment.substring(0, 30)}...</p> 
+                <p className="font-semibold ml-3 text-gray-300">{review.comment.substring(0, 30)}...</p> 
               </div>
-              <p className="text-gray-800 text-sm mb-3">{review.comment}</p>
+              <p className="text-gray-300 text-sm mb-3">{review.comment}</p>
               <div className="flex flex-wrap gap-2 mb-3">
                 {review.images && review.images.map((image, index) => (
                   <img
@@ -56,9 +56,9 @@ const ReviewList = ({ reviews }) => {
                   />
                 ))}
               </div>
-              <div className="flex items-center text-xs text-gray-500">
+              <div className="flex items-center text-xs text-gray-300">
                 <span>{review.userId.name}</span>
-                <i className="fas fa-check-circle text-gray-400 mx-2"></i>
+                <i className="fas fa-check-circle text-gray-300 mx-2"></i>
                 <span>Certified Buyer</span>
                 <span className="mx-2">•</span>
                 <span>{timeSince(review.createdAt)}</span>

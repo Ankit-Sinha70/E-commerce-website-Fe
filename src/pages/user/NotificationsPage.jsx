@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { MoreVertical, Trash2, Check, MailCheck, X, Loader2, Bell, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -64,13 +64,44 @@ const NotificationsPage = () => {
   };
 
   const handleDeleteSelected = () => {
+    if (!user?._id) return;
+    if (selectedNotifications.length === 0) return;
+
+    // Single selection → call single delete API; Multi-selection → bulk delete API
     openConfirmationDialog(() => {
-      const promise = dispatch(deleteAllNotifications({ userId: user._id, notificationIds: selectedNotifications })).unwrap();
-      toast.promise(promise, {
-        loading: 'Deleting selected notifications...',
-        success: 'Selected notifications deleted successfully!',
-        error: 'Failed to delete selected notifications.',
-      });
+      let promise;
+      if (selectedNotifications.length === 1) {
+        promise = dispatch(deleteUserNotification(selectedNotifications[0])).unwrap();
+      } else {
+        promise = dispatch(
+          deleteAllNotifications({ userId: user._id, notificationIds: selectedNotifications })
+        ).unwrap();
+      }
+
+      toast.promise(
+        promise,
+        {
+          pending: {
+            render: selectedNotifications.length === 1
+              ? 'Deleting notification...'
+              : 'Deleting selected notifications...',
+            className: 'toast-info',
+          },
+          success: {
+            render: selectedNotifications.length === 1
+              ? 'Notification deleted successfully!'
+              : 'Selected notifications deleted successfully!',
+            className: 'toast-success',
+          },
+          error: {
+            render: selectedNotifications.length === 1
+              ? 'Failed to delete notification.'
+              : 'Failed to delete selected notifications.',
+            className: 'toast-danger',
+          },
+        }
+      );
+
       setSelectedNotifications([]);
     });
   };
@@ -78,11 +109,14 @@ const NotificationsPage = () => {
   const handleMarkAllAsRead = () => {
     if (user?._id) {
       const promise = dispatch(markAllNotificationsAsRead(user._id)).unwrap();
-      toast.promise(promise, {
-        loading: 'Marking all as read...',
-        success: 'All notifications marked as read!',
-        error: 'Failed to mark all as read.',
-      });
+      toast.promise(
+        promise,
+        {
+          pending: { render: 'Marking all as read...', className: 'toast-info' },
+          success: { render: 'All notifications marked as read!', className: 'toast-success' },
+          error: { render: 'Failed to mark all as read.', className: 'toast-danger' },
+        }
+      );
     }
   };
 
@@ -90,11 +124,14 @@ const NotificationsPage = () => {
     if (user?._id) {
       openConfirmationDialog(() => {
         const promise = dispatch(deleteAllNotifications({ userId: user._id })).unwrap();
-        toast.promise(promise, {
-          loading: 'Deleting all notifications...',
-          success: 'All notifications deleted successfully!',
-          error: 'Failed to delete all notifications.',
-        });
+        toast.promise(
+          promise,
+          {
+            pending: { render: 'Deleting all notifications...', className: 'toast-info' },
+            success: { render: 'All notifications deleted successfully!', className: 'toast-success' },
+            error: { render: 'Failed to delete all notifications.', className: 'toast-danger' },
+          }
+        );
       });
     }
   };
@@ -102,16 +139,19 @@ const NotificationsPage = () => {
   const handleDeleteSingle = (id) => {
     openConfirmationDialog(() => {
       const promise = dispatch(deleteUserNotification(id)).unwrap();
-      toast.promise(promise, {
-        loading: 'Deleting notification...',
-        success: 'Notification deleted successfully!',
-        error: 'Failed to delete notification.',
-      });
+      toast.promise(
+        promise,
+        {
+          pending: { render: 'Deleting notification...', className: 'toast-info' },
+          success: { render: 'Notification deleted successfully!', className: 'toast-success' },
+          error: { render: 'Failed to delete notification.', className: 'toast-danger' },
+        }
+      );
     });
   };
 
   return (
-    <div className="min-h-screen bg-[#111827] text-slate-300 py-6">
+    <div className="min-h-screen bg-[#111827] text-slate-300 py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-8">
@@ -166,7 +206,8 @@ const NotificationsPage = () => {
                     variant="destructive"
                     size="sm"
                     onClick={handleDeleteAll}
-                    className="ml-2 bg-red-500 hover:bg-red-600 text-white"
+                    disabled={selectedNotifications.length <= 1}
+                    className="ml-2 bg-red-500 hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Delete All
                   </Button>

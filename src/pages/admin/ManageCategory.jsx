@@ -41,7 +41,6 @@ import {
 } from "../../components/ui/alert-dialog";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
-import { Toaster } from "../../components/ui/sonner";
 import {
   getCategories,
   createCategory,
@@ -50,7 +49,7 @@ import {
 } from "../../features/category/categorySlice";
 import useDebounce from "../../lib/useDebounce";
 import Loader from "@/component/common/Loader";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import {
   Tooltip,
   TooltipContent,
@@ -79,7 +78,9 @@ const ManageCategory = () => {
   const fetchCategoriesData = async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.warning("Authentication required. Please log in.");
+      toast.warning("Authentication required. Please log in.", {
+        className: "toast-warning",
+      });
       return;
     }
     const resultAction = await dispatch(
@@ -144,11 +145,16 @@ const ManageCategory = () => {
         .then(() => {
           setIsAddEditModalOpen(false);
           fetchCategoriesData();
-          toast.success("Category updated successfully!");
+          toast.success("Category updated successfully!", {
+            className: "toast-success",
+          });
         })
         .catch((err) => {
           toast.error(
-            `Failed to update category: ${err.message || "Unknown error"}`
+            `Failed to update category: ${err.message || "Unknown error"}`,
+            {
+              className: "toast-danger",
+            }
           );
         });
     } else {
@@ -157,11 +163,16 @@ const ManageCategory = () => {
         .then(() => {
           setIsAddEditModalOpen(false);
           fetchCategoriesData();
-          toast.success("Category created successfully!");
+          toast.success("Category created successfully!", {
+            className: "toast-success",
+          });
         })
         .catch((err) => {
           toast.error(
-            `Failed to create category: ${err.message || "Unknown error"}`
+            `Failed to create category: ${err.message || "Unknown error"}`,
+            {
+              className: "toast-danger",
+            }
           );
         });
     }
@@ -176,7 +187,9 @@ const ManageCategory = () => {
     if (categoryToDelete) {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        toast.warning("Authentication required. Please log in.");
+        toast.warning("Authentication required. Please log in.", {
+          className: "toast-warning",
+        });
         return;
       }
       dispatch(
@@ -187,11 +200,16 @@ const ManageCategory = () => {
           setCategoryToDelete(null);
           setIsDeleteConfirmModalOpen(false);
           fetchCategoriesData();
-          toast.success("Category deleted successfully!");
+          toast.success("Category deleted successfully!", {
+            className: "toast-success",
+          });
         })
         .catch((err) => {
           toast.error(
-            `Failed to delete category: ${err.message || "Unknown error"}`
+            `Failed to delete category: ${err.message || "Unknown error"}`,
+            {
+              className: "toast-danger",
+            }
           );
         });
     }
@@ -201,7 +219,9 @@ const ManageCategory = () => {
     const newStatus = category.status === "Active" ? "Inactive" : "Active";
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.warning("Authentication required. Please log in.");
+      toast.warning("Authentication required. Please log in.", {
+        className: "toast-warning",
+      });
       return;
     }
     dispatch(
@@ -214,11 +234,16 @@ const ManageCategory = () => {
       .unwrap()
       .then(() => {
         fetchCategoriesData();
-        toast.success(`Category status updated to ${newStatus}.`);
+        toast.success(`Category status updated to ${newStatus}.`, {
+          className: "toast-success",
+        });
       })
       .catch((err) => {
         toast.error(
-          `Failed to update status: ${err.message || "Unknown error"}`
+          `Failed to update status: ${err.message || "Unknown error"}`,
+          {
+            className: "toast-danger",
+          }
         );
       });
   };
@@ -226,7 +251,10 @@ const ManageCategory = () => {
   useEffect(() => {
     if (error) {
       toast.error(
-        `Category operation error: ${error.message || "Unknown error"}`
+        `Category operation error: ${error.message || "Unknown error"}`,
+        {
+          className: "toast-danger",
+        }
       );
     }
   }, [error]);
@@ -556,7 +584,6 @@ const ManageCategory = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Toaster richColors />
     </div>
   );
 };

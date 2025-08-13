@@ -3,7 +3,7 @@ import { ShoppingCart, Snowflake, Star, Heart } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { addItem, addItemToCart } from "../../src/features/cart/cartSlice";
 import { addItemToWishList } from "../../src/features/wishlist/wishlistSlice";
 import AddToCartConfirmationPopup from "./AddToCartConfirmationPopup";
@@ -53,7 +53,9 @@ const ProductCatalogue = ({ products, loading }) => {
       setShowSuccessAlert(true);
     } catch (error) {
       const errorMessage = error.message || "Failed to add product to cart.";
-      toast.error(errorMessage);
+      toast.error(errorMessage, {
+        className: "toast-danger",
+      });
     }
   };
   const handleAddToWishlist = async (e, product) => {
@@ -68,12 +70,19 @@ const ProductCatalogue = ({ products, loading }) => {
         addItemToWishList(product._id)
       ).unwrap();
       toast.success(
-        `${product.name} added to wishlist!`
+        <div>
+          <strong>{product.name} added to wishlist!</strong>
+        </div>,
+        {
+          className: "toast-success",
+        }
       );
     } catch (error) {
       const errorMessage =
         error.message || "Failed to add to wishlist.";
-      toast.error(errorMessage);
+      toast.error(errorMessage, {
+        className: "toast-danger",
+      });
     }
   };
 

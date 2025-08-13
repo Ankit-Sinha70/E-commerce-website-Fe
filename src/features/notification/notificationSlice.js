@@ -81,8 +81,7 @@ export const deleteAllNotifications = createAsyncThunk(
 
 export const deleteUserNotification = createAsyncThunk(
   "notifications/deleteUserNotification",
-  async (notificationId, { rejectWithValue }) => {
-    try {
+  async (notificationId, { rejectWithValue }) => {    try {
       await axios.delete(
         `${API_URL}/api/notifications/delete/${notificationId}`,
         getAuthHeaders()

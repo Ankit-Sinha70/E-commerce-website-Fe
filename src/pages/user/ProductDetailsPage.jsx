@@ -2,7 +2,7 @@ import { Facebook, Linkedin, ShoppingCart, Twitter } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import AddToCartConfirmationPopup from '../../component/AddToCartConfirmationPopup';
 import { addItemToCart } from "../../features/cart/cartSlice";
 import {
@@ -14,6 +14,7 @@ import Loader from "@/component/common/Loader";
 import ReviewList from "@/component/ReviewList/ReviewList";
 import ReviewForm from "@/component/ReviewForm/ReviewForm";
 import RatingsSummary from "@/component/RatingsSummary/RatingsSummary";
+import { formatCurrency } from "@/lib/currency";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -41,7 +42,9 @@ const ProductDetailsPage = () => {
     }
   } catch (e) {
     console.error("Failed to parse user from localStorage:", e);
-    toast.error("User data corrupted. Please log in again.");
+    toast.error("User data corrupted. Please log in again.", {
+      className: "toast-danger",
+    });
   }
 
   useEffect(() => {
@@ -65,13 +68,17 @@ const ProductDetailsPage = () => {
 
   const handleAddToCart = async () => {
     if (!product) {
-      toast.error("Product details not loaded. Please try again.");
+      toast.error("Product details not loaded. Please try again.", {
+        className: "toast-danger",
+      });
       return;
     }
 
     // Ensure user object exists, has a role, and accessToken exists
     if (!isUser || !isUser.role || !accessToken) {
-      toast.error("Please log in to add items to your cart.");
+      toast.error("Please log in to add items to your cart.", {
+        className: "toast-danger",
+      });
       return;
     }
 
@@ -93,11 +100,15 @@ const ProductDetailsPage = () => {
           resultAction.payload ||
           resultAction.error.message ||
           "Something went wrong.";
-        toast.error(`Failed to add ${product.name} to cart: ${errorMessage}`);
+        toast.error(`Failed to add ${product.name} to cart: ${errorMessage}`, {
+          className: "toast-danger",
+        });
         console.error("Failed to add to cart:", errorMessage);
       }
     } catch (err) {
-      toast.error("An unexpected error occurred while adding to cart.");
+      toast.error("An unexpected error occurred while adding to cart.", {
+        className: "toast-danger",
+      });
       console.error("Unexpected error in handleAddToCart:", err);
     }
   };
@@ -155,15 +166,15 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#1e293b]">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Main Product Section */}
-        <div className="bg-white rounded-lg shadow-sm mb-8">
+        <div className="bg-gray-600 rounded-lg shadow-sm mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
             {/* Product Image */}
             <div className="relative">
               <div
-                className="relative bg-gray-50 rounded-lg overflow-hidden"
+                className="relative bg-gray-600 rounded-lg overflow-hidden"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onMouseMove={handleMouseMove}
@@ -172,7 +183,7 @@ const ProductDetailsPage = () => {
                 <img
                   src={product.image || "/src/image_22_3.jpeg"}
                   alt={product.name}
-                  className="w-full h-auto max-h-[500px] object-contain transition-opacity duration-300"
+                  className="w-full h-auto max-h-[500px] object-contain transition-opacity duration-300 cursor-grid hover:cursor-grid"
                   style={{ opacity: zoomVisible ? 0 : 1 }}
                 />
                 {zoomVisible && (
@@ -191,7 +202,7 @@ const ProductDetailsPage = () => {
                       pointerEvents: 'none',
                       transform: 'translateZ(0)',
                     }}
-                    className="object-contain"
+                    className="object-contain cursor-grid hover:cursor-grid"
                   />
                 )}
                 <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
@@ -203,20 +214,20 @@ const ProductDetailsPage = () => {
             {/* Product Details */}
             <div className="space-y-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-300 mb-2">
                   {product.name}
                 </h1>
-                <p className="text-3xl font-bold text-blue-600">
-                  {product.price} AED
+                <p className="text-3xl font-bold text-blue-500">
+                  {formatCurrency(product.price)}
                 </p>
               </div>
 
               {product.shortDescription && (
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                  <h2 className="text-lg font-semibold text-gray-300 mb-2">
                     {product.shortDescription}
                   </h2>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-300 leading-relaxed">
                     {product.description}
                   </p>
                 </div>
@@ -224,7 +235,7 @@ const ProductDetailsPage = () => {
 
               {product.size && (
                 <div>
-                  <p className="text-gray-700">
+                  <p className="text-gray-300">
                     <strong>Ice Ball Size:</strong> {product.size}
                   </p>
                 </div>
@@ -270,9 +281,9 @@ const ProductDetailsPage = () => {
 
               {/* Category */}
               <div className="border-t pt-4">
-                <p className="text-gray-700">
+                <p className="text-gray-300">
                   <strong>Category:</strong>
-                  <span className="ml-2 text-blue-600">
+                  <span className="ml-2 text-gray-300">
                     {product.category?.name || "Ice"}
                   </span>
                 </p>
@@ -281,13 +292,13 @@ const ProductDetailsPage = () => {
               {/* Share */}
               <div className="border-t pt-4">
                 <div className="flex items-center gap-4">
-                  <strong className="text-gray-700">Share:</strong>
+                  <strong className="text-gray-300">Share:</strong>
                   <div className="flex gap-3">
                     <a
                       href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-gray-300 hover:text-blue-800"
                     >
                       <Facebook className="w-5 h-5" />
                     </a>
@@ -297,7 +308,7 @@ const ProductDetailsPage = () => {
                       }&text=${encodeURIComponent(product.name)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-600"
+                      className="text-gray-300 hover:text-blue-600"
                     >
                       <Twitter className="w-5 h-5" />
                     </a>
@@ -307,7 +318,7 @@ const ProductDetailsPage = () => {
                       }&title=${encodeURIComponent(product.name)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-700 hover:text-blue-900"
+                      className="text-gray-300 hover:text-blue-900"
                     >
                       <Linkedin className="w-5 h-5" />
                     </a>
@@ -319,14 +330,14 @@ const ProductDetailsPage = () => {
         </div>
 
         {/* Description and Reviews Tabs */}
-        <div className="bg-white rounded-lg shadow-sm mb-8">
+        <div className="bg-gray-600 rounded-lg shadow-sm mb-8">
           <div className="border-b">
             <div className="flex">
               <button
                 className={`px-6 py-4 text-sm font-medium border-b-2 ${
                   activeTab === 'description'
-                    ? 'text-blue-600 border-blue-600'
-                    : 'text-gray-500 border-transparent hover:text-gray-700'
+                    ? 'text-blue-600 border-blue-500'
+                    : 'text-gray-300 border-transparent hover:text-gray-500'
                 }`}
                 onClick={() => setActiveTab('description')}
               >
@@ -336,7 +347,7 @@ const ProductDetailsPage = () => {
                 className={`px-6 py-4 text-sm font-medium border-b-2 ${
                   activeTab === 'reviews'
                     ? 'text-blue-600 border-blue-600'
-                    : 'text-gray-500 border-transparent hover:text-gray-700'
+                    : 'text-gray-300 border-transparent hover:text-gray-500'
                 }`}
                 onClick={() => setActiveTab('reviews')}
               >
@@ -349,8 +360,8 @@ const ProductDetailsPage = () => {
             {activeTab === 'description' && (
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{product?.name}</h3>
-                  <p className="text-gray-600 mb-4">
+                  <h3 className="font-semibold text-gray-300 mb-2">{product?.name}</h3>
+                  <p className="text-gray-400 mb-4">
                     {product?.description}
                   </p>
                 </div>
@@ -374,9 +385,9 @@ const ProductDetailsPage = () => {
         </div>
 
         {/* Related Products */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-gray-600 rounded-lg shadow-sm">
           <div className="p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Related products</h2>
+            <h2 className="text-xl font-bold text-gray-300 mb-6">Related products</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Sample Related Products */}
               {[
@@ -385,19 +396,19 @@ const ProductDetailsPage = () => {
                 { name: "Ice Cubes", price: "2.75 AED", image: "/api/placeholder/200/200" },
                 { name: "Ice Ball Mint (6pcs)", price: "36.00 AED", image: "/api/placeholder/200/200" }
               ].map((relatedProduct, index) => (
-                <div key={index} className="relative bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div key={index} className="relative bg-gray-500 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
                     BEST SELLING
                   </div>
                   <img
                     src={relatedProduct.image}
                     alt={relatedProduct.name}
-                    className="w-full h-40 object-contain mb-3"
+                    className="w-full h-40 object-contain mb-3 cursor-grid hover:cursor-grid"
                   />
-                  <h3 className="font-medium text-gray-900 text-center mb-2">
+                  <h3 className="font-medium text-gray-300 text-center mb-2">
                     {relatedProduct.name}
                   </h3>
-                  <p className="text-blue-600 font-semibold text-center">
+                  <p className="text-gray-300 font-semibold text-center">
                     {relatedProduct.price}
                   </p>
                 </div>

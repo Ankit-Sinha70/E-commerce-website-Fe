@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordConfirm } from "../../features/auth/authSlice";
 
@@ -17,7 +17,7 @@ const SetNewPasswordPage = () => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("Passwords do not match", { className: "toast-danger" });
       return;
     }
 
@@ -26,18 +26,16 @@ const SetNewPasswordPage = () => {
     );
 
     if (resetPasswordConfirm.fulfilled.match(resultAction)) {
-      toast.success(resultAction.payload);
+      toast.success(resultAction.payload, { className: "toast-success" });
       navigate("/login");
     } else {
-      toast.error("Failed to reset password", {
-        description: error || "An unexpected error occurred.",
-      });
+      toast.error(error || "An unexpected error occurred.", { className: "toast-danger" });
     }
   };
 
   useEffect(() => {
     if (!token) {
-      toast.error("Password reset token is missing.");
+      toast.error("Password reset token is missing.", { className: "toast-danger" });
     }
   }, [token]);
 

@@ -24,11 +24,11 @@ const ReviewForm = ({ productId }) => {
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Write a Review</h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-300">Write a Review</h2>
       {accessToken ? (
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700">Rating</label>
+          <div className="mb-2">
+            <label className="block text-gray-300 mb-2">Rating</label>
             <div className="flex">
               {[...Array(5)].map((_, i) => (
                 <span key={i} onClick={() => setRating(i + 1)} className="cursor-pointer">
@@ -40,21 +40,21 @@ const ReviewForm = ({ productId }) => {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Comment</label>
+            <label className="block text-gray-300">Comment</label>
             <textarea
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded text-white"
               rows="4"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             ></textarea>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Images</label>
+            <label className="block text-gray-300">Images</label>
             <input
               type="file"
               multiple
               onChange={handleImageChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded text-white"
             />
           </div>
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">

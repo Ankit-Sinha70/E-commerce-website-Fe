@@ -42,7 +42,7 @@ export const createShippingAddress = createAsyncThunk(
         getConfig()
       );
       dispatch(getShippingAddresses());
-      return response.data.address;
+      return response.data; // include message/success if backend provides it
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to create shipping address"
@@ -132,8 +132,13 @@ const shippingAddressSlice = createSlice({
         state.error = null;
         state.success = false;
       })
-      .addCase(createShippingAddress.fulfilled, (state) => {
+      .addCase(createShippingAddress.fulfilled, (state, action) => {
         state.loading = false;
+        // If backend returns the created address and message
+        const createdAddress = action.payload?.address;
+        if (createdAddress) {
+          state.addresses = [createdAddress, ...state.addresses];
+        }
         state.error = null;
         state.success = true;
       })

@@ -200,7 +200,17 @@ const cartSlice = createSlice({
       })
       .addCase(removeCartItem.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload.cart.items;
+        const serverItems = action.payload?.cart?.items ?? action.payload?.items;
+        if (Array.isArray(serverItems)) {
+          state.items = serverItems;
+        } else {
+          const removedId = action.meta?.arg?.productId;
+          if (removedId) {
+            state.items = state.items.filter(
+              (item) => item.productId._id !== removedId
+            );
+          }
+        }
       })
       .addCase(removeCartItem.rejected, (state, action) => {
         state.loading = false;

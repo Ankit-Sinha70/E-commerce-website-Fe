@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import AddProductFormContent from "../../component/AddProductFormContent";
 import {
   deleteProduct,
@@ -61,7 +61,7 @@ const ManageProductsPage = () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("Authentication Required", {
-        description: "Please login to view products.",
+        className: "toast-danger",
       });
       return;
     }
@@ -89,7 +89,9 @@ const ManageProductsPage = () => {
   useEffect(() => {
     fetchProductsData();
     if (error) {
-      toast.error("Error fetching products", { description: error });
+      toast.error("Error fetching products", {
+        className: "toast-danger",
+      });
     }
   }, [debouncedSearchTerm, filterCategory, currentPage, dispatch]);
 
@@ -116,7 +118,7 @@ const ManageProductsPage = () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("Authentication Required", {
-        description: "Please login to delete products.",
+        className: "toast-danger",
       });
       setProductToDelete(null);
       return;
@@ -127,7 +129,7 @@ const ManageProductsPage = () => {
       ).unwrap();
 
       toast.success("Product Deleted", {
-        description: `Product "${productToDelete.name}" has been deleted successfully.`,
+        className: "toast-success",
       });
       setProductToDelete(null);
 
@@ -135,7 +137,7 @@ const ManageProductsPage = () => {
     } catch (err) {
       console.error("Error deleting product:", err);
       toast.error("Error deleting product", {
-        description: typeof err === "string" ? err : err.message || String(err),
+        className: "toast-danger",  
       });
       setProductToDelete(null);
     }

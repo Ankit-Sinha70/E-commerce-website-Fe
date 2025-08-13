@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getCategories } from "@/features/category/categorySlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -113,6 +113,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("Authentication Required", {
+        className: "toast-danger",
         description: "Please log in to perform this action.",
       });
       onClose();
@@ -158,6 +159,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
         description:
           data.message ||
           `Product ${initialData ? "updated" : "added"} successfully!`,
+          className: "toast-success",
       });
       setForm({
         name: "",
@@ -185,7 +187,8 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
           `An unexpected error occurred while ${
             initialData ? "updating" : "adding"
           } the product.`,
-      });
+          className: "toast-danger",
+          });
       onClose();
     } finally {
       setIsSubmitting(false);

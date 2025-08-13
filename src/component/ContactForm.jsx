@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 const ContactForm = ({ API_BASE_URL }) => {
   const [contactName, setContactName] = useState("");
@@ -46,7 +46,15 @@ const ContactForm = ({ API_BASE_URL }) => {
       const result = await response.json();
       console.log("Email sent successfully:", result);
       setContactFormSuccess(true);
-      toast.success("Message sent successfully!");
+      toast.success(
+        <div>
+          <strong>Message sent successfully!</strong>
+          <div style={{ fontSize: "14px" }}>
+            We will get back to you as soon as possible.
+          </div>
+        </div>,
+        { className: "toast-success" }
+      );
       setContactName("");
       setContactEmail("");
       setContactPhone("");
@@ -55,7 +63,15 @@ const ContactForm = ({ API_BASE_URL }) => {
     } catch (err) {
       console.error("Failed to send email:", err);
       setContactFormError(err.message);
-      toast.error("Failed to send message. Please try again later.");
+      toast.error(
+        <div>
+          <strong>Failed to send message.</strong>
+          <div style={{ fontSize: "14px" }}>
+            Please try again later.
+          </div>
+        </div>,
+        { className: "toast-danger" }
+      );
     } finally {
       setContactFormLoading(false);
     }

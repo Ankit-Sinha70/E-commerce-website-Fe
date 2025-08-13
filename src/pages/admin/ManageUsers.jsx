@@ -25,7 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import useDebounce from "@/lib/useDebounce";
 
 const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
@@ -91,12 +91,16 @@ const ManageUsers = () => {
       await dispatch(
         deleteUser({ id: userToDelete._id, accessToken })
       ).unwrap();
-      toast.success("User deleted successfully");
+      toast.success("User deleted successfully", {
+        className: "toast-success",
+      });
       // Optionally, refresh the user list
       dispatch(fetchAllUsers({ name: debouncedSearchInput, page: currentPage, accessToken }));
     } catch (err) {
       // Optionally, show a toast here for error
-      toast.error(typeof err === "string" ? err : err.message);
+        toast.error(typeof err === "string" ? err : err.message, {
+        className: "toast-danger", 
+      });
     }
     setUserToDelete(null);
   };

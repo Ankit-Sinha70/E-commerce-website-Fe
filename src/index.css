@@ -250,4 +250,67 @@
   background-size: 1200% 1200%;
   animation: animatedBackground 30s ease infinite;
 }
+@layer utilities {
+  .cursor-grid {
+    cursor: url('./assets/images/rectangle.png') 16 16, pointer;
+  }
+  .hover\:cursor-grid:hover {
+    cursor: url('./assets/images/rectangle.png') 16 16, pointer;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(34,197,94,0.6)); }
+  50% { filter: drop-shadow(0 0 8px rgba(34,197,94,1)); }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 1s ease-in-out infinite;
+}
+
+/* Success Toast */
+.toast-success {
+  background-color: #00c851 !important; /* Bright green */
+  color: white !important;
+  font-weight: 500;
+}
+
+/* Danger Toast */
+.toast-danger {
+  background-color: #ff4444 !important; /* Bright red */
+  color: white !important;
+  font-weight: 500;
+}
+
+/* Warning Toast */
+.toast-warning {
+  background-color: #ffbb33 !important; /* Yellow */
+  color: white !important;
+  font-weight: 500;
+}
+
+/* Info Toast */
+.toast-info {
+  background-color: #33b5e5 !important; /* Sky blue */
+  color: white !important;
+  font-weight: 500;
+}
+
+
+/* React-Toastify icon colors - force icons to white for all variants */
+.Toastify__toast .Toastify__toast-icon {
+  color: #ffffff !important;
+}
+.Toastify__toast .Toastify__toast-icon svg {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+.Toastify__toast--success .Toastify__toast-icon,
+.Toastify__toast--error .Toastify__toast-icon,
+.Toastify__toast--warning .Toastify__toast-icon,
+.Toastify__toast--info .Toastify__toast-icon,
+.Toastify__toast--default .Toastify__toast-icon {
+  color: #ffffff !important;
+}
+
 

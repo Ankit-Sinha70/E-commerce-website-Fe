@@ -39,7 +39,7 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { logout } from "../features/auth/authSlice";
 import { clearCart, fetchCartItems } from "../features/cart/cartSlice";
 import NotificationBell from './NotificationBell';
@@ -103,8 +103,18 @@ const Navbar = () => {
     dispatch(clearCart());
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
-    toast.success("Logged out successfully!");
-    navigate("/");
+    toast.success(
+      <div>
+        <strong>Logged Out!</strong>
+        <div style={{ fontSize: "14px" }}>
+          You have been successfully logged out.
+        </div>
+      </div>,
+      {
+        className: "toast-success",
+      }
+    );
+    navigate("/");  
     setShowLogoutDialog(false);
   };
 

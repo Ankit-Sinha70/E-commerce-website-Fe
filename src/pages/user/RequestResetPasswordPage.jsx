@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { forgotPasswordRequest } from "../../features/auth/authSlice";
 
@@ -13,14 +13,10 @@ const RequestResetPasswordPage = () => {
     e.preventDefault();
     const resultAction = await dispatch(forgotPasswordRequest(email));
     if (forgotPasswordRequest.fulfilled.match(resultAction)) {
-      toast.success(resultAction.payload, {
-        description: "Please check your email for the password reset link.",
-      });
+      toast.success(resultAction.payload, { className: "toast-success" });
       setEmail("");
     } else {
-      toast.error("Failed to send reset link", {
-        description: error || "An unexpected error occurred.",
-      });
+      toast.error(error || "An unexpected error occurred.", { className: "toast-danger" });
     }
   };
 

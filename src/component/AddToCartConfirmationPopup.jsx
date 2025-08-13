@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types"; // 💡 IMPORT: For prop validation
+import PropTypes from "prop-types";
 import { CheckCircle, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-// 💡 REFACTOR: Create a reusable component for animated elements
 const AnimatedElement = ({
   as,
   children,
@@ -19,7 +18,6 @@ const AnimatedElement = ({
 
   return (
     <div className="overflow-hidden">
-      {" "}
       <ComponentToRender
         className={`${className} transform-gpu ${animationClass}`}
         style={style}
@@ -31,7 +29,6 @@ const AnimatedElement = ({
   );
 };
 
-// Define prop types for the new component for good measure
 AnimatedElement.propTypes = {
   as: PropTypes.elementType,
   children: PropTypes.node.isRequired,
@@ -48,7 +45,6 @@ const AddToCartConfirmationPopup = ({
 }) => {
   const navigate = useNavigate();
   const [shouldRender, setShouldRender] = useState(isVisible);
-
   const modalRef = useRef(null);
   const returnFocusRef = useRef(null);
 
@@ -82,22 +78,27 @@ const AddToCartConfirmationPopup = ({
     };
   }, [isVisible, onClose]);
 
-  if (!shouldRender) {
-    return null;
-  }
+  if (!shouldRender) return null;
 
-  const overlayClasses = `fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-500 ${
-    isVisible ? "opacity-100" : "opacity-0"
-  }`;
-  const modalClasses = `relative bg-white rounded-xl p-8 shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-500 ${
-    isVisible ? "scale-100 opacity-100" : "scale-90 opacity-0"
-  }`;
+  const overlayClasses = `fixed inset-0 z-90 flex items-center justify-center 
+    bg-transparent bg-opacity-10 backdrop-blur-md 
+    transition-opacity duration-500 ${
+      isVisible ? "opacity-100" : "opacity-0"
+    }`;
+
+  const modalClasses = `relative bg-gray-800 text-white rounded-xl p-8 shadow-2xl max-w-sm w-full mx-4 
+    transform transition-all duration-500 ${
+      isVisible ? "scale-100 opacity-100" : "scale-90 opacity-0"
+    }`;
+
   const BurstParticle = ({ className, style }) => (
-    <div
-      className={`absolute top-1/2 left-1/2 w-2 h-8 bg-green-500 rounded-full ${className}`}
-      style={style}
-    />
-  );
+  <div
+    className={`absolute top-1/2 left-1/2 w-2 h-8 bg-green-500 rounded-full 
+      drop-shadow-[0_0_6px_rgba(34,197,94,0.8)] brightness-125 ${className}`}
+    style={style}
+  />
+);
+
   const handleViewCart = () => {
     onClose();
     navigate("/cart");
@@ -144,7 +145,7 @@ const AddToCartConfirmationPopup = ({
             as="h2"
             isVisible={isVisible}
             delay="0.2s"
-            className="text-2xl font-bold text-gray-900 mb-2"
+            className="text-2xl font-bold mb-2"
             id="dialog-title"
           >
             Added to Cart!
@@ -154,9 +155,9 @@ const AddToCartConfirmationPopup = ({
             as="p"
             isVisible={isVisible}
             delay="0.3s"
-            className="text-gray-600 mb-6"
+            className="text-gray-300 mb-6"
           >
-            <span className="font-semibold">
+            <span className="font-semibold text-white">
               {quantity} x {productName}
             </span>{" "}
             has been added to your cart.
@@ -175,7 +176,7 @@ const AddToCartConfirmationPopup = ({
             </Button>
             <Button
               variant="outline"
-              className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold py-3 rounded-lg transition-transform duration-200 hover:scale-105"
+              className="w-full border border-gray-600 text-gray-500 hover:bg-gray-400 font-semibold py-3 rounded-lg transition-transform duration-200 hover:scale-105"
               onClick={onClose}
             >
               Continue Shopping
@@ -187,7 +188,6 @@ const AddToCartConfirmationPopup = ({
   );
 };
 
-// 💡 ROBUSTNESS: Define prop types for the main component
 AddToCartConfirmationPopup.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   productName: PropTypes.string.isRequired,

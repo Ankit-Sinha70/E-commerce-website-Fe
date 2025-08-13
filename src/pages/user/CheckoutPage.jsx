@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 const CheckoutPage = () => {
@@ -24,7 +24,7 @@ const CheckoutPage = () => {
   const handleCheckout = async (e) => {
     e.preventDefault();
     if (!accessToken) {
-      toast.error("Please log in to proceed to checkout.");
+      toast.error("Please log in to proceed to checkout.", { className: "toast-danger" });
       return;
     }
     Swal.fire(
@@ -34,7 +34,7 @@ const CheckoutPage = () => {
     ).then(() => (window.location.href = "/order-confirmation"));
 
     if (!cartItems || cartItems.length === 0) {
-      toast.info("Your cart is empty. Add items before checking out.");
+      toast.info("Your cart is empty. Add items before checking out.", { className: "toast-info" });
       return;
     }
 

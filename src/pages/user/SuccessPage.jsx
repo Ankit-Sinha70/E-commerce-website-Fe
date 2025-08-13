@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { CheckCircle, Home, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { clearCart, clearCartBackend } from "../../features/cart/cartSlice";
 
 export default function SuccessPage() {
@@ -23,7 +23,9 @@ export default function SuccessPage() {
     const verifyAndStoreOrder = async () => {
       if (!sessionId) {
         setPaymentStatus("error");
-        toast.error("Invalid payment session or not logged in.");
+        toast.error("Invalid payment session or not logged in.", {
+          className: "toast-danger",
+        });
         return;
       }
 
@@ -45,7 +47,9 @@ export default function SuccessPage() {
         const data = await response.json();
         setPaymentStatus("success");
         setOrderId(data.orderId);
-        toast.success("Payment successful! Your order has been placed.");
+        toast.success("Payment successful! Your order has been placed.", {
+          className: "toast-success",
+        });
         dispatch(clearCart());
         if (user && accessToken) {
           dispatch(clearCartBackend({ accessToken }));
@@ -53,33 +57,35 @@ export default function SuccessPage() {
       } catch (err) {
         console.error("Order verification/storage error:", err);
         setPaymentStatus("error");
-        toast.error(err.message || "Failed to confirm your order. Please contact support.");
+        toast.error(err.message || "Failed to confirm your order. Please contact support.", {
+          className: "toast-danger",
+        });
       }
     };
     verifyAndStoreOrder();
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-200 p-6">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-xl w-full text-center animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] p-6">
+      <div className="bg-[#0b1220] border border-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 max-w-xl w-full text-center animate-fade-in">
         {paymentStatus === "verifying" && (
           <>
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 mx-auto mb-6"></div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">Confirming Your Order...</h2>
-            <p className="text-gray-600">Please wait while we process your payment.</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-400 mx-auto mb-6"></div>
+            <h2 className="text-2xl font-semibold text-gray-100 mb-3">Confirming Your Order...</h2>
+            <p className="text-gray-400">Please wait while we process your payment.</p>
           </>
         )}
 
         {paymentStatus === "success" && (
           <>
-            <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 animate-pulse" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Payment Successful!</h2>
-            <p className="text-gray-700 text-lg mb-4">
+            <CheckCircle className="w-20 h-20 text-green-400 mx-auto mb-6 animate-pulse" />
+            <h2 className="text-3xl font-bold text-gray-100 mb-4">Payment Successful!</h2>
+            <p className="text-gray-300 text-lg mb-4">
               Thank you for your purchase! Your order has been placed successfully.
             </p>
             {orderId && (
-              <p className="text-gray-600 mb-6">
-                Your Order ID: <span className="font-semibold">{orderId}</span>
+              <p className="text-gray-400 mb-6">
+                Your Order ID: <span className="font-semibold text-gray-100">{orderId}</span>
               </p>
             )}
             <div className="flex flex-col space-y-3">
@@ -91,7 +97,7 @@ export default function SuccessPage() {
               </Link>
               <Link
                 to="/profile/orders"
-                className="text-blue-700 hover:underline hover:scale-105 transition transform flex items-center justify-center gap-2"
+                className="text-blue-400 hover:underline hover:scale-105 transition transform flex items-center justify-center gap-2"
               >
                 <ShoppingCart className="w-5 h-5" /> View My Orders
               </Link>
@@ -101,7 +107,7 @@ export default function SuccessPage() {
 
         {paymentStatus === "error" && (
           <>
-            <div className="w-20 h-20 text-red-500 mx-auto mb-6 animate-bounce">
+            <div className="w-20 h-20 text-red-400 mx-auto mb-6 animate-bounce">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -117,8 +123,8 @@ export default function SuccessPage() {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-red-600 mb-4">Payment Failed!</h2>
-            <p className="text-gray-700 text-lg mb-4">
+            <h2 className="text-3xl font-bold text-red-400 mb-4">Payment Failed!</h2>
+            <p className="text-gray-300 text-lg mb-4">
               Unfortunately, your payment could not be processed.
             </p>
             <div className="flex flex-col space-y-3">
@@ -130,7 +136,7 @@ export default function SuccessPage() {
               </Link>
               <Link
                 to="/"
-                className="text-blue-700 hover:underline hover:scale-105 transition transform flex items-center justify-center gap-2"
+                className="text-blue-400 hover:underline hover:scale-105 transition transform flex items-center justify-center gap-2"
               >
                 <Home className="w-5 h-5" /> Go to Homepage
               </Link>

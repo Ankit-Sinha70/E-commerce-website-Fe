@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/sonner";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Footer from "./component/Footer";
 import Navbar from "./component/Navbar";
@@ -70,7 +69,6 @@ const App = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#111827]">
       <AppInitializer />
-      <Toaster richColors position="top-right" />
       {!isAdminRoute &&
         !isLoginPage &&
         !isRegisterPage &&

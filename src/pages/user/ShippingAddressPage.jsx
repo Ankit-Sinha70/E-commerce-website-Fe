@@ -30,7 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,8 +56,7 @@ const validateAddressForm = (formData) => {
 
   // Full name validation
   if (!formData.fullName || formData.fullName.trim().length < 2) {
-    errors.fullName =
-      "Full name is required and must be at least 2 characters";
+    errors.fullName = "Full name is required and must be at least 2 characters";
   } else if (formData.fullName.length > 50) {
     errors.fullName = "Name must be less than 50 characters";
   }
@@ -147,10 +146,11 @@ const ShippingAddressPage = () => {
     if (success) {
       const timer = setTimeout(() => {
         dispatch(clearShippingAddressSuccess());
-      }, 3000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
     if (error) {
+      toast.error(error, { className: "toast-danger" });
       const timer = setTimeout(() => {
         dispatch(clearShippingAddressError());
       }, 5000);
@@ -210,19 +210,18 @@ const ShippingAddressPage = () => {
   };
 
   // Handler for submitting the add/edit form
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-
-    // Validate form
     const isValid = validateForm();
     if (!isValid) {
+      toast.warning("Please fix the highlighted fields.", {
+        className: "toast-warning",
+      });
       return;
     }
-
     if (editingAddress) {
-      // If editing an existing address (dispatch update thunk)
       dispatch(
         updateShippingAddress({ id: editingAddress._id, addressData: formData })
       )
@@ -231,22 +230,43 @@ const ShippingAddressPage = () => {
           setShowAddEditForm(false);
           setEditingAddress(null);
           setValidationErrors({});
+          toast.success("Address updated successfully!", {
+            className: "toast-success",
+          });
         })
         .catch((err) => {
+          toast.error(err || "Failed to update address", {
+            className: "toast-danger",
+          });
           console.error("Failed to update address:", err);
         });
     } else {
-      // If adding a new address (dispatch create thunk)
-      dispatch(createShippingAddress(formData))
-        .unwrap()
-        .then(() => {
-          setShowAddEditForm(false);
-          setEditingAddress(null);
-          setValidationErrors({});
-        })
-        .catch((err) => {
-          console.error("Failed to create address:", err);
+      const response = await dispatch(createShippingAddress(formData));
+      const payload = response?.payload || {};
+      console.log("response", response);
+      if (response.type?.endsWith('/fulfilled')) {
+        setShowAddEditForm(false);
+        setEditingAddress(null);
+        setValidationErrors({});
+        toast.success(payload.message || "Address added successfully!", { className: "toast-success" });
+      } else {
+        const errorMsg = payload?.message || "Failed to create address";
+        toast.error(errorMsg, { className: "toast-danger" });
+        console.error("Failed to create address:", errorMsg);
+        setShowAddEditForm(false);
+        setValidationErrors({});
+        setFormData({
+          fullName: "",
+          phoneNumber: "",
+          addressLine: "",
+          city: "",
+          state: "",
+          postalCode: "",
+          country: "",
+          type: "Home",
+          isDefault: false,
         });
+      }
     }
   };
 
@@ -275,11 +295,15 @@ const ShippingAddressPage = () => {
       dispatch(deleteShippingAddress(addressToDelete))
         .unwrap()
         .then(() => {
-          toast.success("Address deleted successfully!");
+          toast.success("Address deleted successfully!", {
+            className: "toast-success",
+          });
           setAddressToDelete(null);
         })
         .catch((err) => {
-          toast.error(err || "Failed to delete address");
+          toast.error(err || "Failed to delete address", {
+            className: "toast-danger",
+          });
           console.error("Failed to delete address:", err);
           setAddressToDelete(null);
         });
@@ -290,7 +314,7 @@ const ShippingAddressPage = () => {
     <div className="min-h-screen bg-[#111827] text-slate-300 py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="text-center mb-8 pt-20" style={{ marginTop: '-5rem' }}>
+        <div className="text-center mb-8 pt-20" style={{ marginTop: "-5rem" }}>
           <p className="text-lg text-slate-400">
             Manage your preferred shipping destinations.
           </p>
@@ -440,8 +464,7 @@ const ShippingAddressPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-300 mb-2">
-                      State / Province{" "}
-                      <span className="text-red-500">*</span>
+                      State / Province <span className="text-red-500">*</span>
                     </label>
                     <Input
                       type="text"
@@ -495,7 +518,9 @@ const ShippingAddressPage = () => {
                       value={formData.country}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-700 text-slate-300 border-gray-600 ${
-                        validationErrors.country ? "border-red-500 bg-red-50" : ""
+                        validationErrors.country
+                          ? "border-red-500 bg-red-50"
+                          : ""
                       }`}
                       placeholder="United States"
                     />
@@ -592,7 +617,9 @@ const ShippingAddressPage = () => {
         {addresses?.length === 0 && !loading && !error && !showAddEditForm && (
           <div className="text-center py-16">
             <MapPin className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-slate-400 text-lg">No shipping addresses found</p>
+            <p className="text-slate-400 text-lg">
+              No shipping addresses found
+            </p>
             <p className="text-slate-500 text-sm mt-2">
               Click "Add New Address" to create your first address
             </p>
@@ -663,14 +690,27 @@ const ShippingAddressPage = () => {
                       </AlertDialogTrigger>
                       <AlertDialogContent className="bg-gray-800 border border-gray-700">
                         <AlertDialogHeader>
-                          <AlertDialogTitle className="text-slate-300">Are you sure?</AlertDialogTitle>
+                          <AlertDialogTitle className="text-slate-300">
+                            Are you sure?
+                          </AlertDialogTitle>
                           <AlertDialogDescription className="text-slate-400">
-                            This action cannot be undone. This will permanently delete this address.
+                            This action cannot be undone. This will permanently
+                            delete this address.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel onClick={() => setAddressToDelete(null)} className="text-slate-300">Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-900 text-red-300">Delete</AlertDialogAction>
+                          <AlertDialogCancel
+                            onClick={() => setAddressToDelete(null)}
+                            className="text-slate-300"
+                          >
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleConfirmDelete}
+                            className="bg-red-900 text-red-300"
+                          >
+                            Delete
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>

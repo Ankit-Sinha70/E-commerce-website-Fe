@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { loginUser, logout } from "../../features/auth/authSlice";
 import { registerUser } from "../../features/auth/authSlice";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion as Motion } from "framer-motion";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 import { mergeCartItems } from "@/features/cart/cartSlice";
 
@@ -40,50 +40,53 @@ const AuthTogglePage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try { 
-      const response = await dispatch(loginUser({ email: formData.email, password: formData.password }));
-      if(response.payload.accessToken){
-        dispatch(mergeCartItems({accessToken:response.payload.accessToken, cartItems}));
+      const resultAction = await dispatch(loginUser({ email: formData.email, password: formData.password }));
+
+      if (loginUser.fulfilled.match(resultAction)) {
+        const accessToken = resultAction.payload.accessToken;
+        if (accessToken) {
+          dispatch(mergeCartItems({ accessToken, cartItems }));
+        }
+        const role = resultAction.payload.user?.role;
+        toast.success(
+          role === 'admin' ? 'Welcome to the Admin Dashboard!' : 'Welcome to the Website!',
+          { className: 'toast-success' }
+        );
+      } else {
+        const errorMsg = resultAction.payload || resultAction.error?.message || 'Login failed. Please try again.';
+        toast.error(errorMsg, { className: 'toast-danger' });
       }
     } catch (error) {
-      toast.error("Login Failed", {
-        description: error?.message || "An unknown error occurred.",
-      });
+      toast.error(error?.message || "Login failed. Please try again.", { className: "toast-danger" });
     }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const response = await dispatch(registerUser(formData));
-    if(response.payload.success){
-      toast.success("Registration Successful!", {
-        description: "You can now sign in with your new account.",
-      });
-      setIsSignUp(false); 
-      setFormData({ name: "", email: "", password: "", address: "" }); 
+    const resultAction = await dispatch(registerUser(formData));
+    if (registerUser.fulfilled.match(resultAction)) {
+      const msg = resultAction.payload?.message || 'Registration successful!';
+      toast.success(msg, { className: 'toast-success' });
+      setIsSignUp(false);
+      setFormData({ name: '', email: '', password: '', address: '' });
+    } else {
+      const errorMsg = resultAction.payload || resultAction.error?.message || 'Registration failed';
+      toast.error(errorMsg, { className: 'toast-danger' });
     }
   };
 
   useEffect(() => {
-
-    if (user?.role === "admin") {
-      toast.success("Login Successful", {
-        description: "Welcome to the Admin Dashboard!",
-      });
-      navigate("/admin");
-    } else if (user?.role === "user") {
-      toast.success("Login Successful", {
-        description: "Welcome to the Website!",
-      });
-      navigate("/");
+    if (user?.role === 'admin') {
+      navigate('/admin');
+    } else if (user?.role === 'user') {
+      navigate('/');
     }
 
     if (error) {
-      toast.error("Login Failed", {
-        description: error?.message || "An unknown error occurred.",
-      });
+      toast.error(error, { className: 'toast-danger' });
       dispatch(logout());
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
     }
   }, [accessToken, user, error, loading, navigate, dispatch]);
 
@@ -91,6 +94,7 @@ const AuthTogglePage = () => {
   useEffect(() => {
     if (registrationSuccess) {
       toast.success("Registration Successful!", {
+        className: "toast-success",
         description: "You can now sign in with your new account.",
       });
       setIsSignUp(false); 
@@ -98,6 +102,7 @@ const AuthTogglePage = () => {
     }
     if (userError) {
       toast.error("Registration Failed", {
+        className: "toast-danger",
         description: userError || "An unknown error occurred during registration.",
       });
     }
@@ -134,7 +139,7 @@ const AuthTogglePage = () => {
           {/* Right Panel */}
           <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
             <AnimatePresence mode="wait">
-              <motion.div
+              <Motion.div
                 key={isSignUp ? "signup" : "signin"}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -291,7 +296,7 @@ const AuthTogglePage = () => {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </Motion.div>
             </AnimatePresence>
           </div>
         </div>

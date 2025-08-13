@@ -14,7 +14,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../features/auth/authSlice";
 import { Link } from "react-router-dom";
@@ -51,17 +51,33 @@ const AdminDashboard = () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       setShowLogoutDialog(false);
-      toast.success("Logged Out!", {
-        description: "You have been successfully logged out.",
-      });
+      toast.success(
+        <div>
+          <strong>Logged Out!</strong>
+          <div style={{ fontSize: "14px" }}>
+            You have been successfully logged out.
+          </div>
+        </div>,
+        {
+          className: "toast-success", 
+        }
+      );
+      
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
       setShowLogoutDialog(false);
-      toast.error("Logout Failed", {
-        description:
-          error.message || "An unexpected error occurred during logout.",
-      });
+      toast.error(
+        <div>
+          <strong>Logout Failed</strong>
+          <div style={{ fontSize: "14px" }}>
+            {error.message || "An unexpected error occurred during logout."}
+          </div>
+        </div>,
+        {
+          className: "toast-danger",
+        }
+      );
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       navigate("/");

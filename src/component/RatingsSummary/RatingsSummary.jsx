@@ -33,10 +33,10 @@ const RatingsSummary = ({ reviews }) => {
   return (
     <div className="flex items-start p-4 border-b max-w-3xl">
       <div className="mr-8">
-        <div className="flex items-center text-3xl font-bold">
+        <div className="flex items-center text-3xl font-bold text-yellow-500">
           {averageRating} <i className="fas fa-star text-xl ml-1"></i>
         </div>
-        <p className="text-gray-600">{totalReviews} Ratings & Reviews</p>
+        <p className="text-gray-300">{totalReviews} Ratings & Reviews</p>
       </div>
       <div className="flex-grow">
         {ratingDistribution.map(({ star, count, percentage }) => (
@@ -48,7 +48,7 @@ const RatingsSummary = ({ reviews }) => {
                 style={{ width: `${percentage}%` }}
               ></div>
             </div>
-            <span className="w-10 text-left text-gray-600">{count}</span>
+            <span className="w-10 text-left text-gray-300">{count}</span>
           </div>
         ))}
       </div>

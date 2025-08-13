@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changePassword, clearChangePasswordState, logout } from "@/features/auth/authSlice";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { CheckCircle, Eye, EyeOff, Shield, X, Sparkles, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -47,15 +47,21 @@ const ChangePasswordPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
-      toast.error("All fields are required.");
+      toast.error("All fields are required.", {
+        className: "toast-danger",
+      });
       return;
     }
     if (form.newPassword !== form.confirmPassword) {
-      toast.error("New passwords do not match.");
+      toast.error("New passwords do not match.", {
+        className: "toast-danger",
+      });
       return;
     }
     if (form.newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters.");
+      toast.error("New password must be at least 6 characters.", {
+        className: "toast-danger",
+      });
       return;
     }
     dispatch(changePassword({ oldPassword: form.oldPassword, newPassword: form.newPassword, accessToken }));
@@ -68,13 +74,17 @@ const ChangePasswordPage = () => {
     localStorage.removeItem("user");
     setShowDialog(false);
     navigate("/login");
-    toast.success("Signed out from all devices.");
+    toast.success("Signed out from all devices.", {
+      className: "toast-success",
+    });
   };
 
   // Keep signed in
   const handleKeepSignedIn = () => {
     setShowDialog(false);
-    toast.success("Password changed successfully. You are still signed in.");
+    toast.success("Password changed successfully. You are still signed in.", {
+      className: "toast-success",
+    });
   };
 
   return (

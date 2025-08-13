@@ -2,7 +2,7 @@ import { getUserProfile, updateUserProfile } from "@/features/auth/authSlice";
 import { AlertTriangle, ChevronDown, Mail, UserPen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -115,7 +115,9 @@ const ViewProfilePage = () => {
     if (accessToken) {
       dispatch(getUserProfile({ accessToken }));
     } else {
-      toast.error("You are not logged in. Please log in to view your profile.");
+      toast.error("You are not logged in. Please log in to view your profile.", {
+        className: "toast-danger",
+      });
     }
   }, [dispatch, accessToken]);
 
@@ -153,11 +155,15 @@ const ViewProfilePage = () => {
   // Handle save
   const handleSave = async () => {
     if (!user?._id) {
-      toast.error("User ID not found. Cannot update profile.");
+      toast.error("User ID not found. Cannot update profile.", {
+        className: "toast-danger",
+      });
       return;
     }
     if (!accessToken) {
-      toast.error("Authentication token missing. Please log in.");
+      toast.error("Authentication token missing. Please log in.", {
+        className: "toast-danger",
+      });
       return;
     }
 
@@ -176,10 +182,14 @@ const ViewProfilePage = () => {
       updateUserProfile({ userId: user._id, userData: payload })
     );
     if (updateUserProfile.fulfilled.match(resultAction)) {
-      toast.success("Profile updated successfully!");
+        toast.success(resultAction.payload.message || "Profile updated successfully!", {
+        className: "toast-success",
+      });
       setIsEditing(false);
     } else {
-      toast.error(error || "Failed to update profile. Please try again.");
+        toast.error(resultAction.payload.message || "Failed to update profile. Please try again.", {
+        className: "toast-danger",
+      });
     }
   };
 

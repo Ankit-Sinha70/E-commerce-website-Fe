@@ -9,20 +9,24 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       position="top-right"
+      richColors
       classNames={{
         toast:
-          "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+          "group toast rounded-xl font-semibold shadow-2xl",
+        loader: "!bg-black",
         description: "group-[.toast]:text-muted-foreground",
         actionButton:
           "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
         cancelButton:
           "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        
         success:
-          "group-[.toaster]:bg-green-500 group-[.toaster]:text-white group-[.toaster]:border-green-600",
-        
+          "!bg-emerald-500 !text-white !shadow-[0_20px_40px_-12px_rgba(16,185,129,0.7)] !ring-1 !ring-emerald-300",
+        warning:
+          "!bg-amber-500 !text-white !shadow-[0_20px_40px_-12px_rgba(245,158,11,0.7)] !ring-1 !ring-amber-300",
+        info:
+          "!bg-cyan-500 !text-white !shadow-[0_20px_40px_-12px_rgba(6,182,212,0.7)] !ring-1 !ring-cyan-300",
         error:
-          "group-[.toaster]:bg-red-500 group-[.toaster]:text-white group-[.toaster]:border-red-600",
+          "!bg-red-500 !text-white !shadow-[0_20px_40px_-12px_rgba(239,68,68,0.7)] !ring-1 !ring-red-300",
       }}
       {...props}
     />

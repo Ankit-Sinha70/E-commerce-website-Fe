@@ -9,7 +9,7 @@ import useDebounce from "@/lib/useDebounce";
 import { PackageOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import OrderCardList from "./OrderCardList";
 import OrderDetailsDialog from "./OrderDetailsDialog";
 import OrderFilters from "./OrderFilters";
@@ -76,7 +76,9 @@ const OrdersPage = () => {
     if (!orderToDelete) return;
     try {
       await dispatch(deleteOrder(orderToDelete)).unwrap();
-      toast.success("Order deleted successfully!");
+      toast.success("Order deleted successfully!", {
+        className: "toast-success",
+      });
       setOrderToDelete(null);
       dispatch(
         fetchOrders({
@@ -92,7 +94,7 @@ const OrdersPage = () => {
       });
     } catch (err) {
       toast.error("Failed to delete order", {
-        description: err?.message || String(err),
+        className: "toast-danger",
       });
       setOrderToDelete(null);
     }
@@ -142,7 +144,9 @@ const OrdersPage = () => {
         })
       ).unwrap();
 
-      toast.success("Order status updated successfully!");
+      toast.success("Order status updated successfully!", {
+        className: "toast-success",
+      });
       setShowStatusDialog(false);
       dispatch(
         fetchOrders({
@@ -155,7 +159,9 @@ const OrdersPage = () => {
       });
     } catch (err) {
       console.error("Error in updating status: ", err.message);
-      toast.error("Failed to update status");
+      toast.error("Failed to update status", {
+        className: "toast-danger",
+      });
     }
   };
 
