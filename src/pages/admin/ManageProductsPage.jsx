@@ -218,12 +218,12 @@ const ManageProductsPage = () => {
 
         {/* Dialog for Add/Edit Product */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="bg-gray-800 text-slate-300 shadow-xl rounded-lg no-scrollbar">
-            <DialogHeader>
-              <DialogTitle>
-                {editingProduct ? "Edit Product" : "Add New Product"}
-              </DialogTitle>
-            </DialogHeader>
+        <DialogContent className="bg-gray-800 text-slate-300 shadow-xl rounded-2xl border border-gray-700 no-scrollbar">
+          <DialogHeader className="bg-blue-900 text-white p-4 rounded-t-2xl">
+            <DialogTitle className="text-xl font-bold">
+              {editingProduct ? "Edit Product" : "Add New Product"}
+            </DialogTitle>
+          </DialogHeader>
             <AddProductFormContent
               onClose={handleCloseModal}
               onProductAdded={fetchProductsData}

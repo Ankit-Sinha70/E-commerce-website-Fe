@@ -83,7 +83,6 @@ const AuthTogglePage = () => {
     }
 
     if (error) {
-      toast.error(error, { className: 'toast-danger' });
       dispatch(logout());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');

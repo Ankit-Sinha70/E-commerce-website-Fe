@@ -270,21 +270,21 @@
 
 /* Success Toast */
 .toast-success {
-  background-color: #00c851 !important; /* Bright green */
+  background-color: #04903c !important; /* Bright green */
   color: white !important;
   font-weight: 500;
 }
 
 /* Danger Toast */
 .toast-danger {
-  background-color: #ff4444 !important; /* Bright red */
+  background-color: #ce3232 !important; /* Bright red */
   color: white !important;
   font-weight: 500;
 }
 
 /* Warning Toast */
 .toast-warning {
-  background-color: #ffbb33 !important; /* Yellow */
+  background-color: #fabb3d !important; /* Yellow */
   color: white !important;
   font-weight: 500;
 }

@@ -205,13 +205,13 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
   categories?.find((cat) => cat._id === form.category)?.name || "";
 
   return (
-    <div className="relative">
+    <div className="relative bg-gray-800 text-slate-300">
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 p-2 overflow-y-auto hide-scrollbar"
+        className="space-y-4 p-4 overflow-y-auto hide-scrollbar"
       >
         <div>
-          <label htmlFor="name">Product Name</label>
+          <label htmlFor="name" className="text-slate-300">Product Name</label>
           <Input
             type="text"
             id="name"
@@ -220,10 +220,11 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             value={form.name}
             onChange={handleChange}
             required
+            className="bg-gray-700 border-gray-600 text-slate-200 placeholder-gray-400"
           />
         </div>
         <div>
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description" className="text-slate-300">Description</label>
           <Textarea
             id="description"
             name="description"
@@ -231,10 +232,11 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             value={form.description}
             onChange={handleChange}
             required
+            className="bg-gray-700 border-gray-600 text-slate-200 placeholder-gray-400"
           />
         </div>
         <div>
-          <label htmlFor="price">Price (AED)</label>
+          <label htmlFor="price" className="text-slate-300">Price (AED)</label>
           <Input
             type="number"
             id="price"
@@ -244,10 +246,11 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             onChange={handleChange}
             required
             step="0.01"
+            className="bg-gray-700 border-gray-600 text-slate-200 placeholder-gray-400"
           />
         </div>
         <div>
-          <label htmlFor="category">Category</label>
+          <label htmlFor="category" className="text-slate-300">Category</label>
           <select
             name="category"
             value={form.category || ""}
@@ -255,7 +258,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
               setForm((f) => ({ ...f, category: e.target.value }))
             }
             required
-            className="w-full border rounded p-2"
+            className="w-full border rounded p-2 bg-gray-700 border-gray-600 text-slate-200"
           >
             <option value="">Select Category</option>
             {categories?.map((cat) => (
@@ -268,14 +271,14 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
         <div>
           {imagePreviewUrl && (
             <div className="mt-2">
-              <span className="block text-sm text-gray-700 mb-1">
+              <span className="block text-sm text-slate-300 mb-1">
                 Current Image:
               </span>
               <a
                 href={imagePreviewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block border border-gray-300 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                className="inline-block border border-gray-600 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
               >
                 <img
                   src={imagePreviewUrl}
@@ -283,12 +286,12 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
                   className="w-24 h-24 object-cover object-center rounded-md"
                 />
               </a>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-400 mt-1">
                 Upload new to replace
               </p>
             </div>
           )}
-          <label htmlFor="image">
+          <label htmlFor="image" className="text-slate-300">
             {imagePreviewUrl ? "Update image" : "Add Image"}
           </label>
           <Input
@@ -298,6 +301,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             accept="image/*"
             onChange={handleChange}
             required={!initialData || !initialData.image}
+            className="bg-gray-700 border-gray-600 text-slate-200"
           />
         </div>
         <div className="flex justify-end space-x-2 pt-4">
@@ -306,20 +310,21 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             variant="outline"
             onClick={onClose}
             disabled={isSubmitting}
+            className="border-gray-600 text-slate-300 hover:bg-gray-700"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <span className="flex items-center">
                 <div className="flex justify-center items-center py-12">
                   <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600 text-lg">Loading...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+                    <p className="text-slate-300 text-lg">Loading...</p>
                   </div>
                 </div>
                 {initialData ? "Updating..." : "Adding..."}
@@ -331,14 +336,14 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             )}
           </Button>
         </div>
-        {formError && <p className="text-red-500 text-sm mt-2">{formError}</p>}
+        {formError && <p className="text-red-400 text-sm mt-2">{formError}</p>}
       </form>
       {isSubmitting && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-lg z-10">
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg z-10">
           <div className="flex justify-center items-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 text-lg">Loading...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+              <p className="text-slate-200 text-lg">Loading...</p>
             </div>
           </div>
         </div>
