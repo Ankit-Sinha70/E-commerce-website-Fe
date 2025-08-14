@@ -129,7 +129,7 @@ const Navbar = () => {
         <img
           src="./src/assets/logo/logo.png"
           alt="Logo"
-          className="h-16 w-16"
+          className="h-17 w-24"
         />
       </Link>
 
@@ -139,7 +139,6 @@ const Navbar = () => {
             <Link
               to={item.to}
               className={cn(
-                // CHANGED: Replaced 'transition-colors' with 'transition-all' and added hover transform
                 "flex items-center gap-1 text-white text-base hover:text-blue-600 transition-all duration-300 ease-in-out hover:-translate-y-1",
                 location.pathname === item.to ? "underline font-semibold" : ""
               )}
@@ -158,13 +157,11 @@ const Navbar = () => {
         {isLoggedIn && !isAdmin ? (
           <>
             <li>
-              {/* Consider adding the float animation to NotificationBell if it's a button/link */}
-              <NotificationBell className="text-white hover:bg-gray-300" />
+              <NotificationBell className="text-gray-500 hover:bg-gray-600" />
             </li>
             <li className="relative">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  {/* CHANGED: Added transition and hover effect to the dropdown trigger button */}
                   <button className="flex items-center gap-2 text-white text-base hover:text-gray-600 focus:outline-none transition-all duration-300 ease-in-out hover:-translate-y-1 group">
                     {user?.avatar ? (
                       <img
@@ -178,7 +175,6 @@ const Navbar = () => {
                     <span className="font-semibold">
                       {user?.name || user?.email || "Profile"}
                     </span>
-                    {/* Added 'group-hover:rotate-180' for a nice touch on the arrow */}
                     <svg
                       className="w-4 h-4 ml-1 transform transition-transform duration-300 group-hover:rotate-180"
                       fill="none"
@@ -282,7 +278,6 @@ const Navbar = () => {
             <Link
               to="/login"
               className={cn(
-                // CHANGED: Replaced 'transition-colors' with 'transition-all' and added hover transform
                 "flex items-center gap-1 text-white text-base hover:text-blue-200 transition-all duration-300 ease-in-out hover:-translate-y-1",
                 location.pathname === "/login"
                   ? "underline font-semibold"
@@ -407,7 +402,7 @@ const Navbar = () => {
                           setMobileOpen(false);
                           setShowLogoutDialog(true);
                         }}
-                        className="block w-full text-left py-2 text-red-300 hover:text-red-100 items-center" // Added flex items-center
+                        className="block w-full text-left py-2 text-red-300 hover:text-red-100 items-center" 
                       >
                         <LogOut className="inline-block w-5 h-5 mr-2" /> Logout
                       </button>

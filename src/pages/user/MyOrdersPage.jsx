@@ -742,9 +742,9 @@ const MyOrdersPage = () => {
 
   return (
     <div className="min-h-screen bg-[#111827] text-slate-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-4 mt-16">
           <div className="relative inline-block">
             <h1 className="relative text-4xl md:text-5xl font-bold text-white mb-4">
               {activeTab === "orders" ? "My Orders" : "Return Requests"}

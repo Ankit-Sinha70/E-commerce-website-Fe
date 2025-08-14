@@ -312,12 +312,12 @@ const ShippingAddressPage = () => {
 
   return (
     <div className="min-h-screen bg-[#111827] text-slate-300 py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-8 pt-20" style={{ marginTop: "-5rem" }}>
-          <p className="text-lg text-slate-400">
-            Manage your preferred shipping destinations.
-          </p>
+          <h3 className="text-2xl text-slate-400">
+            Manage your preferred shipping Addresses.
+          </h3>
         </div>
 
         {/* Loading and Error Indicators */}
@@ -339,8 +339,6 @@ const ShippingAddressPage = () => {
         <div className="text-left mb-2">
           <p className="text-slate-400 mt-2">Manage your delivery addresses</p>
         </div>
-        {/* Modal Overlay */}
-        {/* Replace the div with shadcn/ui Dialog */}
         <Dialog open={showAddEditForm} onOpenChange={setShowAddEditForm}>
           <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl bg-gray-800 border border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Modal Header */}
@@ -618,7 +616,7 @@ const ShippingAddressPage = () => {
           <div className="text-center py-16">
             <MapPin className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <p className="text-slate-400 text-lg">
-              No shipping addresses found
+              No shipping addresses found 
             </p>
             <p className="text-slate-500 text-sm mt-2">
               Click "Add New Address" to create your first address
@@ -652,7 +650,7 @@ const ShippingAddressPage = () => {
                     <h3 className="text-lg font-semibold text-slate-300">
                       {address?.fullName}
                     </h3>
-                    <span className="ml-2 text-sm text-gray-500 bg-gray-700 px-2 py-1 rounded">
+                    <span className="ml-2 text-sm text-gray-200 bg-blue-500 px-2 py-1 rounded">
                       {address.type}
                     </span>
                   </div>

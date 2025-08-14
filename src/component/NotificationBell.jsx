@@ -87,31 +87,35 @@ const NotificationBell = () => {
         <DropdownMenuSeparator className="bg-gray-700" />
 
         {loading ? (
-          <DropdownMenuItem className="flex justify-center items-center text-sm text-gray-500">
+          <DropdownMenuItem className="flex justify-center items-center text-sm text-gray-300">
             <Loader2 className="mr-2 h-4 w-4 animate-spin text-blue-500" />
             Loading...
           </DropdownMenuItem>
         ) : notifications?.length > 0 ? (
           <>
-            {notifications?.map((notification) => (
-              <DropdownMenuItem
-                key={notification._id}
-                className={`flex items-start gap-2 px-3 py-2 rounded-md transition-colors duration-200 cursor-pointer ${
-                  !notification.isRead ? "bg-gray-500 hover:bg-gray-600" : "hover:bg-gray-700"
-                }`}
-                onClick={() => handleNotificationClick(notification)}
-              >
-                <div className="flex-grow">
-                  <p className="font-medium text-sm text-slate-300">{notification.title}</p>
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{notification.message}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">
-                    {formatDistanceToNow(new Date(notification.createdAt), {
-                      addSuffix: true,
-                    })}
-                  </p>
-                </div>
-              </DropdownMenuItem>
-            ))}
+            <div className="px-2 py-1 space-y-2">
+              {notifications?.map((notification) => (
+                <DropdownMenuItem
+                  key={notification._id}
+                  className={`flex items-start gap-3 px-4 py-3 rounded-md transition duration-200 cursor-pointer hover:shadow-sm ${
+                    !notification.isRead
+                      ? "bg-gray-600/60 hover:bg-gray-600"
+                      : "hover:bg-gray-700/60"
+                  }`}
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <div className="flex-grow">
+                    <p className="font-medium text-sm text-slate-300">{notification.title}</p>
+                    <p className="text-xs text-gray-300 mt-1 line-clamp-2">{notification.message}</p>
+                    <p className="text-[10px] text-gray-400 mt-1">
+                      {formatDistanceToNow(new Date(notification.createdAt), {
+                        addSuffix: true,
+                      })}
+                    </p>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </div>
 
             {notifications?.length > 0 && (
               <div className="text-center py-2">

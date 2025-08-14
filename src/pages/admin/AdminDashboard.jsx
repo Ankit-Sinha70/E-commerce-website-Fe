@@ -86,18 +86,14 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#1e293b] text-slate-300 flex">
-      {/* Sidebar */}
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
         <header className="bg-[#1e293b] text-slate-50 p-4 sticky top-0 shadow-md z-10">
           <div className="flex justify-end items-center">
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="lg:hidden text-white mr-4 p-2 focus:outline-none focus:ring-2 focus:ring-white rounded"
@@ -152,7 +148,7 @@ const AdminDashboard = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#1e293b] p-4">
+        <main className="flex-1 overflow-y-auto bg-[#1e293b] p-4">
           <Outlet />
         </main>
       </div>

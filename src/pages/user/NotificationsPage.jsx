@@ -151,12 +151,12 @@ const NotificationsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#111827] text-slate-300 py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#111827] text-slate-300 py-20 sm:py-24">
+      <div className="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-white mb-4">Notifications</h2>
-          <p className="text-lg text-slate-400">Stay up-to-date with the latest activity on your account.</p>
+          <h2 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-4">Notifications</h2>
+          <p className="text-base sm:text-lg text-slate-400">Stay up-to-date with the latest activity on your account.</p>
         </div>
 
         {loading ? (
@@ -172,7 +172,7 @@ const NotificationsPage = () => {
         ) : (
           <Card className="bg-gray-800 border border-gray-700 rounded-2xl shadow-lg">
             <CardContent className="p-0">
-              <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 p-4 border-b border-gray-700">
                 <div className="flex items-center gap-2">
                   <Checkbox
                     id="select-all"
@@ -184,13 +184,13 @@ const NotificationsPage = () => {
                     Select All
                   </label>
                 </div>
-                <div>
+                <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
                   <Button
                     variant="destructive"
                     size="sm"
                     disabled={selectedNotifications.length === 0}
                     onClick={handleDeleteSelected}
-                    className="bg-red-500 hover:bg-red-600 text-white"
+                    className="bg-red-500 hover:bg-red-600 text-white w-full sm:w-auto"
                   >
                     Delete Selected
                   </Button>
@@ -198,7 +198,7 @@ const NotificationsPage = () => {
                     variant="outline"
                     size="sm"
                     onClick={handleMarkAllAsRead}
-                    className="ml-2 text-slate-300"
+                    className="sm:ml-2 text-slate-300 w-full sm:w-auto"
                   >
                     Mark All as Read
                   </Button>
@@ -207,7 +207,7 @@ const NotificationsPage = () => {
                     size="sm"
                     onClick={handleDeleteAll}
                     disabled={selectedNotifications.length <= 1}
-                    className="ml-2 bg-red-500 hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="sm:ml-2 bg-red-500 hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                   >
                     Delete All
                   </Button>
@@ -217,7 +217,7 @@ const NotificationsPage = () => {
                 {notifications.map((notification) => (
                   <div
                     key={notification._id}
-                    className={`flex items-start p-4 gap-4 transition-colors ${!notification.isRead ? 'bg-gray-700' : 'bg-gray-800'} hover:bg-gray-700`}
+                    className={`flex flex-col sm:flex-row items-start sm:items-center p-4 gap-3 sm:gap-4 transition-colors ${!notification.isRead ? 'bg-gray-700' : 'bg-gray-800'} hover:bg-gray-700`}
                   >
                     <Checkbox
                       id={`select-${notification._id}`}
@@ -227,7 +227,7 @@ const NotificationsPage = () => {
                     />
                     <div className="flex-grow cursor-pointer" onClick={() => handleSelect(notification._id)}>
                       <p className="font-semibold text-slate-300">{notification.title}</p>
-                      <p className="text-sm text-gray-500 mt-1">{notification.message}</p>
+                      <p className="text-sm text-gray-500 mt-1 break-words">{notification.message}</p>
                       <p className="text-xs text-gray-500 mt-2">
                         {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                       </p>
@@ -235,8 +235,9 @@ const NotificationsPage = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 flex-shrink-0 text-gray-500 hover:text-red-500"
+                      className="h-8 w-8 flex-shrink-0 text-gray-500 hover:text-red-500 self-end sm:self-auto mt-2 sm:mt-0"
                       onClick={() => handleDeleteSingle(notification._id)}
+                      aria-label="Delete notification"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
