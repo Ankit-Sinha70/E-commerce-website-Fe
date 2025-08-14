@@ -172,18 +172,29 @@ export const fetchAllReturnRequests = createAsyncThunk(
 
 export const fetchUserReturnRequest = createAsyncThunk(
   "order/fetchUserReturnRequest",
-  async ({ userId, page = 1, limit = 10 }, { rejectWithValue }) => {
+  async ({ userId, accessToken, page = 1, limit = 10 }, { rejectWithValue }) => {
     try {
+      const params = { page, limit, _ts: Date.now() };
+      const config = accessToken
+        ? { headers: { Authorization: `Bearer ${accessToken}`, 'Cache-Control': 'no-cache' }, params }
+        : { params };
       const response = await axios.get(
         `${API_URL}/api/order/user-return-request/${userId}`,
-        { params: { page, limit } }
+        config
       );
+      const serverItems = Array.isArray(response.data.returnRequests)
+        ? response.data.returnRequests
+        : [];
+      const serverLimit = Number(response.data.limit) || Number(limit) || 10;
+      const serverPage = Number(response.data.page) || Number(page) || 1;
+      const serverTotal = Number(response.data.totalItems) || serverItems.length;
+      const computedTotalPages = Math.max(1, Math.ceil(serverTotal / serverLimit));
       return {
-        data: response.data.returnRequests || [],
-        page: response.data.page || page,
-        totalPages: response.data.totalPages || 1,
-        totalItems: response.data.totalItems || 0,
-        limit: response.data.limit || limit,
+        data: serverItems,
+        page: serverPage,
+        totalPages: Number(response.data.totalPages) || computedTotalPages,
+        totalItems: serverTotal,
+        limit: serverLimit,
       };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);

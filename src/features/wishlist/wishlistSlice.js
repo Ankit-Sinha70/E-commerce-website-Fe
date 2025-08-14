@@ -211,9 +211,21 @@ const wishlistSlice = createSlice({
       })
       .addCase(removeItemFromWishList.fulfilled, (state, action) => {
         state.loading = false;
-        if (state.wishlist && state.wishlist.products) {
+        const removedProductId = action.payload;
+        if (
+          state.wishlist &&
+          state.wishlist.wishList &&
+          Array.isArray(state.wishlist.wishList.products)
+        ) {
+          state.wishlist.wishList.products = state.wishlist.wishList.products.filter(
+            (product) => product._id !== removedProductId
+          );
+        } else if (
+          state.wishlist &&
+          Array.isArray(state.wishlist.products)
+        ) {
           state.wishlist.products = state.wishlist.products.filter(
-            (product) => product._id !== action.payload
+            (product) => product._id !== removedProductId
           );
         }
       })

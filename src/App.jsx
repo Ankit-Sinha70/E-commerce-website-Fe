@@ -36,6 +36,7 @@ import { fetchNotifications } from "./features/notification/notificationSlice";
 import ManageUsers from "./pages/admin/ManageUsers";
 import NotificationsPage from "./pages/user/NotificationsPage";
 import useSocket from "./lib/socket";
+import CancelledOrdersPage from "./pages/admin/CancelledOrdersPage";
 
 const AppInitializer = () => {
   const { user } = useSelector((state) => state.auth);
@@ -89,6 +90,7 @@ const App = () => {
             <Route index element={<DashboardHomePage />} />
             <Route path="dashboard" element={<DashboardHomePage />} />
             <Route path="orders" element={<OrdersPage />} />
+            <Route path="cancelled-orders" element={<CancelledOrdersPage />} />
             <Route path="manage-products" element={<ManageProductsPage />} />
             <Route path="messages" element={<MessagesPage />} />
             <Route path="manage-return-requests" element={<ManageReturnRequests />} />
@@ -128,6 +130,7 @@ const App = () => {
             <Route path="/contactUs" element={<ContactForm />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/product/:id" element={<ProductDetailsPage />} />
+
 
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/cancel" element={<ErrorPage />} />

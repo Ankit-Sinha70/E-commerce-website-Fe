@@ -93,7 +93,8 @@ const ManageProductsPage = () => {
         className: "toast-danger",
       });
     }
-  }, [debouncedSearchTerm, filterCategory, currentPage, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchTerm, filterCategory, currentPage]);
 
   const handleSearch = () => {
     setCurrentPage(1);
@@ -151,6 +152,11 @@ const ManageProductsPage = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  // Ensure new products show at the top by returning to page 1 after add
+  const handleProductAdded = () => {
+    setCurrentPage(1);
   };
 
   return (
@@ -226,7 +232,7 @@ const ManageProductsPage = () => {
           </DialogHeader>
             <AddProductFormContent
               onClose={handleCloseModal}
-              onProductAdded={fetchProductsData}
+              onProductAdded={handleProductAdded}
               initialData={editingProduct}
               categories={categories}
               loading={loading}

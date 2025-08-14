@@ -54,28 +54,28 @@ export default function TrackOrderDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Track Order</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="max-w-md bg-gray-800 border border-gray-700 rounded-2xl shadow-lg text-slate-300">
+        <DialogHeader className="border-b border-gray-700 pb-2">
+          <DialogTitle className="text-white">Track Order</DialogTitle>
+          <DialogDescription className="text-gray-400">
             {trackingId && (
-              <span className="font-mono text-xs text-gray-500">
+              <span className="font-mono text-xs text-gray-400">
                 Tracking ID: #{trackingId}
               </span>
             )}
           </DialogDescription>
         </DialogHeader>
-        {trackingLoading && <div>Loading tracking info...</div>}
+        {trackingLoading && <div className="text-gray-400">Loading tracking info...</div>}
         {trackingError && (
           <div className="text-red-500">Error: {trackingError}</div>
         )}
         {tracking && (
-          <div>
+          <div className="space-y-3">
             <div className="mb-2">
-              <span className="font-semibold">Status:</span> {tracking.status}
+              <span className="font-semibold text-slate-300">Status:</span> <span className="text-gray-300">{tracking.status}</span>
             </div>
             <div className="mb-2">
-              <span className="font-semibold">Estimated Delivery:</span>{" "}
+              <span className="font-semibold text-slate-300">Estimated Delivery:</span>{" "}
               {estimatedDeliveryDate
                 ? new Date(estimatedDeliveryDate).toLocaleString("en-US", {
                     weekday: "long",
@@ -89,20 +89,20 @@ export default function TrackOrderDialog({
             </div>
 
             <div className="mb-4">
-              <span className="font-semibold">Current Location:</span>{" "}
-              {tracking.currentLocation || "N/A"}
+              <span className="font-semibold text-slate-300">Current Location:</span>{" "}
+              <span className="text-gray-300">{tracking.currentLocation || "N/A"}</span>
             </div>
             <div className="flex flex-col gap-2">
               {tracking.trackingHistory?.map((item, idx) => {
                 const stepStatus = getStepStatus(idx, currentStepIdx);
                 return (
                   <div key={idx} className="flex items-start gap-2">
-                    <span className="text-lg w-6 text-center">
+                    <span className={`text-lg w-6 text-center ${stepStatus === 'completed' ? 'text-green-500' : stepStatus === 'current' ? 'text-blue-500' : 'text-gray-500'}`}>
                       {statusIcons[stepStatus]}
                     </span>
                     <div>
-                      <div className="font-medium">{item.status}</div>
-                      <div className="text-xs text-gray-500 flex flex-col">
+                      <div className="font-medium text-slate-300">{item.status}</div>
+                      <div className="text-xs text-gray-400 flex flex-col">
                         <span>
                           {item.timestamp
                             ? new Date(item.timestamp).toLocaleDateString()
@@ -128,7 +128,7 @@ export default function TrackOrderDialog({
           </div>
         )}
         <div className="flex justify-end mt-4">
-          <Button variant="outline" onClick={() => onClose(false)}>
+          <Button variant="outline" className="text-slate-300 border-gray-700 hover:bg-gray-300" onClick={() => onClose(false)}>
             Close
           </Button>
         </div>

@@ -53,20 +53,20 @@ const CancelledOrdersPage = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+    <div className="p-4 sm:p-6 bg-[#0f172a] text-slate-300 min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Cancelled Orders</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Cancelled Orders</h1>
         {totalItems > 0 && (
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-slate-400">
             Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} orders
           </div>
         )}
       </div>
       
       {/* Desktop Table View */}
-      <div className="hidden lg:block bg-white rounded-lg shadow-md overflow-hidden mb-6">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-800">
+      <div className="hidden lg:block bg-gray-800 border border-gray-700 rounded-lg shadow-md overflow-hidden mb-6">
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead className="bg-gray-900">
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Order ID</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">User</th>
@@ -74,13 +74,13 @@ const CancelledOrdersPage = () => {
               <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-gray-800 divide-y divide-gray-700">
             {orders.length > 0 ? (
               orders.map((order) => (
-                <tr key={order._id} className="hover:bg-gray-100 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.orderId}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{order.user?.name || 'Guest'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{order.email}</td>
+                <tr key={order._id} className="hover:bg-gray-700 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-300">{order.orderId}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{order.user?.name || 'Guest'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{order.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                     <div className="flex justify-center items-center space-x-2">
                       <Tooltip>
@@ -88,7 +88,7 @@ const CancelledOrdersPage = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="text-blue-600 hover:text-blue-800 hover:bg-blue-200"
+                            className="text-blue-300 hover:text-blue-200 hover:bg-blue-900/20 border-gray-700"
                             onClick={() => setSelectedOrder(order)}
                           >
                             <Eye className="h-4 w-4" />
@@ -98,7 +98,7 @@ const CancelledOrdersPage = () => {
                       </Tooltip>
                       <Button 
                         onClick={() => handleInitiateRefund(order._id)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
                         size="sm"
                         disabled={loading || order.refundStatus === 'Initiated' || order.refundStatus === 'Succeeded'}
                       >
@@ -110,7 +110,7 @@ const CancelledOrdersPage = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                <td colSpan="4" className="px-6 py-4 text-center text-gray-400">
                   No cancelled orders found
                 </td>
               </tr>
@@ -123,25 +123,25 @@ const CancelledOrdersPage = () => {
       <div className="lg:hidden space-y-4">
         {orders.length > 0 ? (
           orders.map((order) => (
-            <div key={order._id} className="bg-white p-4 rounded-lg shadow">
+            <div key={order._id} className="bg-gray-800 border border-gray-700 p-4 rounded-lg shadow">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <p className="font-medium">Order #{order.orderId}</p>
-                  <p className="text-sm text-gray-600">{order.user?.name || 'Guest'}</p>
-                  <p className="text-sm text-gray-600">{order.email}</p>
+                  <p className="font-medium text-slate-300">Order #{order.orderId}</p>
+                  <p className="text-sm text-slate-400">{order.user?.name || 'Guest'}</p>
+                  <p className="text-sm text-slate-400">{order.email}</p>
                 </div>
                 <div className="flex space-x-2">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-8 w-8 border-gray-700 text-slate-300"
                     onClick={() => setSelectedOrder(order)}
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
                   <Button 
                     onClick={() => handleInitiateRefund(order._id)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white h-8 px-3 text-sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white h-8 px-3 text-sm"
                     disabled={loading || order.refundStatus === 'Initiated' || order.refundStatus === 'Succeeded'}
                   >
                     {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : (order.refundStatus === 'Initiated' ? 'Initiated' : (order.refundStatus === 'Succeeded' ? 'Refunded' : 'Refund'))}
@@ -151,7 +151,7 @@ const CancelledOrdersPage = () => {
             </div>
           ))
         ) : (
-          <div className="text-center p-4 text-gray-500">
+          <div className="text-center p-4 text-gray-400">
             No cancelled orders found
           </div>
         )}
@@ -165,7 +165,7 @@ const CancelledOrdersPage = () => {
               variant="outline"
               disabled={currentPage === 1}
               onClick={() => handlePageChange(currentPage - 1)}
-              className="px-4 py-2 text-sm"
+              className="px-4 py-2 text-sm border-gray-700 text-slate-300 hover:bg-gray-700"
             >
               Previous
             </Button>
@@ -173,19 +173,19 @@ const CancelledOrdersPage = () => {
               variant="outline"
               disabled={currentPage === totalPages}
               onClick={() => handlePageChange(currentPage + 1)}
-              className="ml-3 px-4 py-2 text-sm"
+              className="ml-3 px-4 py-2 text-sm border-gray-700 text-slate-300 hover:bg-gray-700"
             >
               Next
             </Button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{((currentPage - 1) * itemsPerPage) + 1}</span> to{' '}
-                <span className="font-medium">
+              <p className="text-sm text-slate-400">
+                Showing <span className="font-medium text-slate-300">{((currentPage - 1) * itemsPerPage) + 1}</span> to{' '}
+                <span className="font-medium text-slate-300">
                   {Math.min(currentPage * itemsPerPage, totalItems)}
                 </span>{' '}
-                of <span className="font-medium">{totalItems}</span> results
+                of <span className="font-medium text-slate-300">{totalItems}</span> results
               </p>
             </div>
             <div>
@@ -193,7 +193,7 @@ const CancelledOrdersPage = () => {
                 <button
                   onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">First</span>
                   <ChevronsLeft className="h-5 w-5" />
@@ -201,13 +201,11 @@ const CancelledOrdersPage = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Previous</span>
                   <ChevronLeft className="h-5 w-5" />
                 </button>
-                
-                {/* Page numbers */}
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNum;
                   if (totalPages <= 5) {
@@ -219,26 +217,24 @@ const CancelledOrdersPage = () => {
                   } else {
                     pageNum = currentPage - 2 + i;
                   }
-                  
                   return (
                     <button
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
                       className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                         currentPage === pageNum
-                          ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          ? 'z-10 bg-blue-900/30 border-blue-500 text-blue-300'
+                          : 'bg-gray-800 border-gray-700 text-slate-300 hover:bg-gray-700'
                       }`}
                     >
                       {pageNum}
                     </button>
                   );
                 })}
-
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Next</span>
                   <ChevronRight className="h-5 w-5" />
@@ -246,7 +242,7 @@ const CancelledOrdersPage = () => {
                 <button
                   onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Last</span>
                   <ChevronsRight className="h-5 w-5" />
@@ -259,48 +255,48 @@ const CancelledOrdersPage = () => {
 
       {/* Order Details Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-gray-800 border border-gray-700 text-slate-300">
           <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
+            <DialogTitle className="text-white">Order Details</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h3 className="font-medium">Order ID</h3>
-                  <p className="text-gray-600">{selectedOrder.orderId}</p>
+                  <h3 className="font-medium text-slate-300">Order ID</h3>
+                  <p className="text-slate-400">{selectedOrder.orderId}</p>
                 </div>
                 <div>
-                  <h3 className="font-medium">Order Date</h3>
-                  <p className="text-gray-600">
+                  <h3 className="font-medium text-slate-300">Order Date</h3>
+                  <p className="text-slate-400">
                     {new Date(selectedOrder.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-medium">Customer</h3>
-                  <p className="text-gray-600">{selectedOrder.user?.name || 'Guest'}</p>
+                  <h3 className="font-medium text-slate-300">Customer</h3>
+                  <p className="text-slate-400">{selectedOrder.user?.name || 'Guest'}</p>
                 </div>
                 <div>
-                  <h3 className="font-medium">Email</h3>
-                  <p className="text-gray-600">{selectedOrder.email}</p>
+                  <h3 className="font-medium text-slate-300">Email</h3>
+                  <p className="text-slate-400">{selectedOrder.email}</p>
                 </div>
                 <div>
-                  <h3 className="font-medium">Phone</h3>
-                  <p className="text-gray-600">{selectedOrder.user?.phoneNumber || 'N/A'}</p>
+                  <h3 className="font-medium text-slate-300">Phone</h3>
+                  <p className="text-slate-400">{selectedOrder.user?.phoneNumber || 'N/A'}</p>
                 </div>
                 <div>
-                  <h3 className="font-medium">Status</h3>
-                  <p className="text-gray-600 capitalize">{selectedOrder.status}</p>
+                  <h3 className="font-medium text-slate-300">Status</h3>
+                  <p className="text-slate-400 capitalize">{selectedOrder.status}</p>
                 </div>
               </div>
               
               <div className="border-t pt-4">
-                <h3 className="font-medium mb-2">Order Items</h3>
+                <h3 className="font-medium mb-2 text-slate-300">Order Items</h3>
                 <div className="space-y-2">
                   {selectedOrder.items?.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <div key={index} className="flex justify-between items-center p-2 bg-gray-700 rounded">
                       <div className="flex items-center space-x-3">
-                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden">
+                        <div className="w-16 h-16 bg-gray-600 rounded overflow-hidden">
                           {item.image && (
                             <img 
                               src={item.image} 
@@ -310,11 +306,11 @@ const CancelledOrdersPage = () => {
                           )}
                         </div>
                         <div>
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                          <p className="font-medium text-slate-300">{item.name}</p>
+                          <p className="text-sm text-slate-400">Qty: {item.quantity}</p>
                         </div>
                       </div>
-                      <p className="font-medium">₹{item.price * item.quantity}</p>
+                      <p className="font-medium text-slate-300">₹{item.price * item.quantity}</p>
                     </div>
                   ))}
                 </div>
@@ -322,16 +318,16 @@ const CancelledOrdersPage = () => {
               
               <div className="border-t pt-4">
                 <div className="flex justify-between mb-2">
-                  <span>Subtotal</span>
-                  <span>₹{selectedOrder.subtotal}</span>
+                  <span className="text-slate-300">Subtotal</span>
+                  <span className="text-slate-300">₹{selectedOrder.subtotal}</span>
                 </div>
                 <div className="flex justify-between mb-2">
-                  <span>Shipping</span>
-                  <span>₹{selectedOrder.shippingFee}</span>
+                  <span className="text-slate-300">Shipping</span>
+                  <span className="text-slate-300">₹{selectedOrder.shippingFee}</span>
                 </div>
-                <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-                  <span>Total</span>
-                  <span>₹{selectedOrder.total}</span>
+                <div className="flex justify-between font-bold text-lg border-t border-gray-700 pt-2 mt-2">
+                  <span className="text-white">Total</span>
+                  <span className="text-white">₹{selectedOrder.total}</span>
                 </div>
               </div>
             </div>

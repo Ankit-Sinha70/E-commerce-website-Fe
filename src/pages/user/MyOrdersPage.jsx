@@ -704,7 +704,7 @@ const MyOrdersComponent = () => {
                       </div>
                     ) : (
                       <div className="bg-red-900 border border-red-700 p-4 rounded-lg">
-                        <p className="text-red-300 font-medium">
+                        <p className="text-gray-300 font-medium">
                           The 24-hour return window for this order has closed.
                         </p>
                       </div>
@@ -746,11 +746,11 @@ const MyOrdersPage = () => {
         {/* Header Section */}
         <div className="text-center mb-4 mt-16">
           <div className="relative inline-block">
-            <h1 className="relative text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="relative text-3xl md:text-4xl font-bold text-white mb-4 kaushan-script-regular">
               {activeTab === "orders" ? "My Orders" : "Return Requests"}
             </h1>
           </div>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto kaushan-script-regular2">
             {activeTab === "orders"
               ? "Track, manage, and view details of all your orders in one place"
               : "Manage your return requests and track their status"}

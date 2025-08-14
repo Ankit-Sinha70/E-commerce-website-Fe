@@ -246,27 +246,36 @@ const ReturnRequestCard = ({
 
 const ReturnRequest = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user, accessToken } = useSelector((state) => state.auth);
   const { returnRequests, returnRequestsTotalPages, returnRequestsLimit } =
-    useSelector((state) => state.order);
+  useSelector((state) => state.order);
+  console.log('returnRequestsLimit', returnRequestsLimit)
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedReturnRequest, setSelectedReturnRequest] = useState(null);
-  const [selectedReturnRequestId, setSelectedReturnRequestId] = useState(null);
   // Local page state
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Client-side fallback pagination in case backend returns full list
+  const pageSize = returnRequestsLimit || 10;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedReturnRequests = Array.isArray(returnRequests)
+    ? returnRequests.slice(startIndex, endIndex)
+    : [];
 
   useEffect(() => {
     if (user?._id) {
       dispatch(
         fetchUserReturnRequest({
           userId: user?._id,
+          accessToken,
           page: currentPage,
           limit: returnRequestsLimit || 10,
         })
       );
     }
-  }, [dispatch, user, currentPage, returnRequestsLimit]);
+  }, [dispatch, user?._id, accessToken, currentPage, returnRequestsLimit]);
 
   const handlePageChange = (page) => {
     if (page === currentPage) return;
@@ -275,6 +284,7 @@ const ReturnRequest = () => {
       dispatch(
         fetchUserReturnRequest({
           userId: user?._id,
+          accessToken,
           page,
           limit: returnRequestsLimit || 10,
         })
@@ -288,15 +298,14 @@ const ReturnRequest = () => {
   };
 
   const handleCancelReturn = async (returnRequestId) => {
-    setSelectedReturnRequestId(returnRequestId);
     try {
       await dispatch(cancelReturnRequest(returnRequestId)).unwrap();
       toast.success("Return request cancelled successfully");
-      setSelectedReturnRequestId(null);
       // Refresh current page
       dispatch(
         fetchUserReturnRequest({
           userId: user?._id,
+          accessToken,
           page: currentPage,
           limit: returnRequestsLimit || 10,
         })
@@ -332,7 +341,7 @@ const ReturnRequest = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         {/* Return Request Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-          {returnRequests?.map((returnRequest) => (
+          {(returnRequestsTotalPages > 1 ? paginatedReturnRequests : returnRequests)?.map((returnRequest) => (
             <ReturnRequestCard
               key={returnRequest._id}
               returnRequest={returnRequest}

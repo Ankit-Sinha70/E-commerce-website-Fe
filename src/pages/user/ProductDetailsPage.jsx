@@ -1,7 +1,7 @@
-import { Facebook, Linkedin, ShoppingCart, Twitter } from "lucide-react";
+import { Facebook, Linkedin, ShoppingCart, Twitter, ArrowLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import AddToCartConfirmationPopup from '../../component/AddToCartConfirmationPopup';
 import { addItemToCart } from "../../features/cart/cartSlice";
@@ -166,8 +166,23 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#1e293b]">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+		<div className="min-h-screen bg-[#1e293b]">
+			{/* Back to products - fixed top-left, responsive */}
+			<Link
+				to="/#products"
+				aria-label="Back to products"
+				className="fixed top-20 left-4 z-40 inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-800/80 text-slate-300 border border-gray-700 backdrop-blur hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:hidden"
+			>
+				<ArrowLeft className="h-5 w-5" />
+			</Link>
+			<Link
+				to="/#products"
+				className="fixed top-25 left-8 z-40 hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-800/80 text-slate-300 border border-gray-700 backdrop-blur hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+			>
+				<ArrowLeft className="h-5 w-5" />
+				<span className="text-sm font-medium">Back</span>
+			</Link>
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 mt-36">
         {/* Main Product Section */}
         <div className="bg-gray-600 rounded-lg shadow-sm mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">

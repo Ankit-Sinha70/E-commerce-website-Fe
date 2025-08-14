@@ -111,6 +111,11 @@ const productSlice = createSlice({
     clearProduct(state) {
       state.product = null;
     },
+    // Optimistically prepend a product to the current list
+    prependProduct(state, action) {
+      if (!state.products) state.products = [];
+      state.products.unshift(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -119,7 +124,11 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload.products;
+        // Show newer first by sorting only on ObjectId descending (no createdAt)
+        const fetchedProducts = action.payload.products || [];
+        state.products = [...fetchedProducts].sort((a, b) =>
+          String(b?._id || "").localeCompare(String(a?._id || ""))
+        );
         state.error = null;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
@@ -146,7 +155,8 @@ const productSlice = createSlice({
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.products.push(action.payload);
+        // Prepend the newly created product so it appears at the top of lists
+        state.products.unshift(action.payload);
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;

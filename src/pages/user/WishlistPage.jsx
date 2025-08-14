@@ -24,6 +24,7 @@ const WishlistPage = () => {
   const dispatch = useDispatch();
   const { user, accessToken } = useSelector((state) => state.auth);
   const { wishlist, loading, error } = useSelector((state) => state.wishlist);
+  console.log('wishlist', wishlist)
 
   const [showAddToCartDialog, setShowAddToCartDialog] = useState(false);
   const [dialogProductName, setDialogProductName] = useState("");
@@ -54,11 +55,15 @@ const WishlistPage = () => {
       });
       return;
     }
-    const resultAction = await dispatch(removeItemFromWishList(productId));
-    if (removeItemFromWishList.fulfilled.match(resultAction)) {
-      toast.success("Item removed from wishlist!", {
-        className: "toast-success",
-      });
+    try {
+      await dispatch(removeItemFromWishList(productId)).unwrap();
+      toast.success("Item removed from wishlist!", { className: "toast-success" });
+      // Optimistic UI: remove locally if state shape differs
+      if (wishlist?.wishList?.products) {
+        wishlist.wishList.products = wishlist.wishList.products.filter(p => p._id !== productId);
+      }
+    } catch (err) {
+      toast.error(err || "Failed to remove item from wishlist", { className: "toast-danger" });
     }
   };
 
@@ -101,11 +106,11 @@ const WishlistPage = () => {
     return <Loader message="Loading Wishlist..." />;
   }
 
-  const productsInWishlist = wishlist ? wishlist.products : [];
+  const productsInWishlist = wishlist ? wishlist?.wishList?.products : [];
 
   return (
     <div className="min-h-screen bg-[#111827] text-slate-300 py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-white mb-8">Your Wishlist</h2>
