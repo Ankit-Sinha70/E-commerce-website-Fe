@@ -6,9 +6,9 @@ import {
   Plus,
   Lock,
   ShoppingCart,
-  MapPin, 
-  User, 
-  Phone, 
+  MapPin,
+  User,
+  Phone,
   CheckCircle,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,9 +19,9 @@ import {
   updateItemQuantity,
 } from "../../features/cart/cartSlice";
 import {
-  getShippingAddresses, 
-  clearShippingAddressError, 
-} from "../../features/shippingAddress/shippingAddressSlice"; 
+  getShippingAddresses,
+  clearShippingAddressError,
+} from "../../features/shippingAddress/shippingAddressSlice";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Loader from "@/component/common/Loader";
@@ -35,13 +35,11 @@ import {
 import AddressDialog from "@/component/AddressDialog";
 import { formatCurrency } from "@/lib/currency";
 import { toast } from "react-toastify";
+import LoginRequiredPopup from "@/component/LoginRequiredPopup";
 
 export default function CartPage() {
   const dispatch = useDispatch();
-  const {
-    items: cartItems,
-    loading,
-  } = useSelector((state) => state.cart);
+  const { items: cartItems, loading } = useSelector((state) => state.cart);
   const { accessToken, user } = useSelector((state) => state.auth);
   // Access shipping addresses from the store
   const { addresses: shippingAddresses, error: addressError } = useSelector(
@@ -52,8 +50,9 @@ export default function CartPage() {
   const [email, setEmail] = useState("");
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [promoCode, setPromoCode] = useState("");
-  const [selectedAddress, setSelectedAddress] = useState(null); 
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const guestId = localStorage.getItem("guestId");
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // State for login popup
 
   // try {
   //   const userString = localStorage.getItem("user");
@@ -78,11 +77,11 @@ export default function CartPage() {
   // Effect to set the default or first address when addresses are loaded
   useEffect(() => {
     if (shippingAddresses && shippingAddresses.length > 0 && !selectedAddress) {
-      const defaultAddress = shippingAddresses.find(addr => addr.isDefault);
+      const defaultAddress = shippingAddresses.find((addr) => addr.isDefault);
       if (defaultAddress) {
         setSelectedAddress(defaultAddress);
       } else {
-        setSelectedAddress(shippingAddresses[0]);   
+        setSelectedAddress(shippingAddresses[0]);
       }
       console.log("Loaded shipping addresses:", shippingAddresses);
       console.log("Selected shipping address (after effect):", selectedAddress);
@@ -95,7 +94,6 @@ export default function CartPage() {
       return () => clearTimeout(timer);
     }
   }, [shippingAddresses, selectedAddress, dispatch, addressError]);
-
 
   const handleQuantityChange = (productId, currentQuantity, change) => {
     // if (!user || !accessToken) {
@@ -152,7 +150,7 @@ export default function CartPage() {
         toast.success(
           resultAction.payload.message || "Item removed from cart!",
           {
-            className: "toast-success", 
+            className: "toast-success",
             icon: <CheckCircle className="w-4 h-4" />,
             style: {
               borderRadius: "8px",
@@ -167,7 +165,7 @@ export default function CartPage() {
           resultAction.payload ||
           resultAction.error.message ||
           "Failed to remove item.";
-          toast.error(`Error: ${errorMessage}`, {
+        toast.error(`Error: ${errorMessage}`, {
           className: "toast-danger",
         });
         console.error("Failed to remove from cart:", errorMessage);
@@ -191,9 +189,13 @@ export default function CartPage() {
   const handleAddAddress = (address) => {
     setSelectedAddress(address);
     setShowAddAddress(false);
-  }
+  };
 
   const handleCheckout = async () => {
+    if (!accessToken || !user) {
+      setShowLoginPopup(true); // Show login popup
+      return;
+    }
 
     if (!cartItems || cartItems.length === 0) {
       toast.info("Your cart is empty. Add items before checking out.", {
@@ -220,13 +222,12 @@ export default function CartPage() {
     //   console.error("Order creation error:", error);
     // }
 
-
     try {
       const itemsForCheckout = cartItems.map((item) => ({
         name: item?.productId?.name,
         price: item?.productId?.price,
         image: item?.productId?.image,
-        category: { name: item?.productId?.category?.name || 'Uncategorized' },
+        category: { name: item?.productId?.category?.name || "Uncategorized" },
         productId: item?.productId?._id,
         originalPrice: item?.productId?.originalPrice || item?.productId?.price,
         quantity: item?.quantity,
@@ -290,9 +291,7 @@ export default function CartPage() {
   };
 
   if (loading && (!cartItems || cartItems.length === 0)) {
-    return (
-      <Loader message={"Loading Cart Items and Addresses..."} />
-    );
+    return <Loader message={"Loading Cart Items and Addresses..."} />;
   }
 
   if (!cartItems || cartItems.length === 0) {
@@ -408,7 +407,9 @@ export default function CartPage() {
                     <div className="text-right">
                       <div className="text-sm text-gray-500 mb-1">Subtotal</div>
                       <div className="text-xl font-bold text-gray-300">
-                        {formatCurrency(item?.productId?.price * item?.quantity)}
+                        {formatCurrency(
+                          item?.productId?.price * item?.quantity
+                        )}
                       </div>
                     </div>
                   </div>
@@ -437,7 +438,9 @@ export default function CartPage() {
                   <h4 className="text-sm font-medium text-gray-300 mb-1">
                     Phone Case
                   </h4>
-                  <p className="text-sm font-semibold text-gray-300">{formatCurrency(24.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300">
+                    {formatCurrency(24.99)}
+                  </p>
                 </div>
 
                 {/* Bluetooth Speaker */}
@@ -452,7 +455,10 @@ export default function CartPage() {
                   <h4 className="text-sm font-medium text-gray-300 mb-1">
                     Bluetooth Speaker
                   </h4>
-                  <p className="text-sm font-semibold text-gray-300"> {formatCurrency(89.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300">
+                    {" "}
+                    {formatCurrency(89.99)}
+                  </p>
                 </div>
 
                 {/* Laptop Stand */}
@@ -467,7 +473,10 @@ export default function CartPage() {
                   <h4 className="text-sm font-medium text-gray-300 mb-1">
                     Laptop Stand
                   </h4>
-                  <p className="text-sm font-semibold text-gray-300"> {formatCurrency(49.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300">
+                    {" "}
+                    {formatCurrency(49.99)}
+                  </p>
                 </div>
 
                 {/* USB Cable */}
@@ -482,7 +491,10 @@ export default function CartPage() {
                   <h4 className="text-sm font-medium text-gray-300 mb-1">
                     USB Cable
                   </h4>
-                  <p className="text-sm font-semibold text-gray-300"> {formatCurrency(14.99)}</p>
+                  <p className="text-sm font-semibold text-gray-300">
+                    {" "}
+                    {formatCurrency(14.99)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -541,7 +553,8 @@ export default function CartPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-3 py-2 border text-gray-300 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    required />
+                    required
+                  />
                 )}
               </div>
 
@@ -550,9 +563,12 @@ export default function CartPage() {
                 <h3 className="text-md font-semibold text-gray-300 mb-3 flex items-center">
                   <MapPin className="h-4 w-4 mr-2 text-gray-300" />
                   Delivery Address
-                </h3>{guestId && !user && (
+                </h3>
+                {guestId && !user && (
                   <Button onClick={() => setShowAddAddress(true)}>
-                    {selectedAddress ? "Edit Shipping Address" : "Add Shipping Address"} 
+                    {selectedAddress
+                      ? "Edit Shipping Address"
+                      : "Add Shipping Address"}
                   </Button>
                 )}
 
@@ -567,35 +583,44 @@ export default function CartPage() {
                   showDefaultOption={false}
                 />
 
-                {user && (shippingAddresses && shippingAddresses.length > 0 ? (
-                  <Select
-                    onValueChange={(addressId) => {
-                      const addr = shippingAddresses.find(a => a._id === addressId);
-                      setSelectedAddress(addr);
-                    }}
-                    value={selectedAddress?._id || ""}
-                  >
-                    <SelectTrigger className="w-full [&>span]:line-clamp-1 text-gray-300">
-                      <SelectValue placeholder="Select a shipping address" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {shippingAddresses.map((address) => (
-                        <SelectItem key={address._id} value={address._id}>
-                          <div className="flex flex-col items-start">
-                            <span className="font-medium">
-                              {address.fullName} ({address.type}{address.isDefault ? " - Default" : ""})
-                            </span>
-                            <span className="text-xs text-gray-300">
-                              {address.addressLine}, {address.city}, {address.state} {address.postalCode}, {address.country}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <p className="text-sm text-gray-300">No shipping addresses found. Please add one in your profile settings.</p>
-                ))}
+                {user &&
+                  (shippingAddresses && shippingAddresses.length > 0 ? (
+                    <Select
+                      onValueChange={(addressId) => {
+                        const addr = shippingAddresses.find(
+                          (a) => a._id === addressId
+                        );
+                        setSelectedAddress(addr);
+                      }}
+                      value={selectedAddress?._id || ""}
+                    >
+                      <SelectTrigger className="w-full [&>span]:line-clamp-1 text-gray-300">
+                        <SelectValue placeholder="Select a shipping address" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {shippingAddresses.map((address) => (
+                          <SelectItem key={address._id} value={address._id}>
+                            <div className="flex flex-col items-start">
+                              <span className="font-medium">
+                                {address.fullName} ({address.type}
+                                {address.isDefault ? " - Default" : ""})
+                              </span>
+                              <span className="text-xs text-gray-300">
+                                {address.addressLine}, {address.city},{" "}
+                                {address.state} {address.postalCode},{" "}
+                                {address.country}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-sm text-gray-300">
+                      No shipping addresses found. Please add one in your
+                      profile settings.
+                    </p>
+                  ))}
                 {selectedAddress && (
                   <div className="mt-4 p-4 border bg-[#0f172a] border-gray-200 rounded-md text-sm text-gray-300">
                     <p className="flex items-center mb-1">
@@ -608,12 +633,13 @@ export default function CartPage() {
                     </p>
                     <p className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2 text-gray-300" />
-                      {selectedAddress.addressLine}, {selectedAddress.city}, {selectedAddress.state} {selectedAddress.postalCode}, {selectedAddress.country}
+                      {selectedAddress.addressLine}, {selectedAddress.city},{" "}
+                      {selectedAddress.state} {selectedAddress.postalCode},{" "}
+                      {selectedAddress.country}
                     </p>
                   </div>
                 )}
               </div>
-
 
               {/* Promo Code */}
               <div className="mb-6">
@@ -640,6 +666,11 @@ export default function CartPage() {
                 Proceed to Checkout
                 <span className="text-lg">→</span>
               </Button>
+
+              <LoginRequiredPopup
+                isOpen={showLoginPopup}
+                onClose={() => setShowLoginPopup(false)}
+              />
 
               {/* Security Badge */}
               <div className="flex items-center justify-center gap-2 text-sm text-gray-300 mb-6">

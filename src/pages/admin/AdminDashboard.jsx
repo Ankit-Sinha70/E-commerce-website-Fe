@@ -59,10 +59,10 @@ const AdminDashboard = () => {
           </div>
         </div>,
         {
-          className: "toast-success", 
+          className: "toast-success",
         }
       );
-      
+
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -115,7 +115,10 @@ const AdminDashboard = () => {
               </div>
 
               {/* Logout Button with Dialog */}
-              <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+              <Dialog
+                open={showLogoutDialog}
+                onOpenChange={setShowLogoutDialog}
+              >
                 <DialogTrigger asChild>
                   <Button className="bg-rose-500 hover:bg-rose-600 text-white px-3 py-2 rounded">
                     Log Out

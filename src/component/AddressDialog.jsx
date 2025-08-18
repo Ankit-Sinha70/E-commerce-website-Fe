@@ -137,14 +137,12 @@ const AddressDialog = ({
     setValidationErrors({});
   }, [initialData, isOpen]);
 
-  // Validate form data
   const validateForm = () => {
     const errors = validateAddressForm(formData);
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  // Handler for form input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -152,7 +150,6 @@ const AddressDialog = ({
       [name]: type === "checkbox" ? checked : value,
     });
 
-    // Clear validation error for this field
     if (validationErrors[name]) {
       setValidationErrors({
         ...validationErrors,
@@ -161,7 +158,6 @@ const AddressDialog = ({
     }
   };
 
-  // Handler for submitting the form
   const handleSubmit = (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
@@ -187,17 +183,18 @@ const AddressDialog = ({
     }
   };
 
-  // Determine dialog title
-  const dialogTitle = title || (initialData ? "Edit Address" : "Add New Address");
+  const dialogTitle =
+    title || (initialData ? "Edit Address" : "Add New Address");
 
-  // Determine submit button text
-  const buttonText = submitButtonText || (initialData ? "Update Address" : "Add Address");
+  const buttonText =
+    submitButtonText || (initialData ? "Update Address" : "Add Address");
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl
-        [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        
+      <DialogContent
+        className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl
+        [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      >
         {/* Modal Header */}
         <DialogHeader className="bg-gradient-to-r from-sky-300 to-sky-400 text-white p-6 rounded-t-2xl relative">
           <div className="flex items-center">
@@ -251,8 +248,8 @@ const AddressDialog = ({
                     target: {
                       name: "phoneNumber",
                       value: value,
-                      type: "text", 
-                      checked: false, 
+                      type: "text",
+                      checked: false,
                     },
                   })
                 }
@@ -321,8 +318,7 @@ const AddressDialog = ({
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  State / Province{" "}
-                  <span className="text-red-500">*</span>
+                  State / Province <span className="text-red-500">*</span>
                 </label>
                 <Input
                   type="text"
@@ -401,7 +397,7 @@ const AddressDialog = ({
                 {ADDRESS_TYPES.map((type) => {
                   const IconComponent = type.icon;
                   return (
-                    <Button 
+                    <Button
                       variant="outline"
                       key={type.value}
                       type="button"
@@ -417,9 +413,7 @@ const AddressDialog = ({
                       }`}
                     >
                       <IconComponent className="h-5 w-5 mb-1" />
-                      <span className="text-sm font-medium">
-                        {type.label}
-                      </span>
+                      <span className="text-sm font-medium">{type.label}</span>
                     </Button>
                   );
                 })}
