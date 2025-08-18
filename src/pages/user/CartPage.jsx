@@ -184,7 +184,8 @@ export default function CartPage() {
   );
   const totalItems = cartItems?.reduce((acc, item) => acc + item?.quantity, 0);
   const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  const shippingCost = 50;
+  const total = subtotal + tax + shippingCost;
 
   const handleAddAddress = (address) => {
     setSelectedAddress(address);
@@ -522,7 +523,9 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300">Shipping</span>
-                  <span className="font-semibold text-green-600">Free</span>
+                  <span className="font-semibold text-gray-300">
+                    {formatCurrency(shippingCost)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300">Tax</span>

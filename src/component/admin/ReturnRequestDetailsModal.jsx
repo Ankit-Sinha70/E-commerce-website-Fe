@@ -153,7 +153,7 @@ const ReturnRequestDetailsModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl lg:max-w-4xl bg-gray-800 text-slate-300 shadow-xl rounded-lg border border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <DialogContent className="sm:max-w-2xl lg:max-w-4xl bg-[#0f172a] text-gray-300 shadow-xl rounded-lg border border-blue-500 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <DialogHeader>
           <DialogTitle className="text-white">
             Return Request Details

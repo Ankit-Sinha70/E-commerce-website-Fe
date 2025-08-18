@@ -340,7 +340,7 @@ const ShippingAddressPage = () => {
           <p className="text-slate-400 mt-2">Manage your delivery addresses</p>
         </div>
         <Dialog open={showAddEditForm} onOpenChange={setShowAddEditForm}>
-          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl bg-gray-800 border border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl bg-[#0f172a] text-gray-300 border border-blue-500 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Modal Header */}
             <DialogHeader className="bg-blue-900 text-white p-6 rounded-t-2xl relative">
               <div className="flex items-center">

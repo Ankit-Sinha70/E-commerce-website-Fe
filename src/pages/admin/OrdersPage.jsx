@@ -37,7 +37,6 @@ const OrdersPage = () => {
 
   const dispatch = useDispatch();
   const { orders, loading } = useSelector((state) => state.order);
-  console.log("orderssssssSSSS", orders);
 
   useEffect(() => {
     dispatch(
@@ -182,14 +181,13 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="bg-[#0f172a] text-slate-300 min-h-screen p-2">
-      <div>
+    <div className="bg-[#0f172a] text-slate-300 min-h-screen">
         {/* Header */}
         <div className="p-2 lg:p-4">
           <h2 className="text-2xl lg:text-3xl font-bold text-white">
             Orders Management
           </h2>
-          <div className="p-1 lg:p-2 border-b border-gray-700">
+          <div className="p-1 lg:p-2">
             <OrderFilters
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -203,13 +201,13 @@ const OrdersPage = () => {
               onReset={handleResetFilters}
               totalOrders={totalOrders}
             />
-
+            <div className="border-b border-gray-700 mb-8"/>
             {/* Content */}
             {loading ? (
               <Loader message={"Loading Orders..."} />
             ) : orders?.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <PackageOpen className="h-16 w-16 mb-4 text-gray-400" />
+              <div className="flex flex-col items-center justify-center py-12 text-gray-300">
+                <PackageOpen className="h-16 w-16 mb-4 text-gray-300" />
                 <p className="text-xl font-semibold mb-2">No orders found</p>
                 <p className="text-md text-center">
                   Try adjusting your search or filters
@@ -287,7 +285,6 @@ const OrdersPage = () => {
           onUpdate={UpdateStatus}
         />
       </div>
-    </div>
   );
 };
 

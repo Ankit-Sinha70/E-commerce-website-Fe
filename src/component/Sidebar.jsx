@@ -33,11 +33,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       path: "/admin/orders",
       icon: <ShoppingCart className="h-5 w-5" />,
     },
-    {
-      name: "Manage Messages",
-      path: "/admin/messages",
-      icon: <MessageSquare className="h-5 w-5" />,
-    },
+    // {
+    //   name: "Manage Messages",
+    //   path: "/admin/messages",
+    //   icon: <MessageSquare className="h-5 w-5" />,
+    // },
     {
       name: "Manage Categories",
       path: "/admin/manage-categories",

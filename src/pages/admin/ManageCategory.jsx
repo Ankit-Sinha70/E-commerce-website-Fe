@@ -409,8 +409,8 @@ const ManageCategory = () => {
           {loading ? (
             <Loader message={"Loading Categories..."} />
           ) : !hasCategories ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-              <PackageOpen className="h-16 w-16 mb-4 text-gray-400" />
+            <div className="flex flex-col items-center justify-center py-12 text-gray-300">
+              <PackageOpen className="h-16 w-16 mb-4 text-gray-300" />
               <p className="text-xl font-semibold mb-2">No categories found</p>
               <p className="text-md">Try adjusting your search or filters</p>
             </div>

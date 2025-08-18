@@ -5,6 +5,7 @@ import { getCategories } from "@/features/category/categorySlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import Loader from "./common/Loader";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -23,7 +24,6 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
 
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState(null);
 
   // Load categories when component mounts
   useEffect(() => {
@@ -139,7 +139,6 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
 
     try {
       setIsSubmitting(true);
-      setFormError(null);
       const res = await fetch(url, {
         method: method,
         headers: {
@@ -175,12 +174,6 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
         `Error ${initialData ? "updating" : "adding"} product:`,
         err
       );
-      setFormError(
-        err.message ||
-          `An unexpected error occurred while ${
-            initialData ? "updating" : "adding"
-          } the product.`
-      );
       toast.error("Error", {
         description:
           err.message ||
@@ -205,10 +198,15 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
   categories?.find((cat) => cat._id === form.category)?.name || "";
 
   return (
-    <div className="relative bg-gray-800 text-slate-300">
+    <div className="relative bg-[#0f172a] text-slate-300 h-full overflow-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      {isSubmitting && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <Loader message="Saving..." />
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 p-4 overflow-y-auto hide-scrollbar"
+        className="space-y-4 p-4 h-full overflow-y-auto hide-scrollbar"
       >
         <div>
           <label htmlFor="name" className="text-slate-300">Product Name</label>
@@ -310,7 +308,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             variant="outline"
             onClick={onClose}
             disabled={isSubmitting}
-            className="border-gray-600 text-slate-300 hover:bg-gray-700"
+            className="border-gray-600 text-slate-300 hover:bg-gray-300"
           >
             Cancel
           </Button>
@@ -320,15 +318,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <span className="flex items-center">
-                <div className="flex justify-center items-center py-12">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-                    <p className="text-slate-300 text-lg">Loading...</p>
-                  </div>
-                </div>
-                {initialData ? "Updating..." : "Adding..."}
-              </span>
+              <Loader message={initialData ? "Updating..." : "Adding..."} />
             ) : initialData ? (
               "Update Product"
             ) : (
@@ -336,18 +326,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
             )}
           </Button>
         </div>
-        {formError && <p className="text-red-400 text-sm mt-2">{formError}</p>}
       </form>
-      {isSubmitting && (
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg z-10">
-          <div className="flex justify-center items-center py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-              <p className="text-slate-200 text-lg">Loading...</p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

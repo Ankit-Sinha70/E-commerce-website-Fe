@@ -27,13 +27,13 @@ const RequestResetPasswordPage = () => {
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-blue-500">
         <div className="flex flex-col lg:flex-row min-h-[500px]">
           {/* Left Panel - Illustration or Branding */}
-          <div className="lg:w-1/2 bg-gradient-to-br from-black to-pink-500 p-8 lg:p-12 flex flex-col justify-center items-center text-white relative overflow-hidden">
+          <div className="lg:w-1/2 bg-gradient-to-br from-blue-900 to-gray-700 p-8 lg:p-12 flex flex-col justify-center items-center text-white relative overflow-hidden">
             {/* Decorative circles */}
-            <div className="absolute inset-0 bg-gradient-to-br from-black to-pink-600  bg-opacity-10 z-0" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-gray-800  bg-opacity-10 z-0" />
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-white bg-opacity-10 rounded-full z-0" />
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white bg-opacity-10 rounded-full z-0" />
 
@@ -46,20 +46,20 @@ const RequestResetPasswordPage = () => {
           </div>
 
           {/* Right Panel - Form */}
-          <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
+          <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center bg-[#0f172a]">
             <div className="w-full max-w-md mx-auto transform transition-all duration-300 hover:scale-[1.01]">
               <div className="text-center mb-8">
-                <h2 className="text-2xl lg:text-4xl font-bold text-gray-800 mb-2">
+                <h2 className="text-2xl lg:text-4xl font-bold text-gray-300 mb-2">
                   Forgot Your Password?
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-400">
                   We'll email you a link to reset your password.
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 sr-only">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-400 sr-only">
                     Email address
                   </label>
                   <input
@@ -71,14 +71,14 @@ const RequestResetPasswordPage = () => {
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-700 rounded-lg bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-xl hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Sending..." : "Send Reset Link"}
                 </button>
@@ -87,7 +87,7 @@ const RequestResetPasswordPage = () => {
               <div className="mt-6 text-center">
                 <Link
                   to="/login"
-                  className="text-orange-500 hover:text-orange-600 font-medium transition-colors"
+                  className="text-blue-500 hover:text-blue-600 font-medium transition-colors"
                 >
                   &larr; Back to Login
                 </Link>

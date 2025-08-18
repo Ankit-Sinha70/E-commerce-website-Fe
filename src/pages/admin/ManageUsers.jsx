@@ -175,7 +175,7 @@ const ManageUsers = () => {
           {loading ? (
             <Loader message={"Loading Users..."} />
           ) : filteredUsers?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-12 text-gray-300">
               <p className="text-xl font-semibold mb-2">No users found</p>
               <p className="text-md">Try adjusting your search</p>
             </div>

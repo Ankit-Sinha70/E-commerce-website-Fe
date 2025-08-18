@@ -160,8 +160,8 @@ const ManageProductsPage = () => {
   };
 
   return (
-    <div className="bg-[#0f172a] rounded-2xl text-slate-300 min-h-screen">
-      <div className="max-w-9xl mx-auto bg-[rgba(30,30,47,0.6)] backdrop-blur-lg border-r border-white/10 text-white rounded-lg shadow-xl p-4 lg:p-6">
+    <div className="bg-[#0f172a] text-slate-300 relative px-4 py-4">
+      {/* <div className="max-w-9xl mx-auto bg-[rgba(30,30,47,0.6)] backdrop-blur-lg border-r border-white/10 text-white rounded-lg shadow-xl p-4 lg:p-6"> */}
         {/* Header */}
         <div className="border-b border-gray-700 pb-4 lg:pb-6">
           <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 lg:mb-6">
@@ -243,19 +243,17 @@ const ManageProductsPage = () => {
         {/* End Dialog */}
 
         {/* Products Content */}
-        <div className="p-4 lg:p-6">
-          {loading ? (
-            <Loader message={"Loading Products..."} />
-          ) : products?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-              <PackageOpen className="h-16 w-16 mb-4 text-gray-400" />
+        <div className="min-h-screen">
+          {products?.length === 0 && !loading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <PackageOpen className="h-16 w-16 mb-4 text-gray-300" />
               <p className="text-xl font-semibold mb-2">No products found</p>
               <p className="text-md">Try adjusting your search or filters</p>
             </div>
-          ) : (
+          ) : products?.length > 0 && !loading ? (
             <>
               {/* Desktop Table View */}
-              <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
+              <div className="hidden lg:block overflow-x-auto rounded-lg mt-5 shadow-xl">
                 <table className="min-w-full bg-gray-800">
                   <thead className="text-white text-left">
                     <tr className="bg-gray-700">
@@ -419,8 +417,10 @@ const ManageProductsPage = () => {
                 />
               </div>
             </>
+          ) : (
+            <Loader message={"Loading Products..."} />
           )}
-        </div>
+        {/* </div> */}
       </div>
 
       <AlertDialog

@@ -68,7 +68,7 @@ const ReturnRequestTable = ({
   return (
     <>
       {/* Desktop Table View */}
-      <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
+      <div className="hidden lg:block overflow-x-auto rounded-lg shadow-xl">
         <table className="min-w-full bg-gray-800">
           <thead>
             <tr className="bg-gray-700 text-white text-left p-2">

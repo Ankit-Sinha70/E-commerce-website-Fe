@@ -109,11 +109,11 @@ const AuthTogglePage = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-blue-500">
         <div className="flex flex-col lg:flex-row min-h-[600px] relative">
           {/* Left Panel */}
-          <div className="lg:w-1/2 bg-gradient-to-br from-black to-gray-600 p-8 lg:p-12 flex flex-col justify-center items-center text-white relative overflow-hidden">
+          <div className="lg:w-1/2 bg-gradient-to-br from-blue-900 to-gray-700 p-8 lg:p-12 flex flex-col justify-center items-center text-white relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full bg-black opacity-10 z-0"></div>
             <div className="absolute top-10 right-10 w-32 h-32 bg-white opacity-10 rounded-full z-0"></div>
             <div className="absolute bottom-10 left-10 w-24 h-24 bg-white opacity-10 rounded-full z-0"></div>
@@ -136,7 +136,7 @@ const AuthTogglePage = () => {
           </div>
 
           {/* Right Panel */}
-          <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
+          <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center bg-[#0f172a]">
             <AnimatePresence mode="wait">
               <Motion.div
                 key={isSignUp ? "signup" : "signin"}
@@ -147,10 +147,10 @@ const AuthTogglePage = () => {
                 className="w-full max-w-md mx-auto"
               >
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-3xl lg:text-4xl font-bold text-gray-300 mb-2">
                     {isSignUp ? "Create Account" : "Sign In"}
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-gray-400">
                     {isSignUp
                       ? "Fill in your details to get started"
                       : "Enter your credentials to access your account"}
@@ -164,7 +164,7 @@ const AuthTogglePage = () => {
                     {isSignUp && (
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <User className="h-5 w-5 text-gray-400" />
+                          <User className="h-5 w-5 text-gray-500" />
                         </div>
                         <input
                           type="text"
@@ -172,7 +172,7 @@ const AuthTogglePage = () => {
                           value={formData.name}
                           onChange={handleChange}
                           placeholder="Name"
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800 text-gray-100 placeholder-gray-500"
                           required
                         />
                       </div>
@@ -180,7 +180,7 @@ const AuthTogglePage = () => {
 
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Mail className="h-5 w-5 text-gray-400" />
+                        <Mail className="h-5 w-5 text-gray-500" />
                       </div>
                       <input
                         type="email"
@@ -188,14 +188,14 @@ const AuthTogglePage = () => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="Email"
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800 text-gray-100 placeholder-gray-500"
                         required
                       />
                     </div>
 
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-400" />
+                        <Lock className="h-5 w-5 text-gray-500" />
                       </div>
                       <input
                         type={showPassword ? "text" : "password"}
@@ -203,13 +203,13 @@ const AuthTogglePage = () => {
                         value={formData.password}
                         onChange={handleChange}
                         placeholder="Password"
-                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500"
+                        className="w-full pl-10 pr-12 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800 text-gray-100 placeholder-gray-500"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword((prev) => !prev)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-400 transition-colors"
                       >
                         {showPassword ? (
                           <EyeOff className="h-5 w-5" />
@@ -222,7 +222,7 @@ const AuthTogglePage = () => {
                     {isSignUp && (
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Mail className="h-5 w-5 text-gray-400" />
+                          <Mail className="h-5 w-5 text-gray-500" />
                         </div>
                         <input
                           type="text"
@@ -230,7 +230,7 @@ const AuthTogglePage = () => {
                           value={formData.address}
                           onChange={handleChange}
                           placeholder="Address"
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800 text-gray-100 placeholder-gray-500"
                           required
                         />
                       </div>
@@ -240,7 +240,7 @@ const AuthTogglePage = () => {
                       <div className="text-right">
                         <Link
                           to="/forgot-password"
-                          className="text-red-500 hover:text-red-600 font-medium transition-colors"
+                          className="text-blue-500 hover:text-blue-600 font-medium transition-colors"
                         >
                           Forgot your password?
                         </Link>
@@ -250,7 +250,7 @@ const AuthTogglePage = () => {
                     <button
                       type="submit"
                       disabled={isSignUp ? userLoading : loading}
-                      className="w-full py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold rounded-xl hover:from-red-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSignUp
                         ? userLoading
@@ -267,10 +267,10 @@ const AuthTogglePage = () => {
                 <div className="mt-8">
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
+                      <div className="w-full border-t border-gray-700"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">
+                      <span className="px-2 bg-gray-900 text-gray-400">
                         Or continue with
                       </span>
                     </div>
@@ -283,7 +283,7 @@ const AuthTogglePage = () => {
                         onClick={() =>
                           toast.info(`Attempting ${icon} login...`)
                         }
-                        className="w-12 h-12 rounded-full bg-white border border-gray-300 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-110 transition"
+                        className="w-12 h-12 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-110 transition"
                         title={`Sign in with ${icon}`}
                       >
                         <img

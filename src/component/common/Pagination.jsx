@@ -177,7 +177,7 @@ export function PaginationDemo({ currentPage, totalPages, onPageChange }) {
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center p-3">
       {/* Pagination */}
       <div className="flex justify-center">
         <Pagination>
