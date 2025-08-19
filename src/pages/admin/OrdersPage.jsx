@@ -91,7 +91,7 @@ const OrdersPage = () => {
         setTotalOrders(res.payload.totalOrders);
         setTotalPages(res.payload.totalPages);
       });
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete order", {
         className: "toast-danger",
       });
@@ -181,7 +181,7 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="bg-[#0f172a] text-slate-300 min-h-screen">
+    <div className="bg-[#0f172a] text-slate-300 min-h-screen flex flex-col">
         {/* Header */}
         <div className="p-2 lg:p-4">
           <h2 className="text-2xl lg:text-3xl font-bold text-white">
@@ -203,6 +203,7 @@ const OrdersPage = () => {
             />
             <div className="border-b border-gray-700 mb-8"/>
             {/* Content */}
+            <div className="flex-grow overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {loading ? (
               <Loader message={"Loading Orders..."} />
             ) : orders?.length === 0 ? (
@@ -285,6 +286,7 @@ const OrdersPage = () => {
           onUpdate={UpdateStatus}
         />
       </div>
+    </div>
   );
 };
 

@@ -59,6 +59,7 @@ const DashboardHomePage = () => {
       title: "Total Revenue",
       value: yearlyRevenueLoading ? <Loader /> : formatCurrency(yearlyRevenue),
       icon: <CreditCard className="h-6 w-6 text-blue-600" />,
+      className:"bg-blue-400"
     },
     {
       title: "Total Orders",
@@ -79,14 +80,18 @@ const DashboardHomePage = () => {
 
   const getStatusClasses = (status) => {
     switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800";
+      case "Processing":
+        return "bg-green-400 text-green-800";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-gray-300 text-yellow-800";
+      case "Cancelled":
+        return "bg-red-400 text-red-800";
+      case "Delivered":
+        return "bg-purple-500 text-purple-800";
+      case "Shipped":
+        return "bg-blue-400 text-blue-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-red-400 text-gray-800";
     }
   };
 
@@ -112,7 +117,7 @@ const DashboardHomePage = () => {
                 {card.value}
               </p>
             </div>
-            <div className="bg-gray-100 p-3 rounded-full">{card.icon}</div>
+            <div className="bg-blue-300 p-3 rounded-full">{card.icon}</div>
           </div>
         ))}
       </div>
@@ -122,7 +127,7 @@ const DashboardHomePage = () => {
         {/* Sales Overview Card */}
         <div className="lg:col-span-2 bg-gray-800 p-6 rounded-lg shadow-sm border border-blue-500">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">
+            <h3 className="text-xl font-semibold text-gray-300">
               Sales Overview
             </h3>
             <div className="relative">
@@ -136,20 +141,21 @@ const DashboardHomePage = () => {
           </div>
           <div className="h-64">
             {salesOverviewLoading ? (
-              <div className="flex items-center justify-center h-full text-gray-500">
-                Loading sales overview...
-              </div>
+              // <div className="flex items-center justify-center h-full text-gray-500">
+              //   Loading sales overview...
+              // </div>
+              <Loader message={"Loading sales overview..."}/>
             ) : salesOverviewError ? (
               <div className="flex items-center justify-center h-full text-red-500">
                 Error loading chart
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" className={"text-red-500"}>
                 <BarChart
                   data={salesOverview}
                   margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 6" />
                   <XAxis dataKey="label" />
                   <YAxis />
                   <Tooltip />
@@ -184,7 +190,7 @@ const DashboardHomePage = () => {
                   className="flex justify-between items-center bg-gray-500 p-3 rounded-md"
                 >
                   <div>
-                    <p className="font-medium text-gray-200">
+                    <p className="font-medium text-gray-300">
                       {order.user?.name || "Unknown Customer"}
                     </p>
                     <p className="text-sm text-gray-300">
@@ -192,7 +198,7 @@ const DashboardHomePage = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-100">
+                    <p className="font-semibold text-gray-300">
                       {formatCurrency(order.totalAmount)}
                     </p>
                     <span

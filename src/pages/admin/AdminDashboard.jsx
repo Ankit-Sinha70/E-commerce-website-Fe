@@ -1,23 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { Bell, Menu, User, X, MessageSquare, RotateCcw } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import Sidebar from "../../component/Sidebar";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { toast } from "react-toastify";
+import { Bell, Menu, User, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import Sidebar from "../../component/Sidebar";
 import { logoutUser } from "../../features/auth/authSlice";
-import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -85,14 +84,14 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1e293b] text-slate-300 flex">
+    <div className="h-screen bg-[#1e293b] text-slate-300 flex overflow-hidden relative min-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-[#1e293b] text-slate-50 p-4 sticky top-0 shadow-md z-10">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
+        <header className="bg-[#1e293b] text-slate-50 p-4 sticky top-0 shadow-md z-10 w-full transition-all duration-300 ease-in-out">
           <div className="flex justify-end items-center">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -151,7 +150,7 @@ const AdminDashboard = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-[#1e293b] p-4">
+        <main className="flex-1 overflow-y-auto bg-[#1e293b] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Outlet />
         </main>
       </div>

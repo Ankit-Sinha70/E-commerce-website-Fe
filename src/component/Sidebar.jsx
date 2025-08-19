@@ -74,7 +74,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         } bg-[#1e293b] text-slate-50 p-4 shadow-xl lg:shadow-md
           transition-all duration-300 ease-in-out z-20
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          fixed top-0 left-0 h-screen overflow-y-auto
+          fixed top-0 left-0 h-screen flex flex-col overflow-hidden
           lg:static lg:translate-x-0 lg:h-full lg:flex-shrink-0`}
       >
         {/* Toggle Collapse Button */}
@@ -90,7 +90,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           </button>
         </div>
 
-        <nav>
+        <nav className="flex-grow overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <ul>
             {navLinks.map((link) => (
               <li key={link.name} className="mb-2">

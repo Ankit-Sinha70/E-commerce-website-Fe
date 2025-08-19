@@ -100,6 +100,7 @@ const ViewProfilePage = () => {
   const { user, accessToken, loading, error } = useSelector(
     (state) => state.auth
   );
+  console.log("user", user);
 
   // Inline editing state
   const [isEditing, setIsEditing] = useState(false);
@@ -115,9 +116,12 @@ const ViewProfilePage = () => {
     if (accessToken) {
       dispatch(getUserProfile({ accessToken }));
     } else {
-      toast.error("You are not logged in. Please log in to view your profile.", {
-        className: "toast-danger",
-      });
+      toast.error(
+        "You are not logged in. Please log in to view your profile.",
+        {
+          className: "toast-danger",
+        }
+      );
     }
   }, [dispatch, accessToken]);
 
@@ -182,14 +186,21 @@ const ViewProfilePage = () => {
       updateUserProfile({ userId: user._id, userData: payload })
     );
     if (updateUserProfile.fulfilled.match(resultAction)) {
-        toast.success(resultAction.payload.message || "Profile updated successfully!", {
-        className: "toast-success",
-      });
+      toast.success(
+        resultAction.payload.message || "Profile updated successfully!",
+        {
+          className: "toast-success",
+        }
+      );
       setIsEditing(false);
     } else {
-        toast.error(resultAction.payload.message || "Failed to update profile. Please try again.", {
-        className: "toast-danger",
-      });
+      toast.error(
+        resultAction.payload.message ||
+          "Failed to update profile. Please try again.",
+        {
+          className: "toast-danger",
+        }
+      );
     }
   };
 
@@ -305,10 +316,18 @@ const ViewProfilePage = () => {
                 ? "Edit Profile"
                 : `Welcome, ${
                     formData.name.split(" ")[0]?.charAt(0).toUpperCase() +
-                    formData.name.split(" ")[0]?.slice(1) || "User"
+                      formData.name.split(" ")[0]?.slice(1) || "User"
                   }`}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">Tue, 07 June 2022</p>
+            <p className="text-sm text-gray-500 mt-1">
+              CreatedAt - {user?.createdAt
+                ? new Date(user.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })
+                : ""}
+            </p>
           </div>
           <div className="mt-4 sm:mt-0">
             {!isEditing ? (
@@ -363,8 +382,7 @@ const ViewProfilePage = () => {
               )}
             </div>
             <CardTitle className="mt-4 text-2xl font-bold text-slate-300">
-              {formData.name.charAt(0).toUpperCase() +
-                formData.name.slice(1)}
+              {formData.name.charAt(0).toUpperCase() + formData.name.slice(1)}
             </CardTitle>
             <CardDescription className="text-gray-500">
               {formData.email}
@@ -411,19 +429,12 @@ const ViewProfilePage = () => {
                     <p className="font-semibold text-slate-300">
                       {formData.email}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-400">
                       {formatTimeAgo(user.createdAt)}
                     </p>
                   </div>
                 </div>
               </div>
-              {/* <Button
-                variant="secondary"
-                className="mt-4 w-full bg-gray-600 text-slate-300 font-semibold py-3 rounded-lg hover:bg-gray-500 transition-colors"
-                disabled
-              >
-                + Add Email Address
-              </Button> */}
             </div>
           </CardContent>
         </Card>

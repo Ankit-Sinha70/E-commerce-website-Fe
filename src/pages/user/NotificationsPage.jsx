@@ -116,7 +116,9 @@ const NotificationsPage = () => {
           success: { render: 'All notifications marked as read!', className: 'toast-success' },
           error: { render: 'Failed to mark all as read.', className: 'toast-danger' },
         }
-      );
+      ).then(() => {
+        setSelectedNotifications([]);
+      });
     }
   };
 
@@ -199,6 +201,7 @@ const NotificationsPage = () => {
                     size="sm"
                     onClick={handleMarkAllAsRead}
                     className="sm:ml-2 text-slate-300 w-full sm:w-auto"
+                    disabled={selectedNotifications.length !== notifications.length}
                   >
                     Mark All as Read
                   </Button>

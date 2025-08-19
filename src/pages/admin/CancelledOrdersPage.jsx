@@ -1,20 +1,4 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getCancelledOrders,
-  initiateRefund,
-  setCurrentPage,
-} from "../../features/order/cancelledOrderSlice";
 import { Button } from "@/components/ui/button";
-import {
-  Eye,
-  Loader2,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +11,19 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/currency";
+import {
+  Eye,
+  Loader2
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import {
+  getCancelledOrders,
+  initiateRefund,
+  setCurrentPage,
+} from "../../features/order/cancelledOrderSlice";
+import PaginationDemo from "@/component/common/Pagination";
 
 const CancelledOrdersPage = () => {
   const dispatch = useDispatch();
@@ -237,116 +234,23 @@ const CancelledOrdersPage = () => {
               </div>
             </div>
           ))
-        ) : (
+        ) : !loading && orders.length === 0 ? (
           <div className="text-center p-4 text-gray-400">
             No cancelled orders found
+          </div>
+        ) : (
+          <div className="text-center p-4">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto" />
           </div>
         )}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6 px-2">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <Button
-              variant="outline"
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-              className="px-4 py-2 text-sm border-gray-700 text-slate-300 hover:bg-gray-700"
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-              className="ml-3 px-4 py-2 text-sm border-gray-700 text-slate-300 hover:bg-gray-700"
-            >
-              Next
-            </Button>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-slate-400">
-                Showing{" "}
-                <span className="font-medium text-slate-300">
-                  {(currentPage - 1) * itemsPerPage + 1}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium text-slate-300">
-                  {Math.min(currentPage * itemsPerPage, totalItems)}
-                </span>{" "}
-                of{" "}
-                <span className="font-medium text-slate-300">{totalItems}</span>{" "}
-                results
-              </p>
-            </div>
-            <div>
-              <nav
-                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <button
-                  onClick={() => handlePageChange(1)}
-                  disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">First</span>
-                  <ChevronsLeft className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">Previous</span>
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
-                  }
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => handlePageChange(pageNum)}
-                      className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                        currentPage === pageNum
-                          ? "z-10 bg-blue-900/30 border-blue-500 text-blue-300"
-                          : "bg-gray-800 border-gray-700 text-slate-300 hover:bg-gray-700"
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">Next</span>
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => handlePageChange(totalPages)}
-                  disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-700 bg-gray-800 text-sm font-medium text-slate-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">Last</span>
-                  <ChevronsRight className="h-5 w-5" />
-                </button>
-              </nav>
-            </div>
-          </div>
-        </div>
+        <PaginationDemo
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       )}
 
       {/* Order Details Dialog */}

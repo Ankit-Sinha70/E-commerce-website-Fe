@@ -33,8 +33,8 @@ const OrderTable = ({
   onUpdateStatus,
   onDeleteOrder,
 }) => (
-  <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
-    <table className="min-w-full bg-gray-800">
+  <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-700 shadow-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    <table className="bg-gray-800 w-full">
       <thead>
         <tr className="bg-gray-700 text-white text-center p-2">
           <td className="px-8 py-1 font-sm">Order ID</td>

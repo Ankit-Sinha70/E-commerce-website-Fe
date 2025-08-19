@@ -17,6 +17,7 @@ import {
 } from "@/features/notification/notificationSlice";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
+import Loader from "./common/Loader";
 
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -88,8 +89,7 @@ const NotificationBell = () => {
 
         {loading ? (
           <DropdownMenuItem className="flex justify-center items-center text-sm text-gray-300">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin text-blue-500" />
-            Loading...
+            <Loader message={"Loading..."} className="mr-2 h-4 w-4 animate-spin text-blue-500" />
           </DropdownMenuItem>
         ) : notifications?.length > 0 ? (
           <>

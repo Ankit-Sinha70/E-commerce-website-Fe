@@ -136,7 +136,6 @@ export function PaginationDemo({ currentPage, totalPages, onPageChange }) {
     }
     const end = Math.min(start + 2, totalPages);
 
-    // Adjust start if we're near the end so we still show 3 items when possible
     start = Math.max(1, Math.min(start, Math.max(1, totalPages - 2)));
 
     for (let i = start; i <= end; i++) {

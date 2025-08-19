@@ -52,17 +52,7 @@ export default function CartPage() {
   const [promoCode, setPromoCode] = useState("");
   const [selectedAddress, setSelectedAddress] = useState(null);
   const guestId = localStorage.getItem("guestId");
-  const [showLoginPopup, setShowLoginPopup] = useState(false); // State for login popup
-
-  // try {
-  //   const userString = localStorage.getItem("user");
-  //   if (userString) {
-  //     user = JSON.parse(userString);
-  //   }
-  // } catch (e) {
-  //   console.error("Failed to parse user from localStorage:", e);
-  //   toast.error("User data corrupted. Please log in again.");
-  // }
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   useEffect(() => {
     if (accessToken && user?._id) {
@@ -74,7 +64,6 @@ export default function CartPage() {
     }
   }, [accessToken, user?._id, dispatch]);
 
-  // Effect to set the default or first address when addresses are loaded
   useEffect(() => {
     if (shippingAddresses && shippingAddresses.length > 0 && !selectedAddress) {
       const defaultAddress = shippingAddresses.find((addr) => addr.isDefault);
@@ -96,17 +85,10 @@ export default function CartPage() {
   }, [shippingAddresses, selectedAddress, dispatch, addressError]);
 
   const handleQuantityChange = (productId, currentQuantity, change) => {
-    // if (!user || !accessToken) {
-    //   toast.error("Please log in to modify cart items.");
-    //   return;
-    // }
-
     const newQuantity = currentQuantity + change;
-
     if (newQuantity < 1) {
       return;
     }
-
     try {
       dispatch(
         updateItemQuantity({
@@ -120,7 +102,9 @@ export default function CartPage() {
         (item) => item.productId._id === productId
       );
       toast.success(
-        `Quantity ${actionText} for ${updatedItem?.productId?.name || "item"}.`
+        `Quantity ${actionText} for ${updatedItem?.productId?.name || "item"}.`,{
+          className: "toast-success"
+        }
       );
     } catch (err) {
       toast.error("An unexpected error occurred while updating quantity.", {
