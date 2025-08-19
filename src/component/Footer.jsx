@@ -65,7 +65,7 @@ const Footer = () => {
                 <div className="flex items-center justify-center md:justify-start">
                   <Mail className="w-5 h-5 text-blue-400 mr-3" />
                   <a href="mailto:info@icenatural.com" className="text-blue-100 hover:text-white transition-colors">
-                    info@icenatural.com
+                    info@trendiya.com
                   </a>
                 </div>
               </div>
@@ -91,7 +91,7 @@ const Footer = () => {
           {/* Bottom Section */}
           <div className="border-t border-white/20 mt-12 pt-8 text-center">
             <p className="text-blue-100 mb-4">
-              © 2025 Natural Ice. All rights reserved.
+            © 2025 Trendiya. Shop Smart. Shop Trendy.
             </p>
             <div className="flex justify-center space-x-4 text-sm">
               <a href="#" className="text-blue-200 hover:text-white transition-colors">

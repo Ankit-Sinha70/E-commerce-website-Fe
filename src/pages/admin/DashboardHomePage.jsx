@@ -63,7 +63,7 @@ const DashboardHomePage = () => {
     },
     {
       title: "Total Orders",
-      value: orders.length,
+      value: orders?.length,
       icon: <ShoppingCart className="h-6 w-6 text-blue-600" />,
     },
     {

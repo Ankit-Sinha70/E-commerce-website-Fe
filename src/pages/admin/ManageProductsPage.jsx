@@ -244,7 +244,7 @@ const ManageProductsPage = () => {
 
         {/* Products Content */}
         <div className="min-h-screen overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {products?.length === 0 && !loading ? (
+          {products?.length == 0 && !loading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <PackageOpen className="h-16 w-16 mb-4 text-gray-300" />
               <p className="text-xl font-semibold mb-2">No products found</p>

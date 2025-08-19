@@ -86,7 +86,7 @@ const ContactForm = ({ API_BASE_URL }) => {
           </h2>
           <div className="w-16 sm:w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mb-4 sm:mb-6 rounded-full" />
           <p className="kaushan-script-regular2 text-base sm:text-lg text-slate-300 px-2">
-            Get in touch with us for your ice supply needs
+          Reach out to us for exclusive deals and premium products.
           </p>
         </div>
 
@@ -179,7 +179,7 @@ const ContactForm = ({ API_BASE_URL }) => {
                 rows={4}
                 id="contactMessage"
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-slate-300 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none resize-none text-sm sm:text-base"
-                placeholder="Tell us about your ice supply requirements..."
+                placeholder="Let us know your fashion and lifestyle needs..."
                 value={contactMessage}
                 onChange={(e) => setContactMessage(e.target.value)}
                 required

@@ -96,8 +96,7 @@ const ProductCatalogue = ({ products, loading }) => {
           </h2>
           <div className="w-16 sm:w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mb-2 sm:mb-4 rounded-full" />
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto px-2 kaushan-script-regular2">
-            Discover our carefully curated selection of premium ice products,
-            crafted to meet your highest standards
+          Discover our carefully curated selection of premium products, crafted to match your style and elevate your lifestyle.
           </p>
         </div>
 

@@ -25,6 +25,7 @@ export const getCategories = createAsyncThunk(
           },
         }
       );
+      console.log('response', response)
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);

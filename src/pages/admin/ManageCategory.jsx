@@ -60,6 +60,7 @@ import PaginationDemo from "@/component/common/Pagination";
 const ManageCategory = () => {
   const dispatch = useDispatch();
   const { categories, loading, error } = useSelector((state) => state.category);
+  console.log('error', error)
 
   const [isAddEditModalOpen, setIsAddEditModalOpen] = React.useState(false);
   const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] =
@@ -251,7 +252,7 @@ const ManageCategory = () => {
   useEffect(() => {
     if (error) {
       toast.error(
-        `Category operation error: ${error.message || "Unknown error"}`,
+        `${error || "Unknown error"}`,
         {
           className: "toast-danger",
         }

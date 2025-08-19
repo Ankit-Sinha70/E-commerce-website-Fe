@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { capitalizeFirstLetter } from "@/lib/orderUtils";
-import { isRefundProceed } from "@/pages/admin/ReturnRequestTable";
+import isRefundProceed from "@/lib/refundUtils";
 
 // const statusOrder = ["Pending", "Approved", "Picked", "Refunded"];
 

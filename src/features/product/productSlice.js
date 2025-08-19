@@ -50,6 +50,7 @@ export const createProduct = createAsyncThunk(
         Authorization: `Bearer ${accessToken}`,
       },
     });
+    console.log('response', response)
     return response.data.product;
   }
 );

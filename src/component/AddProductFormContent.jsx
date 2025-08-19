@@ -101,13 +101,6 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
     }));
   };
 
-  // const handleSelectChange = (value) => {
-  //   setForm((prev) => ({
-  //     ...prev,
-  //     category: value,
-  //   }));
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("accessToken");
@@ -147,6 +140,7 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
         body: formData,
       });
       const data = await res.json();
+      console.log("dataaaaa", data);
 
       if (!res.ok) {
         throw new Error(
@@ -154,12 +148,13 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
         );
       }
 
-      toast.success("Success", {
-        description:
-          data.message ||
+      toast.success(
+        data.message ||
           `Product ${initialData ? "updated" : "added"} successfully!`,
+        {
           className: "toast-success",
-      });
+        }
+      );
       setForm({
         name: "",
         description: "",
@@ -180,8 +175,8 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
           `An unexpected error occurred while ${
             initialData ? "updating" : "adding"
           } the product.`,
-          className: "toast-danger",
-          });
+        className: "toast-danger",
+      });
       onClose();
     } finally {
       setIsSubmitting(false);
@@ -209,7 +204,9 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
         className="space-y-4 p-4 h-full overflow-y-auto hide-scrollbar"
       >
         <div>
-          <label htmlFor="name" className="text-slate-300">Product Name</label>
+          <label htmlFor="name" className="text-slate-300">
+            Product Name
+          </label>
           <Input
             type="text"
             id="name"
@@ -222,7 +219,9 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
           />
         </div>
         <div>
-          <label htmlFor="description" className="text-slate-300">Description</label>
+          <label htmlFor="description" className="text-slate-300">
+            Description
+          </label>
           <Textarea
             id="description"
             name="description"
@@ -234,7 +233,9 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
           />
         </div>
         <div>
-          <label htmlFor="price" className="text-slate-300">Price (AED)</label>
+          <label htmlFor="price" className="text-slate-300">
+            Price (AED)
+          </label>
           <Input
             type="number"
             id="price"
@@ -248,7 +249,9 @@ const AddProductFormContent = ({ onClose, onProductAdded, initialData }) => {
           />
         </div>
         <div>
-          <label htmlFor="category" className="text-slate-300">Category</label>
+          <label htmlFor="category" className="text-slate-300">
+            Category
+          </label>
           <select
             name="category"
             value={form.category || ""}
