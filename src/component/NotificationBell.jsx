@@ -17,7 +17,7 @@ import {
 } from "@/features/notification/notificationSlice";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
-import Loader from "./common/Loader";
+import Loader from "./Common/Loader";
 
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);

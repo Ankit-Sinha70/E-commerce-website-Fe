@@ -1,4 +1,4 @@
-import Loader from "@/component/common/Loader";
+import Loader from "@/component/Common/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

@@ -19,7 +19,7 @@ import {
   clearShippingAddressError,
   clearShippingAddressSuccess,
 } from "../../features/shippingAddress/shippingAddressSlice";
-import Loader from "@/component/common/Loader";
+import Loader from "@/component/Common/Loader";
 import {
   Dialog,
   DialogContent,

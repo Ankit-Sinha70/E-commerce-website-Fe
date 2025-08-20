@@ -19,7 +19,6 @@ import PaymentPage from "./pages/user/PaymentPage";
 import RegisterPage from "./pages/user/RegisterPage";
 import WishlistPage from "./pages/user/WishlistPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import ManageCategory from "./pages/admin/ManageCategory";
 import RequestResetPasswordPage from "./pages/user/RequestResetPasswordPage";
 import SetNewPasswordPage from "./pages/user/SetNewPasswordPage";
 import ProductDetailsPage from "./pages/user/ProductDetailsPage";
@@ -37,6 +36,8 @@ import ManageUsers from "./pages/admin/ManageUsers";
 import NotificationsPage from "./pages/user/NotificationsPage";
 import useSocket from "./lib/socket";
 import CancelledOrdersPage from "./pages/admin/CancelledOrdersPage";
+import ManageCategory from "./pages/admin/ManageCategory";
+import CategoryPage from "./pages/user/CategoryPage";
 
 const AppInitializer = () => {
   const { user } = useSelector((state) => state.auth);
@@ -122,6 +123,7 @@ const App = () => {
               element={<SetNewPasswordPage />}
             />
             <Route path="/about" element={<AboutAllFixPage />} />
+            <Route path="/categories" element={<CategoryPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/invoice" element={<InvoicePage />} />

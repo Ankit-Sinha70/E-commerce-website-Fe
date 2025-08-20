@@ -7,25 +7,32 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const getCategories = createAsyncThunk(
   "category/getCategories",
   async (
-    { accessToken, searchTerm = "", status = "all", page = 1, limit = 10 },
+    { accessToken, searchTerm = "", status = "all", page = 1, limit = 10, nested = false } = {},
     { rejectWithValue }
   ) => {
     try {
       const query = new URLSearchParams();
-      if (searchTerm) query.append("name", searchTerm);
-      if (status && status !== "all") query.append("status", status);
-      query.append("page", page);
-      query.append("limit", limit);
+
+      if (nested) {
+        query.append("nested", "true");
+        if (searchTerm) query.append("name", searchTerm);
+        if (status && status !== "all") query.append("status", status);
+      } else {
+        if (searchTerm) query.append("name", searchTerm);
+        if (status && status !== "all") query.append("status", status);
+        query.append("page", page);
+        query.append("limit", limit);
+      }
+
+      const config = {};
+      if (accessToken) {
+        config.headers = { Authorization: `Bearer ${accessToken}` };
+      }
 
       const response = await axios.get(
         `${API_URL}/api/category?${query.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        config
       );
-      console.log('response', response)
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -39,13 +46,11 @@ export const getCategoryById = createAsyncThunk(
   async ({ id, accessToken }, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_URL}/api/category/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
-      return response.data.category;
+      // backend sends raw category object
+      return response.data;
     } catch (error) {
-      console.error("Error fetching single category:", error);
       const errorMessage =
         error?.response?.data?.message ||
         error?.message ||
@@ -55,23 +60,20 @@ export const getCategoryById = createAsyncThunk(
   }
 );
 
+
 //create a new category
 export const createCategory = createAsyncThunk(
   "category/createCategory",
-  async ({ categoryData, accessToken }, { rejectWithValue }) => {
+  async ({ formData, accessToken }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${API_URL}/api/category/create`,
-        categoryData,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        formData,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-      return response.data.category;
+      // backend: { success, message, data: savedCategory }
+      return response.data.data;
     } catch (error) {
-      console.error("Error creating category:", error);
       const errorMessage =
         error?.response?.data?.message ||
         error?.message ||
@@ -80,32 +82,29 @@ export const createCategory = createAsyncThunk(
     }
   }
 );
-
 //update an existing category
 export const updateCategory = createAsyncThunk(
-  "category/updateCategory",
-  async ({ _id, updateData, accessToken }, { rejectWithValue }) => {
+  "categories/updateCategory",
+  async ({ _id, formData, accessToken }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `${API_URL}/api/category/update/${_id}`,
-        updateData,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      return response.data.category;
-    } catch (error) {
-      console.error("Error updating category:", error);
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Failed to update category";
-      return rejectWithValue(errorMessage);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
+
+
 
 //delete a category
 export const deleteCategory = createAsyncThunk(
@@ -204,6 +203,7 @@ const categorySlice = createSlice({
       })
       .addCase(createCategory.fulfilled, (state, action) => {
         state.loading = false;
+        // action.payload is the category object
         state.categories.push(action.payload);
         state.currentCategory = action.payload;
         state.error = null;
@@ -218,15 +218,12 @@ const categorySlice = createSlice({
         state.error = null;
       })
       .addCase(updateCategory.fulfilled, (state, action) => {
-        const updatedCategory = action.meta.arg._id;
-        state.categories = state.categories.map((category) =>
-          category._id === updatedCategory._id ? updatedCategory : category
+        const updated = action.payload;
+        state.categories = state.categories.map((c) =>
+          c._id === updated._id ? updated : c
         );
-        if (
-          state.currentCategory &&
-          state.currentCategory._id === updatedCategory._id
-        ) {
-          state.currentCategory = updatedCategory;
+        if (state.currentCategory && state.currentCategory._id === updated._id) {
+          state.currentCategory = updated;
         }
         state.loading = false;
         state.error = null;

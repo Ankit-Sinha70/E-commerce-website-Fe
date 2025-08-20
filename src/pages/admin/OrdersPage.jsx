@@ -1,5 +1,5 @@
-import Loader from "@/component/common/Loader";
-import PaginationDemo from "@/component/common/Pagination";
+import Loader from "@/component/Common/Loader";
+import PaginationDemo from "@/component/Common/Pagination";
 import {
   deleteOrder,
   fetchOrders,
@@ -60,6 +60,7 @@ const OrdersPage = () => {
   };
 
   const handleUpdateStatus = (orderId, currentStatus) => {
+    console.log('Order ID:', orderId, 'Current Status:', currentStatus);
     setStatusOrderId(orderId);
     setNewStatus(currentStatus);
     setShowStatusDialog(true);

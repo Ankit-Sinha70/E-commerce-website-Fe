@@ -3,7 +3,7 @@ import { useDispatch, useSelector }  from "react-redux";
 import { fetchAllUsers, deleteUser } from "../../features/user/userSlice";
 import { Button } from "@/components/ui/button";
 import { Search, RotateCw, Trash2, Eye } from "lucide-react";
-import Loader from "@/component/common/Loader";
+import Loader from "@/component/Common/Loader";
 import {
   Tooltip,
   TooltipContent,

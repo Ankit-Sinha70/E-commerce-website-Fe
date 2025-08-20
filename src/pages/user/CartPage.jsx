@@ -24,7 +24,7 @@ import {
 } from "../../features/shippingAddress/shippingAddressSlice";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import Loader from "@/component/common/Loader";
+import Loader from "@/component/Common/Loader";
 import {
   Select,
   SelectContent,

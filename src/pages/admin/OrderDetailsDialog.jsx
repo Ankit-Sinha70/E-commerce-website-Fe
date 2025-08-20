@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Loader from "@/component/common/Loader";
+import Loader from "@/component/Common/Loader";
 import { getStatusBadge } from "../../lib/orderUtils";
 import { FileText, MapPin, Package, User } from "lucide-react";
 import { useRef, useState } from "react";

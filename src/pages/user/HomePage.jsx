@@ -20,6 +20,7 @@ const HomePage = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log('pproduct response', response)
         setProducts(data.products);
       } catch (err) {
         console.error("Failed to fetch products:", err);

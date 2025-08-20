@@ -1,5 +1,5 @@
-import Loader from "@/component/common/Loader";
-import PaginationDemo from "@/component/common/Pagination";
+import Loader from "@/component/Common/Loader";
+import PaginationDemo from "@/component/Common/Pagination";
 import ReturnRequest from "@/component/ReturnRequest";
 import TrackOrderDialog from "@/component/TrackOrderDialog";
 import { Button } from "@/components/ui/button";

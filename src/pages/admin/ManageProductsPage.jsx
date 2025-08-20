@@ -1,4 +1,4 @@
-import Loader from "@/component/common/Loader";
+import Loader from "@/component/Common/Loader";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -38,7 +38,7 @@ import {
 } from "../../features/product/productSlice";
 import useDebounce from "../../lib/useDebounce";
 import { formatCurrency } from "@/lib/currency";
-import PaginationDemo from "@/component/common/Pagination";
+import PaginationDemo from "@/component/Common/Pagination";
 
 const ManageProductsPage = () => {
   const dispatch = useDispatch();

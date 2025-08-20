@@ -1,5 +1,5 @@
 // File: src/pages/DashboardHomePage.jsx
-import Loader from "@/component/common/Loader";
+import Loader from "@/component/Common/Loader";
 import {
   fetchRecentOrders,
   fetchYearlyRevenue, getSalesOverview
