@@ -21,6 +21,7 @@ import {
 import {
   getShippingAddresses,
   clearShippingAddressError,
+  createShippingAddress,
 } from "../../features/shippingAddress/shippingAddressSlice";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export default function CartPage() {
   const { items: cartItems, loading } = useSelector((state) => state.cart);
   const { accessToken, user } = useSelector((state) => state.auth);
   // Access shipping addresses from the store
-  const { addresses: shippingAddresses, error: addressError } = useSelector(
+  const { addresses: shippingAddresses, error: addressError, loading: addressLoading } = useSelector(
     (state) => state.shippingAddress
   );
   const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -138,7 +139,7 @@ export default function CartPage() {
             icon: <CheckCircle className="w-4 h-4" />,
             style: {
               borderRadius: "8px",
-              background: "#1F2937", // Tailwind gray-800
+              background: "#1F2937",
               color: "#fff",
             },
           }
@@ -171,14 +172,29 @@ export default function CartPage() {
   const shippingCost = 50;
   const total = subtotal + tax + shippingCost;
 
-  const handleAddAddress = (address) => {
-    setSelectedAddress(address);
-    setShowAddAddress(false);
+  const handleAddAddress = async (address) => {
+    try {
+      if (user && accessToken) {
+        const result = await dispatch(createShippingAddress(address));
+        const created = result?.payload?.address;
+        if (created) {
+          setSelectedAddress(created);
+        }
+      } else {
+        // Guest checkout: just set locally
+        setSelectedAddress(address);
+      }
+    // eslint-disable-next-line no-unused-vars
+    } catch (e) {
+      toast.error("Failed to save address. Please try again.", { className: "toast-danger" });
+    } finally {
+      setShowAddAddress(false);
+    }
   };
 
   const handleCheckout = async () => {
     if (!accessToken || !user) {
-      setShowLoginPopup(true); // Show login popup
+      setShowLoginPopup(true);
       return;
     }
 
@@ -195,17 +211,6 @@ export default function CartPage() {
       });
       return;
     }
-
-    // Map cartItems to the structure expected by the backend
-
-    // try {
-    //   const response = await dispatch(createOrder(data));
-    // } catch (error) {
-    //   toast.error(
-    //     error.message || "Failed to create order. Please try again."
-    //   );
-    //   console.error("Order creation error:", error);
-    // }
 
     try {
       const itemsForCheckout = cartItems.map((item) => ({
@@ -226,7 +231,6 @@ export default function CartPage() {
         state: selectedAddress.state,
         postalCode: selectedAddress.postalCode,
         country: selectedAddress.country,
-        // Include other fields if your backend expects them, e.g., type, isDefault
         type: selectedAddress.type,
         isDefault: selectedAddress.isDefault,
       };
@@ -566,8 +570,8 @@ export default function CartPage() {
                   }}
                   onSubmit={handleAddAddress}
                   initialData={selectedAddress}
-                  isLoading={false}
-                  showDefaultOption={false}
+                  isLoading={addressLoading}
+                  showDefaultOption={!!user}
                 />
 
                 {user &&
@@ -593,8 +597,8 @@ export default function CartPage() {
                                 {address.isDefault ? " - Default" : ""})
                               </span>
                               <span className="text-xs text-gray-300">
-                                {address.addressLine}, {address.city},{" "}
-                                {address.state} {address.postalCode},{" "}
+                                {address.addressLine}, {address.city}, {""}
+                                {address.state} {address.postalCode}, {""}
                                 {address.country}
                               </span>
                             </div>
@@ -603,10 +607,10 @@ export default function CartPage() {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <p className="text-sm text-gray-300">
-                      No shipping addresses found. Please add one in your
-                      profile settings.
-                    </p>
+                    <div className="flex flex-col gap-2">
+                      <p className="text-sm text-gray-300">No shipping addresses found.</p>
+                      <Button onClick={() => setShowAddAddress(true)}>Add Address</Button>
+                    </div>
                   ))}
                 {selectedAddress && (
                   <div className="mt-4 p-4 border bg-[#0f172a] border-gray-200 rounded-md text-sm text-gray-300">
@@ -620,8 +624,8 @@ export default function CartPage() {
                     </p>
                     <p className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2 text-gray-300" />
-                      {selectedAddress.addressLine}, {selectedAddress.city},{" "}
-                      {selectedAddress.state} {selectedAddress.postalCode},{" "}
+                      {selectedAddress.addressLine}, {selectedAddress.city}, {""}
+                      {selectedAddress.state} {selectedAddress.postalCode}, {""}
                       {selectedAddress.country}
                     </p>
                   </div>

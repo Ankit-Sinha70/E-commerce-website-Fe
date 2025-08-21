@@ -1,7 +1,7 @@
 import Loader from "@/component/Common/Loader";
 import PaginationDemo from "@/component/Common/Pagination";
 import axios from "axios";
-import { PackageOpen } from "lucide-react";
+import { PackageOpen, SlidersHorizontal } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -21,6 +21,7 @@ const CategoryPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchPage = async () => {
@@ -50,6 +51,8 @@ const CategoryPage = () => {
       );
       const cat = res.data?.category || res.data?.data || res.data;
       setSelectedCategory(cat);
+      // Auto-close filters on small screens
+      setShowFilters(false);
     } catch (e) {
       console.error("Failed to fetch category detail", e);
     }
@@ -106,13 +109,34 @@ const CategoryPage = () => {
     if (!loading && categories.length > 0 && !selectedCategory) {
       fetchCategoryDetail(categories[0]._id);
     }
-  }, [loading, categories, selectedCategory, fetchCategoryDetail]);
+  }, [loading, categories, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <div className="flex">
-        <div className="w-64 bg-gray-800 min-h-screen p-6 border-r border-gray-700">
-          <div className="mb-8">
+      <div className="flex flex-col lg:flex-row">
+        {/* Sidebar / Filters */}
+        <div className="lg:hidden sticky top-0 z-20 bg-gray-900/80 backdrop-blur supports-[backdrop-filter]:bg-gray-900/60">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+            <h1 className="text-xl font-semibold text-white">
+              {selectedCategory ? selectedCategory.name : "Categories"}
+            </h1>
+            <button
+              type="button"
+              onClick={() => setShowFilters((s) => !s)}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              <span className="text-sm">Filters</span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          className={`w-full lg:w-64 bg-gray-800 ${
+            showFilters ? "block" : "hidden"
+          } lg:block lg:min-h-screen p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-gray-700`}
+        >
+          <div className="mb-6 sm:mb-8">
             <h2 className="text-lg font-semibold text-white mb-4">Filter</h2>
             <div className="border-b border-gray-600 pb-2 mb-4"></div>
             <h3 className="text-md font-medium text-white mb-3">Sort</h3>
@@ -159,10 +183,10 @@ const CategoryPage = () => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white">
+        <div className="flex-1 p-4 sm:p-6 lg:p-8">
+          {/* Header (hidden on mobile because we have sticky header) */}
+          <div className="mb-6 lg:mb-8 hidden lg:block">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white">
               {selectedCategory ? selectedCategory.name : "Categories"}
             </h1>
           </div>
@@ -180,20 +204,16 @@ const CategoryPage = () => {
             <div className="flex flex-col items-center justify-center h-64 text-gray-400">
               <PackageOpen className="h-16 w-16 mb-4" />
               <p className="text-xl font-semibold mb-2">Select a category</p>
-              <p className="text-md">
-                Choose a category from the sidebar to view products.
-              </p>
+              <p className="text-md">Choose a category from the sidebar to view products.</p>
             </div>
           ) : selectedProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-gray-400">
               <PackageOpen className="h-16 w-16 mb-4" />
               <p className="text-xl font-semibold mb-2">No products found</p>
-              <p className="text-md">
-                This category doesn't have any products yet.
-              </p>
+              <p className="text-md">This category doesn't have any products yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {selectedProducts.map((product) => {
                 const imgUrl = getProductImageUrl(product);
                 return (
@@ -216,24 +236,22 @@ const CategoryPage = () => {
                     </div>
 
                     {/* Product Info */}
-                    <div className="p-4">
+                    <div className="p-3 sm:p-4">
                       <div className="mb-2">
-                        <h3 className="font-semibold text-white text-lg leading-tight">
+                        <h3 className="font-semibold text-white text-base sm:text-lg leading-tight line-clamp-2 min-h-[2.5rem]">
                           {product.name}
                         </h3>
                       </div>
 
-                      <div className="mb-3">
-                        {/* <p className="text-gray-400 text-sm">Stock: {product.stock}</p> */}
-                      </div>
+                      <div className="mb-3"></div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-white font-bold text-lg">
+                        <span className="text-white font-bold text-base sm:text-lg">
                           ${product.price}
                         </span>
                         <Link
                           to={`/product/${product._id}`}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:px-4 rounded text-xs sm:text-sm font-medium transition-colors duration-200"
                         >
                           View Details
                         </Link>

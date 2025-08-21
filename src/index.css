@@ -312,5 +312,42 @@
 .Toastify__toast--default .Toastify__toast-icon {
   color: #ffffff !important;
 }
+/* --- Magnifier Styles --- */
 
+.magnifier-container {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* Ensure it takes up the grid space */
+}
 
+.image-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  cursor: zoom-in;
+}
+
+.magnifier {
+  display: none;
+  position: fixed;
+  z-index: 99;
+  overflow: hidden;
+  width: 500px;
+  height: 500px;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(67, 61, 61, 0.3);
+  pointer-events: none; 
+}
+
+.magnifier__img {
+  width: auto; /* use natural width */
+  height: auto;
+  transform-origin: 0 0; /* translate in pixel space, then scale from top-left */
+  will-change: transform;
+  user-select: none;
+  pointer-events: none;
+}

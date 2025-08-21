@@ -143,7 +143,8 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.loading = false;
-        state.product = action.payload;
+        // Normalize: some APIs return { product }, some { data }, some the entity/array directly
+        state.product = action.payload?.product || action.payload?.data || action.payload;
       })
       .addCase(fetchProductById.rejected, (state, action) => {
         state.loading = false;

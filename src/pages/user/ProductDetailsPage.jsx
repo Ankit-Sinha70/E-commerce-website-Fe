@@ -1,15 +1,24 @@
-import { Facebook, Linkedin, ShoppingCart, Twitter, ArrowLeft } from "lucide-react";
+import {
+  Facebook,
+  Linkedin,
+  ShoppingCart,
+  Twitter,
+  ArrowLeft,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import AddToCartConfirmationPopup from '../../component/AddToCartConfirmationPopup';
+import AddToCartConfirmationPopup from "../../component/AddToCartConfirmationPopup";
 import { addItemToCart } from "../../features/cart/cartSlice";
 import {
   clearProduct,
   fetchProductById,
 } from "../../features/product/productSlice";
-import { fetchReviewsByProductId, clearReviews } from '../../features/review/reviewSlice';
+import {
+  fetchReviewsByProductId,
+  clearReviews,
+} from "../../features/review/reviewSlice";
 import Loader from "@/component/Common/Loader";
 import ReviewList from "@/component/ReviewList/ReviewList";
 import ReviewForm from "@/component/ReviewForm/ReviewForm";
@@ -21,32 +30,38 @@ const ProductDetailsPage = () => {
   console.log("id", id);
   const dispatch = useDispatch();
 
-  const { product, loading, } = useSelector((state) => state.product);
+  // --- Redux State ---
+  const { product, loading } = useSelector((state) => state.product);
   const { accessToken } = useSelector((state) => state.auth);
   const { loading: cartLoading } = useSelector((state) => state.cart);
-  const { reviews, status: reviewStatus } = useSelector((state) => state.reviews);
-  console.log('reviews', reviews)
+  const { reviews, status: reviewStatus } = useSelector(
+    (state) => state.reviews
+  );
+  console.log("reviews", reviews);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('description');
+  const [activeTab, setActiveTab] = useState("description");
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
-  const [zoomVisible, setZoomVisible] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const imageContainerRef = useRef(null);
+  const [imageError, setImageError] = useState(false);
 
-  // Retrieve and parse user from localStorage
-  let isUser = null;
-  try {
-    const userString = localStorage.getItem("user");
-    if (userString) {
-      isUser = JSON.parse(userString);
-    }
-  } catch (e) {
-    console.error("Failed to parse user from localStorage:", e);
-    toast.error("User data corrupted. Please log in again.", {
-      className: "toast-danger",
-    });
-  }
+  // --- New Magnifier State and Ref ---
+  const imgRef = useRef(null); // Ref for the main product image
+  const [magnifierState, setMagnifierState] = useState({
+    visible: false,
+    top: 0,
+    left: 0,
+    scale: 2, // Initial zoom level
+    tx: 0, // pixel translate X
+    ty: 0, // pixel translate Y
+    lastRelX: 0, // last mouse X relative to displayed image (px)
+    lastRelY: 0, // last mouse Y relative to displayed image (px)
+    imgW: 0, // displayed image width
+    imgH: 0, // displayed image height
+  });
 
+  const placeholderImage = "https://placehold.co/800x800?text=No+Image";
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  // --- Data Fetching Effect ---
   useEffect(() => {
     if (id) {
       dispatch(fetchProductById({ id, accessToken: null }));
@@ -58,58 +73,89 @@ const ProductDetailsPage = () => {
     };
   }, [id, dispatch]);
 
-  const handleQuantityChange = (type) => {
-    if (type === "increment") {
-      setQuantity((prev) => prev + 1);
-    } else if (type === "decrement" && quantity > 1) {
-      setQuantity((prev) => prev - 1);
+  // --- Helper Functions ---
+  const getProductImageUrl = (p) => {
+    try {
+      const candidates = [];
+      if (Array.isArray(p?.images)) candidates.push(p.images[0]);
+      if (p?.image) candidates.push(p.image);
+      if (p?.thumbnail) candidates.push(p.thumbnail);
+      if (p?.mainImage) candidates.push(p.mainImage);
+
+      let first = candidates.find(Boolean);
+      if (!first) return null;
+
+      let url =
+        typeof first === "string"
+          ? first
+          : first.url || first.path || first.src || null;
+      if (!url) return null;
+
+      const isAbsolute = /^(https?:)?\/\//i.test(url);
+      if (isAbsolute) return url;
+      url = url.replace(/^\//, "");
+      return `${API_URL}/${url}`;
+    } catch (e) {
+      console.error("Failed to resolve product image URL", e);
+      return null;
     }
   };
 
+  let isUser = null;
+  try {
+    const userString = localStorage.getItem("user");
+    if (userString) isUser = JSON.parse(userString);
+  } catch (e) {
+    console.error("Failed to parse user from localStorage:", e);
+  }
+
+  // --- Event Handlers ---
+  const handleQuantityChange = (type) => {
+    setQuantity((prev) =>
+      type === "increment" ? prev + 1 : Math.max(1, prev - 1)
+    );
+  };
+
   const handleAddToCart = async () => {
-    if (!product) {
-      toast.error("Product details not loaded. Please try again.", {
-        className: "toast-danger",
-      });
+    const prod = Array.isArray(product)
+      ? product.find((p) => String(p?._id) === String(id))
+      : product;
+    if (!prod) {
+      toast.error("Product details not loaded.", { className: "toast-danger" });
       return;
     }
-
-    // Ensure user object exists, has a role, and accessToken exists
     if (!isUser || !isUser.role || !accessToken) {
       toast.error("Please log in to add items to your cart.", {
         className: "toast-danger",
       });
       return;
     }
-
     try {
       const resultAction = await dispatch(
         addItemToCart({
-          productId: product._id,
-          quantity: quantity,
-          price: product.price,
+          productId: prod._id,
+          quantity,
+          price: prod.price,
           userId: isUser._id,
-          accessToken: accessToken,
+          accessToken,
         })
       );
-
       if (addItemToCart.fulfilled.match(resultAction)) {
         setShowConfirmationPopup(true);
-      } else if (addItemToCart.rejected.match(resultAction)) {
-        const errorMessage =
+      } else {
+        const error =
           resultAction.payload ||
           resultAction.error.message ||
           "Something went wrong.";
-        toast.error(`Failed to add ${product.name} to cart: ${errorMessage}`, {
+        toast.error(`Failed to add to cart: ${error}`, {
           className: "toast-danger",
         });
-        console.error("Failed to add to cart:", errorMessage);
       }
     } catch (err) {
-      toast.error("An unexpected error occurred while adding to cart.", {
+      console.log("err", err);
+      toast.error("An unexpected error occurred.", {
         className: "toast-danger",
       });
-      console.error("Unexpected error in handleAddToCart:", err);
     }
   };
 
@@ -117,47 +163,90 @@ const ProductDetailsPage = () => {
     setShowConfirmationPopup(false);
   };
 
-  const handleMouseEnter = () => {
-    setZoomVisible(true);
+  // --- New Magnifier Event Handlers ---
+  const handleMouseMove = (e) => {
+    if (!imgRef.current || imageError) return;
+
+    const { left, top, width, height } = imgRef.current.getBoundingClientRect();
+    const relX = e.clientX - left; // relative to image (viewport coords)
+    const relY = e.clientY - top;
+
+    if (relX < 0 || relY < 0 || relX > width || relY > height) {
+      if (magnifierState.visible)
+        setMagnifierState((prev) => ({ ...prev, visible: false }));
+      return;
+    }
+
+    const lensSize = 300;
+    const half = lensSize / 2;
+    const scale = magnifierState.scale;
+
+    // Compute translation using DISPLAYED size so 1x equals the on-page image
+    let tx = -(relX * scale - half);
+    let ty = -(relY * scale - half);
+
+    // Clamp using displayed size as well
+    const minTx = lensSize - width * scale;
+    const minTy = lensSize - height * scale;
+    tx = Math.max(minTx, Math.min(0, tx));
+    ty = Math.max(minTy, Math.min(0, ty));
+
+    setMagnifierState((prev) => ({
+      ...prev,
+      visible: true,
+      // lens follows cursor; lens is fixed-position, so use clientX/clientY
+      top: e.clientY - half,
+      left: e.clientX - half,
+      tx,
+      ty,
+      lastRelX: relX,
+      lastRelY: relY,
+      imgW: width,
+      imgH: height,
+    }));
   };
 
   const handleMouseLeave = () => {
-    setZoomVisible(false);
-    setZoomPosition({ x: 0, y: 0 });
+    setMagnifierState((prev) => ({ ...prev, visible: false }));
   };
 
-  const handleMouseMove = (e) => {
-    if (!imageContainerRef.current || !product?.image) return;
+  const handleWheel = (e) => {
+    if (!magnifierState.visible) return;
+    e.preventDefault();
+    const scrollingUp = e.deltaY < 0;
 
-    const { left, top, width, height } = imageContainerRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - left;
-    const mouseY = e.clientY - top;
+    setMagnifierState((prev) => {
+      const newScale = scrollingUp
+        ? Math.min(3, prev.scale + 0.1)
+        : Math.max(1, prev.scale - 0.1);
+      const scale = Math.round(newScale * 10) / 10;
 
-    const viewWidth = width;
-    const viewHeight = height;
+      // Recompute tx/ty to keep the zoom centered at last cursor point (display size space)
+      const width =
+        prev.imgW || imgRef.current?.getBoundingClientRect().width || 1;
+      const height =
+        prev.imgH || imgRef.current?.getBoundingClientRect().height || 1;
+      const lensSize = 300;
+      const half = lensSize / 2;
+      let tx = -(prev.lastRelX * scale - half);
+      let ty = -(prev.lastRelY * scale - half);
+      const minTx = lensSize - width * scale;
+      const minTy = lensSize - height * scale;
+      tx = Math.max(minTx, Math.min(0, tx));
+      ty = Math.max(minTy, Math.min(0, ty));
 
-    const zoomWidth = 800;
-    const zoomHeight = 800;
-
-    const zoomFactorX = zoomWidth / viewWidth;
-    const zoomFactorY = zoomHeight / viewHeight;
-
-    const newLeft = -(mouseX * (zoomFactorX - 1));
-    const newTop = -(mouseY * (zoomFactorY - 1));
-
-    const clampedLeft = Math.max(-(zoomWidth - viewWidth), Math.min(0, newLeft));
-    const clampedTop = Math.max(-(zoomHeight - viewHeight), Math.min(0, newTop));
-
-    setZoomPosition({ x: clampedLeft, y: clampedTop });
+      return { ...prev, scale, tx, ty };
+    });
   };
 
-  if (loading) {
-    return (
-      <Loader message={"Loading Product Details..."}/>
-    );
-  }
+  // --- Render Logic ---
+  const prod = Array.isArray(product)
+    ? product.find((p) => String(p?._id) === String(id))
+    : product;
 
-  if (!product) {
+  if (loading) return <Loader message={"Loading Product Details..."} />;
+
+  if (!prod) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <p className="text-xl text-gray-700">Product not found.</p>
@@ -165,102 +254,102 @@ const ProductDetailsPage = () => {
     );
   }
 
+  const productImgUrl = getProductImageUrl(prod);
+
   return (
-		<div className="min-h-screen bg-[#1e293b]">
-			{/* Back to products - fixed top-left, responsive */}
-			<Link
-				to="/#products"
-				aria-label="Back to products"
-				className="fixed top-20 left-4 z-40 inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-800/80 text-slate-300 border border-gray-700 backdrop-blur hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:hidden"
-			>
-				<ArrowLeft className="h-5 w-5" />
-			</Link>
-			<Link
-				to="/#products"
-				className="fixed top-25 left-8 z-40 hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-800/80 text-slate-300 border border-gray-700 backdrop-blur hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			>
-				<ArrowLeft className="h-5 w-5" />
-				<span className="text-sm font-medium">Back</span>
-			</Link>
+    <div className="min-h-screen bg-[#1e293b]">
+      <Link
+        to="/#products"
+        aria-label="Back to products"
+        className="fixed top-20 left-4 z-40 inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-800/80 text-slate-300 border border-gray-700 backdrop-blur hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:hidden"
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </Link>
+      <Link
+        to="/#products"
+        className="fixed top-25 left-8 z-40 hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-800/80 text-slate-300 border border-gray-700 backdrop-blur hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <ArrowLeft className="h-5 w-5" />
+        <span className="text-sm font-medium">Back</span>
+      </Link>
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 mt-36">
-        {/* Main Product Section */}
         <div className="bg-gray-600 rounded-lg shadow-sm mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
-            {/* Product Image */}
-            <div className="relative">
-              <div
-                className="relative bg-gray-600 rounded-lg overflow-hidden"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onMouseMove={handleMouseMove}
-                ref={imageContainerRef}
-              >
-                <img
-                  src={product.image || "/src/image_22_3.jpeg"}
-                  alt={product.name}
-                  className="w-full h-auto max-h-[500px] object-contain transition-opacity duration-300 cursor-grid hover:cursor-grid"
-                  style={{ opacity: zoomVisible ? 0 : 1 }}
-                />
-                {zoomVisible && (
+            {/* ====== Product Image Section with Magnifier ====== */}
+            <div
+              className="magnifier-container"
+              onMouseMove={!imageError ? handleMouseMove : undefined}
+              onMouseLeave={!imageError ? handleMouseLeave : undefined}
+              onWheel={!imageError ? handleWheel : undefined}
+            >
+              <img
+                ref={imgRef}
+                src={productImgUrl || placeholderImage}
+                alt={prod?.name || "Product"}
+                className="image-preview"
+                onError={() => setImageError(true)}
+                onLoad={() => setImageError(false)}
+              />
+              {!imageError && productImgUrl && (
+                <div
+                  className="magnifier"
+                  style={{
+                    display: magnifierState.visible ? "block" : "none",
+                    top: `${magnifierState.top}px`,
+                    left: `${magnifierState.left}px`,
+                  }}
+                >
                   <img
-                    src={product.image || "/src/image_22_3.jpeg"}
-                    alt={`${product.name} zoomed`}
+                    className="magnifier__img"
+                    src={productImgUrl}
+                    alt="Zoomed"
                     style={{
-                      position: 'absolute',
-                      top: zoomPosition.y,
-                      left: zoomPosition.x,
-                      width: '800px',
-                      height: '800px',
-                      maxWidth: 'none',
-                      maxHeight: 'none',
-                      opacity: 1,
-                      pointerEvents: 'none',
-                      transform: 'translateZ(0)',
+                      width: `${magnifierState.imgW || 0}px`,
+                      height: `${magnifierState.imgH || 0}px`,
+                      transform: `translate(${magnifierState.tx}px, ${magnifierState.ty}px) scale(${magnifierState.scale})`,
                     }}
-                    className="object-contain cursor-grid hover:cursor-grid"
                   />
-                )}
-                <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                  BEST SELLING
                 </div>
+              )}
+              <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                BEST SELLING
               </div>
             </div>
 
-            {/* Product Details */}
+            {/* ====== Product Details Section ====== */}
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl font-bold text-gray-300 mb-2">
-                  {product.name}
+                  {prod?.name}
                 </h1>
                 <p className="text-3xl font-bold text-blue-500">
-                  {formatCurrency(product.price)}
+                  {formatCurrency(prod?.price)}
                 </p>
               </div>
 
-              {product.shortDescription && (
+              {prod?.shortDescription && (
                 <div>
                   <h2 className="text-lg font-semibold text-gray-300 mb-2">
-                    {product.shortDescription}
+                    {prod?.shortDescription}
                   </h2>
                   <p className="text-gray-300 leading-relaxed">
-                    {product.description}
+                    {prod?.description}
                   </p>
                 </div>
               )}
 
-              {product.size && (
+              {prod?.size && (
                 <div>
                   <p className="text-gray-300">
-                    <strong>Ice Ball Size:</strong> {product.size}
+                    <strong>Ice Ball Size:</strong> {prod?.size}
                   </p>
                 </div>
               )}
 
-              {/* Quantity and Add to Cart */}
               <div className="flex items-center gap-4">
-                <div className="flex items-center border border-gray-300 rounded">
+                <div className="flex items-center border border-gray-300 rounded text-gray-300 bg-gray-700">
                   <button
-                    className="px-3 py-2 hover:bg-gray-100 text-lg font-medium"
+                    className="px-3 py-2 hover:bg-gray-500 text-lg font-medium"
                     onClick={() => handleQuantityChange("decrement")}
                   >
                     -
@@ -269,10 +358,10 @@ const ProductDetailsPage = () => {
                     type="text"
                     value={quantity}
                     readOnly
-                    className="w-16 text-center border-x border-gray-300 py-2 focus:outline-none"
+                    className="w-16 text-center border-x border-gray-500 py-2 focus:outline-none bg-gray-700 text-gray-300"
                   />
                   <button
-                    className="px-3 py-2 hover:bg-gray-100 text-lg font-medium"
+                    className="px-3 py-2 hover:bg-gray-500 text-lg font-medium"
                     onClick={() => handleQuantityChange("increment")}
                   >
                     +
@@ -284,11 +373,10 @@ const ProductDetailsPage = () => {
                   disabled={cartLoading}
                 >
                   {cartLoading ? (
-                    "Adding to Cart..."
+                    "Adding..."
                   ) : (
                     <>
-                      <ShoppingCart className="w-4 h-4" />
-                      ADD TO CART
+                      <ShoppingCart className="w-4 h-4" /> ADD TO CART
                     </>
                   )}
                 </button>
@@ -298,8 +386,8 @@ const ProductDetailsPage = () => {
               <div className="border-t pt-4">
                 <p className="text-gray-300">
                   <strong>Category:</strong>
-                  <span className="ml-2 text-gray-300">
-                    {product.category?.name || "Ice"}
+                  <span className="ml-2 text-gray-400">
+                    {prod?.category?.name || "Uncategorized"}
                   </span>
                 </p>
               </div>
@@ -350,42 +438,42 @@ const ProductDetailsPage = () => {
             <div className="flex">
               <button
                 className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                  activeTab === 'description'
-                    ? 'text-blue-600 border-blue-500'
-                    : 'text-gray-300 border-transparent hover:text-gray-500'
+                  activeTab === "description"
+                    ? "text-blue-600 border-blue-500"
+                    : "text-gray-300 border-transparent hover:text-gray-500"
                 }`}
-                onClick={() => setActiveTab('description')}
+                onClick={() => setActiveTab("description")}
               >
                 Description
               </button>
               <button
                 className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                  activeTab === 'reviews'
-                    ? 'text-blue-600 border-blue-600'
-                    : 'text-gray-300 border-transparent hover:text-gray-500'
+                  activeTab === "reviews"
+                    ? "text-blue-600 border-blue-600"
+                    : "text-gray-300 border-transparent hover:text-gray-500"
                 }`}
-                onClick={() => setActiveTab('reviews')}
+                onClick={() => setActiveTab("reviews")}
               >
                 Reviews ({reviews?.length})
               </button>
             </div>
           </div>
-          
+
           <div className="p-6">
-            {activeTab === 'description' && (
+            {activeTab === "description" && (
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-300 mb-2">{product?.name}</h3>
-                  <p className="text-gray-400 mb-4">
-                    {product?.description}
-                  </p>
+                  <h3 className="font-semibold text-gray-300 mb-2">
+                    {product?.name}
+                  </h3>
+                  <p className="text-gray-400 mb-4">{product?.description}</p>
                 </div>
               </div>
             )}
-            
-            {activeTab === 'reviews' && (
+
+            {activeTab === "reviews" && (
               <div>
-                {reviewStatus === 'loading' ? (
+                {reviewStatus === "loading" ? (
                   <Loader message="Loading reviews..." />
                 ) : (
                   <>
@@ -402,16 +490,37 @@ const ProductDetailsPage = () => {
         {/* Related Products */}
         <div className="bg-gray-600 rounded-lg shadow-sm">
           <div className="p-6">
-            <h2 className="text-xl font-bold text-gray-300 mb-6">Related products</h2>
+            <h2 className="text-xl font-bold text-gray-300 mb-6">
+              Related products
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Sample Related Products */}
               {[
-                { name: "Ice Ball (6pcs)", price: "30.00 AED - 40.00 AED", image: "/api/placeholder/200/200" },
-                { name: "Ice Tubes", price: "1.50 AED - 37.50 AED", image: "/api/placeholder/200/200" },
-                { name: "Ice Cubes", price: "2.75 AED", image: "/api/placeholder/200/200" },
-                { name: "Ice Ball Mint (6pcs)", price: "36.00 AED", image: "/api/placeholder/200/200" }
+                {
+                  name: "Ice Ball (6pcs)",
+                  price: "30.00 AED - 40.00 AED",
+                  image: "/api/placeholder/200/200",
+                },
+                {
+                  name: "Ice Tubes",
+                  price: "1.50 AED - 37.50 AED",
+                  image: "/api/placeholder/200/200",
+                },
+                {
+                  name: "Ice Cubes",
+                  price: "2.75 AED",
+                  image: "/api/placeholder/200/200",
+                },
+                {
+                  name: "Ice Ball Mint (6pcs)",
+                  price: "36.00 AED",
+                  image: "/api/placeholder/200/200",
+                },
               ].map((relatedProduct, index) => (
-                <div key={index} className="relative bg-gray-500 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div
+                  key={index}
+                  className="relative bg-gray-500 rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
                   <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
                     BEST SELLING
                   </div>
@@ -435,7 +544,7 @@ const ProductDetailsPage = () => {
 
       <AddToCartConfirmationPopup
         isVisible={showConfirmationPopup}
-        productName={product?.name}
+        productName={prod?.name}
         quantity={quantity}
         onClose={handleCloseConfirmationPopup}
       />
