@@ -6,20 +6,22 @@ const API_URL = import.meta.env.VITE_API_URL;
 // GET all products
 export const fetchProducts = createAsyncThunk(
   "product/fetchProducts",
-  async ({ accessToken, searchTerm = "", category = "All", page = 1, limit = 10 }) => {
+  async ({ accessToken, searchTerm = "", category, subcategory, minPrice, maxPrice, sortBy, page = 1, limit = 10 }) => {
     const query = new URLSearchParams();
     if (searchTerm) query.append("name", searchTerm);
     if (category && category !== "All") query.append("category", category);
+    if (subcategory) query.append("subcategory", subcategory);
+    if (minPrice != null && minPrice !== "") query.append("minPrice", minPrice);
+    if (maxPrice != null && maxPrice !== "") query.append("maxPrice", maxPrice);
+    if (sortBy) query.append("sortBy", sortBy);
     query.append("page", page);
     query.append("limit", limit);
 
+    const config = accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {};
+
     const response = await axios.get(
       `${API_URL}/api/product/list?${query.toString()}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
+      config
     );
 
     return response.data;
@@ -51,7 +53,7 @@ export const createProduct = createAsyncThunk(
       },
     });
     console.log('response', response)
-    return response.data.product;
+    return response.data.data;
   }
 );
 
@@ -65,7 +67,7 @@ export const updateProduct = createAsyncThunk(
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    return response.data.product;
+    return response.data.data;
   }
 );
 
@@ -105,12 +107,14 @@ const productSlice = createSlice({
   initialState: {
     products: [],
     product: null,
+    relatedProducts: [],
     loading: false,
     error: null,
   },
   reducers: {
     clearProduct(state) {
       state.product = null;
+      state.relatedProducts = [];
     },
     // Optimistically prepend a product to the current list
     prependProduct(state, action) {
@@ -126,7 +130,7 @@ const productSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         // Show newer first by sorting only on ObjectId descending (no createdAt)
-        const fetchedProducts = action.payload.products || [];
+        const fetchedProducts = action.payload.data || [];
         state.products = [...fetchedProducts].sort((a, b) =>
           String(b?._id || "").localeCompare(String(a?._id || ""))
         );
@@ -144,7 +148,8 @@ const productSlice = createSlice({
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.loading = false;
         // Normalize: some APIs return { product }, some { data }, some the entity/array directly
-        state.product = action.payload?.product || action.payload?.data || action.payload;
+        state.product = action.payload?.product || action.payload?.data?.product || action.payload?.data || action.payload;
+        state.relatedProducts = action.payload?.data?.relatedProducts || action.payload?.relatedProducts || [];
       })
       .addCase(fetchProductById.rejected, (state, action) => {
         state.loading = false;

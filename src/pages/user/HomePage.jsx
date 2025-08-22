@@ -21,7 +21,7 @@ const HomePage = () => {
         }
         const data = await response.json();
         console.log('pproduct response', response)
-        setProducts(data.products);
+        setProducts(data?.data || data?.products || []);
       } catch (err) {
         console.error("Failed to fetch products:", err);
       } finally {

@@ -31,7 +31,7 @@ const ProductDetailsPage = () => {
   const dispatch = useDispatch();
 
   // --- Redux State ---
-  const { product, loading } = useSelector((state) => state.product);
+  const { product, relatedProducts, loading } = useSelector((state) => state.product);
   const { accessToken } = useSelector((state) => state.auth);
   const { loading: cartLoading } = useSelector((state) => state.cart);
   const { reviews, status: reviewStatus } = useSelector(
@@ -82,19 +82,18 @@ const ProductDetailsPage = () => {
       if (p?.thumbnail) candidates.push(p.thumbnail);
       if (p?.mainImage) candidates.push(p.mainImage);
 
-      let first = candidates.find(Boolean);
-      if (!first) return null;
-
-      let url =
-        typeof first === "string"
-          ? first
-          : first.url || first.path || first.src || null;
-      if (!url) return null;
-
-      const isAbsolute = /^(https?:)?\/\//i.test(url);
-      if (isAbsolute) return url;
-      url = url.replace(/^\//, "");
-      return `${API_URL}/${url}`;
+      for (const c of candidates) {
+        if (!c) continue;
+        let url = typeof c === "string" ? c : c?.url || c?.path || c?.src || c?.secure_url || null;
+        if (!url) continue;
+        url = String(url).replace(/\\/g, "/");
+        const isAbsolute = /^(https?:)?\/\//i.test(url) || url.startsWith("data:");
+        if (isAbsolute) return url;
+        const clean = url.replace(/^\//, "");
+        const base = String(API_URL || "").replace(/\/$/, "");
+        return base ? `${base}/${clean}` : `/${clean}`;
+      }
+      return null;
     } catch (e) {
       console.error("Failed to resolve product image URL", e);
       return null;
@@ -135,7 +134,7 @@ const ProductDetailsPage = () => {
         addItemToCart({
           productId: prod._id,
           quantity,
-          price: prod.price,
+          price: prod?.discountPrice ?? prod?.price,
           userId: isUser._id,
           accessToken,
         })
@@ -181,11 +180,9 @@ const ProductDetailsPage = () => {
     const half = lensSize / 2;
     const scale = magnifierState.scale;
 
-    // Compute translation using DISPLAYED size so 1x equals the on-page image
     let tx = -(relX * scale - half);
     let ty = -(relY * scale - half);
 
-    // Clamp using displayed size as well
     const minTx = lensSize - width * scale;
     const minTy = lensSize - height * scale;
     tx = Math.max(minTx, Math.min(0, tx));
@@ -194,7 +191,6 @@ const ProductDetailsPage = () => {
     setMagnifierState((prev) => ({
       ...prev,
       visible: true,
-      // lens follows cursor; lens is fixed-position, so use clientX/clientY
       top: e.clientY - half,
       left: e.clientX - half,
       tx,
@@ -221,7 +217,6 @@ const ProductDetailsPage = () => {
         : Math.max(1, prev.scale - 0.1);
       const scale = Math.round(newScale * 10) / 10;
 
-      // Recompute tx/ty to keep the zoom centered at last cursor point (display size space)
       const width =
         prev.imgW || imgRef.current?.getBoundingClientRect().width || 1;
       const height =
@@ -239,7 +234,6 @@ const ProductDetailsPage = () => {
     });
   };
 
-  // --- Render Logic ---
   const prod = Array.isArray(product)
     ? product.find((p) => String(p?._id) === String(id))
     : product;
@@ -316,15 +310,32 @@ const ProductDetailsPage = () => {
               </div>
             </div>
 
-            {/* ====== Product Details Section ====== */}
+            {/* Product Details Section */}
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl font-bold text-gray-300 mb-2">
                   {prod?.name}
                 </h1>
                 <p className="text-3xl font-bold text-blue-500">
-                  {formatCurrency(prod?.price)}
+                  {formatCurrency(prod?.discountPrice ?? prod?.price)}
                 </p>
+                {prod?.originalPrice && prod?.discountPrice && (
+                  <p className="text-gray-300 line-through text-sm">
+                    {formatCurrency(prod.originalPrice)}
+                  </p>
+                )}
+                {(() => {
+                  const pct = typeof prod?.discountPercentage === 'number'
+                    ? Math.round(prod.discountPercentage)
+                    : (prod?.originalPrice && prod?.discountPrice
+                        ? Math.round(100 - (Number(prod.discountPrice) / Number(prod.originalPrice)) * 100)
+                        : null);
+                  return (pct && isFinite(pct) && pct > 0) ? (
+                    <span className="inline-block mt-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">
+                      {pct}% OFF
+                    </span>
+                  ) : null;
+                })()}
               </div>
 
               {prod?.shortDescription && (
@@ -408,7 +419,7 @@ const ProductDetailsPage = () => {
                     <a
                       href={`https://twitter.com/intent/tweet?url=${
                         window.location.href
-                      }&text=${encodeURIComponent(product.name)}`}
+                      }&text=${encodeURIComponent(prod?.name || "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-blue-600"
@@ -418,7 +429,7 @@ const ProductDetailsPage = () => {
                     <a
                       href={`https://www.linkedin.com/shareArticle?mini=true&url=${
                         window.location.href
-                      }&title=${encodeURIComponent(product.name)}`}
+                      }&title=${encodeURIComponent(prod?.name || "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-blue-900"
@@ -493,51 +504,57 @@ const ProductDetailsPage = () => {
             <h2 className="text-xl font-bold text-gray-300 mb-6">
               Related products
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Sample Related Products */}
-              {[
-                {
-                  name: "Ice Ball (6pcs)",
-                  price: "30.00 AED - 40.00 AED",
-                  image: "/api/placeholder/200/200",
-                },
-                {
-                  name: "Ice Tubes",
-                  price: "1.50 AED - 37.50 AED",
-                  image: "/api/placeholder/200/200",
-                },
-                {
-                  name: "Ice Cubes",
-                  price: "2.75 AED",
-                  image: "/api/placeholder/200/200",
-                },
-                {
-                  name: "Ice Ball Mint (6pcs)",
-                  price: "36.00 AED",
-                  image: "/api/placeholder/200/200",
-                },
-              ].map((relatedProduct, index) => (
-                <div
-                  key={index}
-                  className="relative bg-gray-500 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                    BEST SELLING
-                  </div>
-                  <img
-                    src={relatedProduct.image}
-                    alt={relatedProduct.name}
-                    className="w-full h-40 object-contain mb-3 cursor-grid hover:cursor-grid"
-                  />
-                  <h3 className="font-medium text-gray-300 text-center mb-2">
-                    {relatedProduct.name}
-                  </h3>
-                  <p className="text-gray-300 font-semibold text-center">
-                    {relatedProduct.price}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {Array.isArray(relatedProducts) && relatedProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {relatedProducts.map((rp) => {
+                  const rpImg = getProductImageUrl(rp) || "https://placehold.co/400x400?text=No+Image";
+                  return (
+                    <Link
+                      to={`/product/${rp._id}`}
+                      key={rp._id}
+                      className="relative bg-gray-500 rounded-lg p-4 hover:shadow-md transition-shadow block"
+                    >
+                      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                        BEST SELLING
+                      </div>
+                      <img
+                        src={rpImg}
+                        alt={rp?.name || "Related product"}
+                        className="w-full h-40 object-contain mb-3"
+                        loading="lazy"
+                      />
+                      <h3 className="font-medium text-gray-300 text-center mb-2 line-clamp-2">
+                        {rp?.name}
+                      </h3>
+                      <div className="text-center">
+                        <p className="text-gray-300 font-semibold">
+                          {formatCurrency(rp?.discountPrice ?? rp?.price)}
+                        </p>
+                        {rp?.originalPrice && rp?.discountPrice && (
+                          <p className="text-gray-400 line-through text-sm">
+                            {formatCurrency(rp.originalPrice)}
+                          </p>
+                        )}
+                        {(() => {
+                          const pct = typeof rp?.discountPercentage === 'number'
+                            ? Math.round(rp.discountPercentage)
+                            : (rp?.originalPrice && rp?.discountPrice
+                                ? Math.round(100 - (Number(rp.discountPrice) / Number(rp.originalPrice)) * 100)
+                                : null);
+                          return (pct && isFinite(pct) && pct > 0) ? (
+                            <span className="inline-block mt-1 bg-green-600 text-white text-xs font-semibold px-2 py-0.5 rounded">
+                              -{pct}%
+                            </span>
+                          ) : null;
+                        })()}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-gray-300">No related products found.</p>
+            )}
           </div>
         </div>
       </div>

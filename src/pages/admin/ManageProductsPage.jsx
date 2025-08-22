@@ -40,6 +40,8 @@ import useDebounce from "../../lib/useDebounce";
 import { formatCurrency } from "@/lib/currency";
 import PaginationDemo from "@/component/Common/Pagination";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const ManageProductsPage = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.product);
@@ -272,11 +274,28 @@ const ManageProductsPage = () => {
                         className="border-b border-gray-700 last:border-b-0 hover:bg-gray-700 transition-colors"
                       >
                         <td className="px-6 py-4">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-16 h-16 object-cover rounded-lg shadow-md"
-                          />
+                          {(() => {
+                            const raw = product?.image || (Array.isArray(product?.image) ? product.image[0] : null);
+                            let src = typeof raw === 'string' ? raw : raw?.url || raw?.path || raw?.src || '';
+                            if (src) {
+                              src = String(src).replace(/\\/g, '/');
+                              if (!/^https?:\/\//i.test(src) && !src.startsWith('data:')) {
+                                const clean = src.replace(/^\//, '');
+                                const base = String(API_URL || '').replace(/\/$/, '');
+                                src = base ? `${base}/${clean}` : `/${clean}`;
+                              }
+                            }
+                            return src ? (
+                              <img
+                                src={product?.image}
+                                alt={product.name}
+                                className="w-16 h-16 object-cover rounded-lg shadow-md"
+                                onError={(e) => (e.currentTarget.style.display = 'none')}
+                              />
+                            ) : (
+                              <div className="w-16 h-16 bg-gray-700 rounded-lg" />
+                            );
+                          })()}
                         </td>
                         <td className="px-6 py-4">
                           <div className="font-medium text-white">
@@ -287,10 +306,17 @@ const ManageProductsPage = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-gray-400">
-                          {product?.category?.name}
+                          {product?.category?.name || product?.category || "-"}
                         </td>
                         <td className="px-6 py-4 font-medium text-gray-300">
-                          {formatCurrency(product.price)}
+                          <div className="flex items-center gap-2">
+                            <span>{formatCurrency(product?.discountPrice ?? product?.price ?? 0)}</span>
+                            {product?.originalPrice && product?.discountPrice && (
+                              <span className="text-gray-400 line-through text-sm">
+                                {formatCurrency(product.originalPrice)}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 text-gray-400">
                           {product.stock}
@@ -349,11 +375,27 @@ const ManageProductsPage = () => {
                     className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-4"
                   >
                     <div className="flex space-x-4">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-20 h-20 object-cover rounded-lg shadow-md flex-shrink-0"
-                      />
+                      {(() => {
+                        const raw = product?.image || (Array.isArray(product?.images) ? product.images[0] : null);
+                        let src = typeof raw === 'string' ? raw : raw?.url || raw?.path || raw?.src || '';
+                        if (src) {
+                          src = String(src).replace(/\\/g, '/');
+                          if (!/^https?:\/\//i.test(src) && !src.startsWith('data:')) {
+                            const clean = src.replace(/^\//, '');
+                            const base = String(API_URL || '').replace(/\/$/, '');
+                            src = base ? `${base}/${clean}` : `/${clean}`;
+                          }
+                        }
+                        return src ? (
+                          <img
+                            src={src}
+                            alt={product.name}
+                            className="w-20 h-20 object-cover rounded-lg shadow-md flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 bg-gray-700 rounded-lg flex-shrink-0" />
+                        );
+                      })()}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-white truncate">
                           {product.name}
@@ -365,13 +407,13 @@ const ManageProductsPage = () => {
                           <div>
                             <span className="text-gray-400">Category:</span>
                             <span className="ml-1 text-gray-300">
-                              {product.category.name}
+                              {product?.category?.name || product?.category || "-"}
                             </span>
                           </div>
                           <div>
                             <span className="text-gray-400">Price:</span>
                             <span className="ml-1 font-medium text-gray-300">
-                              {formatCurrency(product.price)}
+                              {formatCurrency(product?.discountPrice ?? product?.price ?? 0)}
                             </span>
                           </div>
                           <div>

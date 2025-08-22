@@ -37,7 +37,10 @@ import NotificationsPage from "./pages/user/NotificationsPage";
 import useSocket from "./lib/socket";
 import CancelledOrdersPage from "./pages/admin/CancelledOrdersPage";
 import ManageCategory from "./pages/admin/ManageCategory";
-import CategoryPage from "./pages/user/CategoryPage";
+import ManageSubcategory from "./pages/admin/ManageSubcategory";
+import CategoryListingPage from "./pages/user/CategoryListingPage";
+import SubcategoryListingPage from "./pages/user/SubcategoryListingPage";
+import SubcategoryProductsPage from "./pages/user/SubcategoryProductsPage";
 
 const AppInitializer = () => {
   const { user } = useSelector((state) => state.auth);
@@ -97,6 +100,7 @@ const App = () => {
             <Route path="manage-return-requests" element={<ManageReturnRequests />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="manage-categories" element={<ManageCategory />} />
+            <Route path="manage-subcategories" element={<ManageSubcategory />} />
             <Route
               path="manage-users"
               element={
@@ -123,7 +127,10 @@ const App = () => {
               element={<SetNewPasswordPage />}
             />
             <Route path="/about" element={<AboutAllFixPage />} />
-            <Route path="/categories" element={<CategoryPage />} />
+            <Route path="/categories" element={<CategoryListingPage />} />
+            <Route path="/c" element={<CategoryListingPage />} />
+            <Route path="/c/:categorySlugOrId" element={<SubcategoryListingPage />} />
+            <Route path="/c/:categorySlugOrId/s/:subcategorySlugOrId" element={<SubcategoryProductsPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/invoice" element={<InvoicePage />} />

@@ -14,12 +14,14 @@ import shippingAddressReducer from '../features/shippingAddress/shippingAddressS
 import notificationReducer from "../features/notification/notificationSlice";
 import paymentReducer from '../features/payment/paymentSlice';
 import reviewReducer from '../features/review/reviewSlice';
+import subcategoryReducer from '../features/subcategory/subcategorySlice';
 
 const appReducer  = combineReducers({
   auth: authReducer,
   user: userReducer,
   cart: cartReducer,
   category: categoryReducer,
+  subcategory: subcategoryReducer,
   product: productReducer,
   wishlist: wishlistReducer,
   order: orderReducer,
@@ -43,7 +45,7 @@ const rootReducer = (state, action) => {
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: [ 'cart', 'shippingAddress','category','payment','order','recentOrders','user','product','reviews']
+  whitelist: [ 'cart', 'shippingAddress','payment','order','recentOrders','user','product','reviews']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

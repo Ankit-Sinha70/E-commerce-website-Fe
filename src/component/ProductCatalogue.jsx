@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Snowflake, Star, Heart } from "lucide-react";
 import { useState } from "react";
@@ -8,6 +9,8 @@ import { addItem, addItemToCart } from "../../src/features/cart/cartSlice";
 import { addItemToWishList } from "../../src/features/wishlist/wishlistSlice";
 import AddToCartConfirmationPopup from "./AddToCartConfirmationPopup";
 import LoginRequiredPopup from "./LoginRequiredPopup";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ProductCatalogue = ({ products, loading }) => {
   console.log('products', products)
@@ -34,7 +37,7 @@ const ProductCatalogue = ({ products, loading }) => {
           addItem({
             productId: product,
             quantity: quantity,
-            price: product.price,
+            price: product?.discountPrice ?? product?.price,
           })
         );
       } else {
@@ -42,7 +45,7 @@ const ProductCatalogue = ({ products, loading }) => {
           addItemToCart({
             productId: product._id,
             quantity: quantity,
-            price: product.price,
+            price: product?.discountPrice ?? product?.price,
             userId: user._id,
             accessToken: accessToken,
           })
@@ -83,6 +86,46 @@ const ProductCatalogue = ({ products, loading }) => {
       toast.error(errorMessage, {
         className: "toast-danger",
       });
+    }
+  };
+
+  // Resolve product image URL from common fields and prefix relative paths
+  const getProductImageUrl = (p) => {
+    try {
+      const candidates = [];
+      if (Array.isArray(p?.images)) candidates.push(p.images[0]);
+      if (p?.image) candidates.push(p.image);
+      if (p?.imageUrl) candidates.push(p.imageUrl);
+      if (p?.imageURL) candidates.push(p.imageURL);
+      if (p?.imageUri) candidates.push(p.imageUri);
+      if (p?.image_path) candidates.push(p.image_path);
+      if (p?.imagePath) candidates.push(p.imagePath);
+      if (p?.url) candidates.push(p.url);
+      if (p?.thumbnail) candidates.push(p.thumbnail);
+      if (p?.mainImage) candidates.push(p.mainImage);
+
+      for (const c of candidates) {
+        if (!c) continue;
+        let url = typeof c === "string" ? c : c?.url || c?.path || c?.src || c?.secure_url || null;
+        if (!url) continue;
+        // Normalize backslashes
+        url = String(url).replace(/\\/g, "/");
+        const isAbsolute = /^(https?:)?\/\//i.test(url) || url.startsWith("data:");
+        if (isAbsolute) return url;
+        // If it's a bare filename (no slash) with an image extension, assume uploads/
+        const looksLikeFilename = !url.includes("/") && /\.(png|jpe?g|gif|webp|svg|bmp|ico)$/i.test(url);
+        const withBasePath = looksLikeFilename ? `uploads/${url}` : url;
+        // strip leading slash to safely join
+        const clean = withBasePath.replace(/^\//, "");
+        if (API_URL) {
+          const base = String(API_URL).replace(/\/$/, "");
+          return `${base}/${clean}`;
+        }
+        return `/${clean}`;
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
   };
 
@@ -133,11 +176,9 @@ const ProductCatalogue = ({ products, loading }) => {
                 >
                   <div className="relative overflow-hidden">
                     <img
-                      src={product.image}
+                      src={getProductImageUrl(product) || "/src/image_22_3.jpeg"}
                       alt={product.name}
-                      onError={(e) =>
-                        (e.currentTarget.src = "/src/image_22_3.jpeg")
-                      }
+                      onError={(e) => (e.currentTarget.src = "/src/image_22_3.jpeg")}
                       className="w-full h-48 sm:h-56 lg:h-64 object-cover transition-transform duration-700 group-hover:scale-110"
                     />
 
@@ -188,9 +229,28 @@ const ProductCatalogue = ({ products, loading }) => {
                     </p>
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col">
-                        <span className="text-xl sm:text-2xl font-bold text-slate-200 transition-colors duration-300">
-                          AED {Number(product.price).toFixed(2)}
-                        </span>
+                        <div className="text-xl sm:text-2xl font-bold text-slate-200 transition-colors duration-300 flex items-center gap-2">
+                          <span>
+                            AED {Number(product?.discountPrice ?? product?.price ?? 0).toFixed(2)}
+                          </span>
+                          {product?.originalPrice && product?.discountPrice && (
+                            <span className="text-slate-400 line-through text-base font-normal">
+                              AED {Number(product.originalPrice).toFixed(2)}
+                            </span>
+                          )}
+                          {(() => {
+                            const pct = typeof product?.discountPercentage === 'number'
+                              ? Math.round(product.discountPercentage)
+                              : (product?.originalPrice && product?.discountPrice
+                                  ? Math.round(100 - (Number(product.discountPrice) / Number(product.originalPrice)) * 100)
+                                  : null);
+                            return (pct && isFinite(pct) && pct > 0) ? (
+                              <span className="bg-green-600 text-white text-xs font-semibold px-2 py-0.5 rounded">
+                                {pct}% OFF
+                              </span>
+                            ) : null;
+                          })()}
+                        </div>
                       </div>
                       {/* Small Shopping Bag Icon - positioned relative to the card, appears on hover */}
                       <div className="absolute bottom-4 right-4 bg-white rounded-full p-2 shadow-md">

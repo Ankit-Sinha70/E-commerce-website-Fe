@@ -44,6 +44,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       icon: <UserCog className="h-5 w-5" />,
     },
     {
+      name: "Manage Subcategories",
+      path: "/admin/manage-subcategories",
+      icon: <UserCog className="h-5 w-5" />,
+    },
+    {
       name: "Manage Users",
       path: "/admin/manage-users",
       icon: <Users className="h-5 w-5" />,
