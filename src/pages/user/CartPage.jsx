@@ -41,6 +41,7 @@ import LoginRequiredPopup from "@/component/LoginRequiredPopup";
 export default function CartPage() {
   const dispatch = useDispatch();
   const { items: cartItems, loading } = useSelector((state) => state.cart);
+  console.log('cartItems', cartItems)
   const { accessToken, user } = useSelector((state) => state.auth);
   // Access shipping addresses from the store
   const { addresses: shippingAddresses, error: addressError, loading: addressLoading } = useSelector(
@@ -163,14 +164,22 @@ export default function CartPage() {
     }
   };
 
-  const subtotal = cartItems?.reduce(
-    (acc, item) => acc + item?.productId?.price * item?.quantity,
+  // replace subtotal/total calculations with robust numeric coercion
+  const subtotal = (cartItems || []).reduce((acc, item) => {
+    const price =
+      Number(item?.productId?.discountPrice) ||
+      Number(item?.productId?.price) ||
+      0;
+    const qty = Number(item?.quantity) || 0;
+    return acc + price * qty;
+  }, 0);
+  const totalItems = (cartItems || []).reduce(
+    (acc, item) => acc + (Number(item?.quantity) || 0),
     0
   );
-  const totalItems = cartItems?.reduce((acc, item) => acc + item?.quantity, 0);
-  const tax = subtotal * 0.08;
-  const shippingCost = 50;
-  const total = subtotal + tax + shippingCost;
+  const tax = Number((subtotal * 0.08).toFixed(2)) || 0;
+  const shippingCost = subtotal > 500 ? 0 : 40;
+  const total = Number((subtotal + tax + shippingCost).toFixed(2)) || 0;
 
   const handleAddAddress = async (address) => {
     try {
@@ -197,14 +206,12 @@ export default function CartPage() {
       setShowLoginPopup(true);
       return;
     }
-
     if (!cartItems || cartItems.length === 0) {
       toast.info("Your cart is empty. Add items before checking out.", {
         className: "toast-info",
       });
       return;
     }
-
     if (!selectedAddress) {
       toast.error("Please select a shipping address to proceed.", {
         className: "toast-danger",
@@ -213,15 +220,34 @@ export default function CartPage() {
     }
 
     try {
-      const itemsForCheckout = cartItems.map((item) => ({
-        name: item?.productId?.name,
-        price: item?.productId?.price,
-        image: item?.productId?.image,
-        category: { name: item?.productId?.category?.name || "Uncategorized" },
-        productId: item?.productId?._id,
-        originalPrice: item?.productId?.originalPrice || item?.productId?.price,
-        quantity: item?.quantity,
-      }));
+      // ensure numeric price / quantity and avoid sending NaN to backend
+      const itemsForCheckout = (cartItems || []).map((item) => {
+        const priceNum =
+          Number(item?.productId?.discountPrice) ||
+          Number(item?.productId?.price) ||
+          0;
+        const originalPriceNum =
+          Number(item?.productId?.originalPrice) || priceNum;
+        const qtyNum = Number(item?.quantity) || 0;
+        return {
+          name: item?.productId?.name || "Item",
+          price: priceNum,
+          image: item?.productId?.image,
+          category: { name: item?.productId?.category?.name || "Uncategorized" },
+          productId: item?.productId?._id,
+          originalPrice: originalPriceNum,
+          quantity: qtyNum,
+        };
+      });
+
+      // sanity check - avoid sending NaN/Infinity to backend
+      if (!Number.isFinite(total) || Number.isNaN(total)) {
+        toast.error("Invalid order total. Please check cart item prices.", {
+          className: "toast-danger",
+        });
+        console.error("Invalid total computed", { subtotal, tax, shippingCost, total, itemsForCheckout });
+        return;
+      }
 
       const shippingAddressForCheckout = {
         fullName: selectedAddress.fullName,
@@ -323,7 +349,7 @@ export default function CartPage() {
             {/* Product Cards */}
             {cartItems.map((item) => (
               <div
-                key={item?.productId?._id}
+                key={item?._id}
                 className="bg-[#0f172a] rounded-lg shadow-sm p-6 mb-6 border border-blue-500"
                 style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 18px 50px -10px" }}
               >
@@ -347,7 +373,7 @@ export default function CartPage() {
                     </h3>
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-xl font-bold text-slate-300">
-                        {formatCurrency(item?.productId?.price)}
+                        {formatCurrency(item?.productId?.discountPrice)}
                       </span>
                     </div>
 
@@ -397,7 +423,7 @@ export default function CartPage() {
                       <div className="text-sm text-gray-500 mb-1">Subtotal</div>
                       <div className="text-xl font-bold text-gray-300">
                         {formatCurrency(
-                          item?.productId?.price * item?.quantity
+                          item?.productId?.discountPrice * item?.quantity
                         )}
                       </div>
                     </div>

@@ -115,16 +115,18 @@ export const returnOrder = createAsyncThunk(
 // Return order request
 export const returnOrderRequest = createAsyncThunk(
   "order/returnOrderRequest",
-  async ({ orderId, formData }, { rejectWithValue }) => {
+  async ({ orderId, formData, accessToken }, { rejectWithValue }) => {
     try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+      };
       const response = await axios.post(
         `${API_URL}/api/order/return-request/${orderId}`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        config
       );
       return response.data;
     } catch (error) {

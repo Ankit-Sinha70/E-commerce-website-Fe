@@ -129,9 +129,9 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        // Show newer first by sorting only on ObjectId descending (no createdAt)
-        const fetchedProducts = action.payload.data || [];
-        state.products = [...fetchedProducts].sort((a, b) =>
+        // Sort by _id in descending order (newest first)
+        const fetchedProducts = Array.isArray(action.payload.data) ? action.payload.data : [];
+        state.products = [...fetchedProducts].sort((a, b) => 
           String(b?._id || "").localeCompare(String(a?._id || ""))
         );
         state.error = null;
@@ -162,8 +162,11 @@ const productSlice = createSlice({
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.loading = false;
-        // Prepend the newly created product so it appears at the top of lists
-        state.products.unshift(action.payload);
+        // Add the new product at the beginning of the array
+        if (action.payload) {
+          state.products = [action.payload, ...(state.products || [])];
+        }
+        state.error = null;
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;

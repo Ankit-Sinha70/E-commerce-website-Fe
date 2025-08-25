@@ -46,6 +46,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
+import ReturnRequestModal from "@/component/ReturnRequestModal";
 
 const getStatusClasses = (status) => {
   switch (status?.toLowerCase()) {
@@ -302,6 +303,8 @@ const MyOrdersComponent = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [trackDialogOpen, setTrackDialogOpen] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [selectedOrderForReturn, setSelectedOrderForReturn] = useState(null);
 
   // Local page state to avoid effect loops
   const [currentPage, setCurrentPage] = useState(1);
@@ -357,7 +360,9 @@ const MyOrdersComponent = () => {
   };
 
   const handleReturnClick = (order) => {
-    setSelectedOrder(order);
+    // open the return modal for this order
+    setSelectedOrderForReturn(order);
+    setShowReturnModal(true);
   };
 
   const handleTrackOrder = (order) => {
@@ -730,6 +735,18 @@ const MyOrdersComponent = () => {
           onClose={() => setTrackDialogOpen(false)}
           trackingId={selectedOrder._id}
           estimatedDeliveryDate={selectedOrder.estimatedDeliveryDate}
+        />
+      )}
+
+      {/* Return request modal — controlled by showReturnModal + selectedOrderForReturn */}
+      {selectedOrderForReturn && (
+        <ReturnRequestModal
+          isOpen={showReturnModal}
+          onClose={() => {
+            setShowReturnModal(false);
+            setSelectedOrderForReturn(null);
+          }}
+          order={selectedOrderForReturn}
         />
       )}
     </>

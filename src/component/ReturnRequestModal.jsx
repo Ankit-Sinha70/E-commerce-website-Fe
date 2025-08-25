@@ -1,344 +1,148 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { fetchUserReturnRequest, cancelReturnRequest } from '@/features/order/orderSlice';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { OrderItemDetails } from '@/pages/user/MyOrdersPage';
-import { format } from 'date-fns';
-import { Eye, XCircle } from 'lucide-react';
-import { formatCurrency } from '@/lib/currency';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { returnOrderRequest } from '../features/order/orderSlice';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
-const getStatusClasses = (status) => {
-    switch (status?.toLowerCase()) {
-        case "requested":
-            return "bg-yellow-200 text-yellow-800";
-        case "approved":
-            return "bg-purple-200 text-purple-800";
-        case "rejected":
-            return "bg-red-200 text-red-800";
-        case "picked":
-            return "bg-blue-200 text-blue-800";
-        case "cancelled":
-            return "bg-red-200 text-red-800";
-        case "refunded":
-            return "bg-green-200 text-green-800";
-        default:
-            return "bg-gray-200 text-gray-800";
+const ReturnRequestModal = ({ isOpen, onClose, order }) => {
+  console.log('order', order)
+  const [reason, setReason] = useState('');
+  const [comment, setComment] = useState('');
+  const [image, setImage] = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (selectedProducts.length === 0) {
+      toast.error('Please select at least one product to return');
+      return;
     }
-};
-
-const getRefundStatusClasses = (status) => {
-    switch (status?.toLowerCase()) {
-        case "pending":
-            return "bg-yellow-200 text-yellow-800";
-        case "initiated":
-            return "bg-purple-200 text-purple-800";
-        case "succeeded":
-            return "bg-green-200 text-green-800";
-        case "failed":
-            return "bg-red-200 text-red-800";
-        default:
-            return "bg-gray-200 text-gray-800";
+    try {
+      const formData = new FormData();
+      formData.append('reason', reason);
+      formData.append('comment', comment);
+      formData.append('items', JSON.stringify(selectedProducts));
+      if (image) {
+        formData.append('image', image);
+      }
+      const result = await dispatch(returnOrderRequest({ orderId: order._id, formData })).unwrap();
+      toast.success(result.message || 'Return request submitted successfully');
+    } catch (error) {
+      console.error('error', error);
+      toast.error(error || 'Failed to submit return request');
+    } finally {
+      setReason('');
+      setComment('');
+      setImage(null);
+      setSelectedProducts([]);
+      onClose();
     }
-};
+  };
 
-const ReturnRequest = () => {
-    const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.auth);
-    const { returnRequests, cancelLoading, cancelError } = useSelector((state) => state.order);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedReturnRequest, setSelectedReturnRequest] = useState(null);
-    const [selectedReturnRequestId, setSelectedReturnRequestId] = useState(null);
-
-    useEffect(() => {
-        if (user?._id) {
-            dispatch(fetchUserReturnRequest(user?._id));
-        }
-    }, [dispatch, user]);
-
-    const handleViewDetails = (returnRequest) => {
-        setSelectedReturnRequest(returnRequest);
-        setIsDialogOpen(true);
-    };
-
-    const handleCancelReturn = async () => {
-        if (selectedReturnRequestId) {
-            try {
-                await dispatch(cancelReturnRequest(selectedReturnRequestId)).unwrap();
-                toast.success("Return request cancelled successfully!");
-            } catch (err) {
-                toast.error(err || "Failed to cancel return request");
-            } finally {
-                setSelectedReturnRequestId(null);
-            }
-        }
-    };
-
-    if (returnRequests?.length === 0) {
-        return 
-    }
-
-    return (
-        <div className="max-w-8xl mx-auto">
-            <h1 className="text-2xl font-extrabold text-gray-900 mt-10 mb-6">
-                Your Return Request
-            </h1>
-
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <div className="rounded-lg overflow-hidden shadow-md bg-white">
-                    <div className="overflow-x-auto">
-                        <Table className="min-w-full divide-y divide-gray-200">
-                            <TableHeader className="bg-gray-100">
-                                <TableRow>
-                                    <TableHead className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                                        Return Request ID
-                                    </TableHead>
-                                    <TableHead className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                                        Products
-                                    </TableHead>
-                                    <TableHead className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                                        Return Date
-                                    </TableHead>
-                                    <TableHead className="px-4 py-3 text-middle text-xs font-medium text-gray-600 uppercase tracking-wider">
-                                        Status
-                                    </TableHead>
-                                    <TableHead className="px-4 py-3 text-middle text-xs font-medium text-gray-600 uppercase tracking-wider">
-                                        Amount
-                                    </TableHead>
-                                    <TableHead className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
-                                        Items
-                                    </TableHead>
-                                    <TableHead className="px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">
-                                        Actions
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody className="bg-white divide-y divide-gray-100">
-                                {returnRequests?.map((returnRequest) => {
-                                    const returnRequestDate = new Date(returnRequest.requestedAt);
-                                    const numberOfItems = returnRequest.items ? returnRequest.items.length : 0;
-
-                                    return (
-                                        <TableRow
-                                            key={returnRequest._id}
-                                            className="hover:bg-gray-50 transition-colors"
-                                        >
-                                            <TableCell className="px-4 py-3 font-mono text-sm text-gray-700">
-                                                {returnRequest._id}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 font-mono text-sm text-gray-700">
-                                                {returnRequest.items.length > 1
-                                                    ? `${returnRequest.items[0].name},...`
-                                                    : returnRequest.items[0]?.name || "—"}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-sm text-gray-600 text-left">
-                                                {format(returnRequestDate, "MMM d, yyyy")}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-middle">
-                                                <span
-                                                    className={`px-2 py-1 text-black rounded-full text-xs font-semibold ${getStatusClasses(
-                                                        returnRequest.status
-                                                    )}`}
-                                                >
-                                                    {returnRequest?.status}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-middle text-sm font-medium text-gray-800">
-                                                {formatCurrency(returnRequest.refundAmount)}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-right text-sm text-gray-600">
-                                                {numberOfItems}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-right">
-                                                <div className="flex flex-wrap gap-2 justify-end">
-                                                    <DialogTrigger asChild>
-                                                        <button
-                                                            onClick={() => handleViewDetails(returnRequest)}
-                                                            className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
-                                                        >
-                                                            <Eye className="w-3 h-3 mr-1" />
-                                                            Details
-                                                        </button>
-                                                    </DialogTrigger>
-
-                                                    {returnRequest.status?.toLowerCase() === "requested" && (
-                                                        <AlertDialog>
-                                                            <AlertDialogTrigger asChild>
-                                                                <button
-                                                                    className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md"
-                                                                    onClick={() =>
-                                                                        setSelectedReturnRequestId(returnRequest._id)
-                                                                    }
-                                                                >
-                                                                    <XCircle className="w-3 h-3 mr-1" />
-                                                                    Cancel
-                                                                </button>
-                                                            </AlertDialogTrigger>
-                                                            <AlertDialogContent>
-                                                                <AlertDialogHeader>
-                                                                    <AlertDialogTitle>
-                                                                        Cancel Return Request
-                                                                    </AlertDialogTitle>
-                                                                    <AlertDialogDescription>
-                                                                        Are you sure you want to cancel this
-                                                                        return request? This action cannot be undone.
-                                                                    </AlertDialogDescription>
-                                                                    {cancelError && (
-                                                                        <div className="text-red-500 text-sm">
-                                                                            {cancelError}
-                                                                        </div>
-                                                                    )}
-                                                                </AlertDialogHeader>
-                                                                <AlertDialogFooter>
-                                                                    <AlertDialogCancel
-                                                                        onClick={() => setSelectedReturnRequestId(null)}
-                                                                    >
-                                                                        No, keep return request
-                                                                    </AlertDialogCancel>
-                                                                    <AlertDialogAction
-                                                                        disabled={cancelLoading}
-                                                                        onClick={handleCancelReturn}
-                                                                    >
-                                                                        {cancelLoading
-                                                                            ? "Cancelling..."
-                                                                            : "Yes, cancel return request"}
-                                                                    </AlertDialogAction>
-                                                                </AlertDialogFooter>
-                                                            </AlertDialogContent>
-                                                        </AlertDialog>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </div>
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Request a Return</DialogTitle>
+          <DialogDescription>
+            Please fill out the form below to request a return for your order.
+          </DialogDescription>
+        {/* Product selection */}
+        <div className="mt-4">
+          <Label className="block mb-2 font-medium">Select Product(s) to Return</Label>
+          <div className="max-h-40 overflow-y-auto border rounded p-2 bg-gray-50">
+            {order?.items && order.items.length > 0 ? (
+              order.items.map((item) => (
+                <div key={item._id} className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    id={`product-${item._id}`}
+                    checked={selectedProducts.includes(item)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedProducts((prev) => [...prev, item]);
+                      } else {
+                        setSelectedProducts((prev) => prev.filter((pid) => pid._id !== item._id));
+                      }
+                    }}
+                    className="mr-2"
+                  />
+                  <Label htmlFor={`product-${item._id}`} className="flex items-center gap-2 cursor-pointer">
+                    <img
+                      src={item.image || "https://via.placeholder.com/32"}
+                      alt={item.name}
+                      className="w-8 h-8 object-cover rounded"
+                    />
+                    <span>{item.name}</span>
+                    <span className="ml-2 text-xs text-gray-500">x{item.quantity}</span>
+                  </Label>
                 </div>
-
-                <DialogContent className="sm:max-w-[800px] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    {selectedReturnRequest && (
-                        <>
-                            <DialogHeader>
-                                <DialogTitle>
-                                    Return Request Details: {selectedReturnRequest._id?.substring(0, 25)}
-                                </DialogTitle>
-                                <DialogDescription>
-                                    Details of your return request placed on{" "}
-                                    {format(
-                                        new Date(selectedReturnRequest.requestedAt),
-                                        "MMMM d, yyyy 'at' hh:mm a"
-                                    )}
-                                    .
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="py-4 space-y-6">
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Reason for Return</h3>
-                                    <p className="text-gray-700">
-                                        {selectedReturnRequest.reason || "Not specified"}
-                                    </p>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Comment</h3>
-                                    <p className="text-gray-700">
-                                        {selectedReturnRequest.comment || "Not specified"}
-                                    </p>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                                        Return Items
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {selectedReturnRequest.items.map((item, index) => (
-                                            <OrderItemDetails key={index} item={item} />
-                                        ))}
-                                    </div>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                                        Return Information
-                                    </h3>
-                                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                                        <p className="text-gray-700">
-                                            <strong>Recipient:</strong>{" "}
-                                            {selectedReturnRequest?.pickUpAddress?.fullName || "Customer Name"}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>Address:</strong>{" "}
-                                            {selectedReturnRequest?.pickUpAddress?.addressLine}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>Phone:</strong>{" "}
-                                            {selectedReturnRequest?.pickUpAddress?.phoneNumber}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>City:</strong> {selectedReturnRequest?.pickUpAddress?.city}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>Postal Code:</strong>{" "}
-                                            {selectedReturnRequest?.pickUpAddress?.postalCode}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>State</strong> {selectedReturnRequest?.pickUpAddress?.state}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>Country</strong>{" "}
-                                            {selectedReturnRequest?.pickUpAddress?.country}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                                        Return Details
-                                    </h3>
-                                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                                        <p className="text-gray-700">
-                                            <strong>Refund Status:</strong>{" "}
-                                            <span
-                                                className={`px-2 py-1 text-black rounded-full text-xs font-semibold ${getRefundStatusClasses(
-                                                    selectedReturnRequest?.status
-                                                )}`}
-                                            >
-                                                {selectedReturnRequest?.status}
-                                            </span>
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>Refund Amount:</strong>{" "}
-                                            {formatCurrency(selectedReturnRequest?.refundAmount)}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>Refund Date:</strong>{" "}
-                                            {selectedReturnRequest?.refundedAt ? format(new Date(selectedReturnRequest?.refundedAt), "MMM d, yyyy") : "N/A"}
-                                        </p>
-
-                                        {selectedReturnRequest?.refundStatus === "Failed" && (
-                                            <p className="text-gray-700">
-                                                <strong>Refund Failed Reason:</strong>{" "}
-                                                {selectedReturnRequest?.refundFailureReason || "Not specified"}
-                                            </p>
-                                        )}
-
-                                    </div>
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <button
-                                    onClick={() => setIsDialogOpen(false)}
-                                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md"
-                                >
-                                    Close
-                                </button>
-                            </DialogFooter>
-                        </>
-                    )}
-                </DialogContent>
-            </Dialog>
+              ))
+            ) : (
+              <div className="text-gray-500 text-sm">No products found in this order.</div>
+            )}
+          </div>
         </div>
-    )
-}
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="reason" className="text-right">
+              Reason
+            </Label>
+            <Input
+              id="reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="col-span-3"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="comment" className="text-right">
+              Comment
+            </Label>
+            <Textarea
+              id="comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="col-span-3"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="image" className="text-right">
+              Image
+            </Label>
+            <Input
+              id="image"
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+              className="col-span-3"
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">Submit Request</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
-export default ReturnRequest
+export default ReturnRequestModal;
