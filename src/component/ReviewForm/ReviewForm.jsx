@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createReview } from '../../features/review/reviewSlice';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ReviewForm = ({ productId }) => {
   const [rating, setRating] = useState(0);
@@ -10,16 +12,51 @@ const ReviewForm = ({ productId }) => {
 
   const { accessToken } = useSelector((state) => state.auth);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createReview({ productId, rating, comment, images }));
-    setRating(0);
-    setComment('');
-    setImages([]);
+    if (!accessToken) {
+      toast.info('Please sign in to submit a review.', {
+        className: "toast-info"
+      });
+      return;
+    }
+
+    if (rating <= 0) {
+      toast.warn('Please provide a rating.', {
+        className: "toast-warning"
+      });
+      return;
+    }
+
+    try {
+      await dispatch(createReview({ productId, rating, comment, images })).unwrap();
+      toast.success('Review submitted successfully', {
+        className: "toast-success",
+        autoClose: 3000
+      });
+      setRating(0);
+      setComment('');
+      setImages([]);
+    } catch (err) {
+      const message = (err && err.message) || 'Failed to submit review';
+      toast.error(message, {
+        className: "toast-danger",
+        autoClose: 3000
+      });
+      console.error('createReview error', err);
+    }
   };
 
   const handleImageChange = (e) => {
-    setImages([...e.target.files]);
+    const files = Array.from(e.target.files || []);
+    if (files.length > 5) {
+      toast.warn('You can upload up to 5 images. Extra files were ignored.', {
+        className:"toast-warning"
+      });
+      setImages(files.slice(0, 5));
+      return;
+    }
+    setImages(files);
   };
 
   return (
@@ -62,7 +99,17 @@ const ReviewForm = ({ productId }) => {
           </button>
         </form>
       ) : (
-        <p>Please <a href="/login" className="text-blue-500">sign in</a> to write a review.</p>
+        <p>
+          Please{' '}
+          <a
+            href="/login"
+            className="text-blue-500"
+            onClick={() => toast.info('You need to sign in to write a review')}
+          >
+            sign in
+          </a>{' '}
+          to write a review.
+        </p>
       )}
     </div>
   );

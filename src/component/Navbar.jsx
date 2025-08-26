@@ -247,7 +247,7 @@ const Navbar = () => {
                       <AlertDialogTrigger asChild>
                         <DropdownMenuItem
                           onSelect={(e) => e.preventDefault()}
-                          className="text-red-600 hover:bg-red-500 hover:text-white focus:bg-red-50 flex items-center text-sm px-4 py-2 transition-colors duration-200"
+                          className="text-red-600 hover:bg-red-500 hover:text-white focus:bg-red-500 flex items-center text-sm px-4 py-2 transition-colors duration-200"
                         >
                           <LogOut className="mr-2 h-4 w-4" /> Logout
                         </DropdownMenuItem>

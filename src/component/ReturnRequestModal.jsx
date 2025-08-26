@@ -54,16 +54,17 @@ const ReturnRequestModal = ({ isOpen, onClose, order }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-gray-900 text-slate-200 border border-gray-800 shadow-lg">
         <DialogHeader>
-          <DialogTitle>Request a Return</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg font-semibold text-slate-100">Request a Return</DialogTitle>
+          <DialogDescription className="text-sm text-slate-300">
             Please fill out the form below to request a return for your order.
           </DialogDescription>
+
         {/* Product selection */}
         <div className="mt-4">
-          <Label className="block mb-2 font-medium">Select Product(s) to Return</Label>
-          <div className="max-h-40 overflow-y-auto border rounded p-2 bg-gray-50">
+          <Label className="block mb-2 font-medium text-slate-300">Select Product(s) to Return</Label>
+          <div className="max-h-40 overflow-y-auto border rounded p-2 bg-gray-800">
             {order?.items && order.items.length > 0 ? (
               order.items.map((item) => (
                 <div key={item._id} className="flex items-center mb-2">
@@ -78,66 +79,73 @@ const ReturnRequestModal = ({ isOpen, onClose, order }) => {
                         setSelectedProducts((prev) => prev.filter((pid) => pid._id !== item._id));
                       }
                     }}
-                    className="mr-2"
+                    className="mr-2 accent-emerald-400"
                   />
-                  <Label htmlFor={`product-${item._id}`} className="flex items-center gap-2 cursor-pointer">
+                  <Label htmlFor={`product-${item._id}`} className="flex items-center gap-2 cursor-pointer text-slate-200">
                     <img
                       src={item.image || "https://via.placeholder.com/32"}
                       alt={item.name}
                       className="w-8 h-8 object-cover rounded"
                     />
-                    <span>{item.name}</span>
-                    <span className="ml-2 text-xs text-gray-500">x{item.quantity}</span>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{item.name}</span>
+                      <span className="text-xs text-slate-400">x{item.quantity}</span>
+                    </div>
                   </Label>
                 </div>
               ))
             ) : (
-              <div className="text-gray-500 text-sm">No products found in this order.</div>
+              <div className="text-slate-400 text-sm">No products found in this order.</div>
             )}
           </div>
         </div>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="reason" className="text-right">
+            <Label htmlFor="reason" className="text-right text-slate-300">
               Reason
             </Label>
             <Input
               id="reason"
               value={reason}
+              placeholder='Reason for return'
               onChange={(e) => setReason(e.target.value)}
-              className="col-span-3"
+              className="col-span-3 bg-gray-800 text-slate-100 border-gray-700 placeholder:text-slate-400"
               required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="comment" className="text-right">
+            <Label htmlFor="comment" className="text-right text-slate-300">
               Comment
             </Label>
             <Textarea
               id="comment"
+              placeholder='Additional details (optional)'
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="col-span-3"
+              className="col-span-3 bg-gray-800 text-slate-100 border-gray-700 placeholder:text-slate-400"
               required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="image" className="text-right">
+            <Label htmlFor="image" className="text-right text-slate-300">
               Image
             </Label>
             <Input
               id="image"
               type="file"
               onChange={(e) => setImage(e.target.files[0])}
-              className="col-span-3"
+              className="col-span-3 bg-gray-600 text-slate-100 border-gray-700"
             />
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+          <DialogFooter className="pt-3">
+            <Button type="button" variant="ghost" onClick={onClose} className="border-gray-700 text-slate-200 hover:bg-gray-400 hover:border-gray-600 hover:text-white">
               Cancel
             </Button>
-            <Button type="submit">Submit Request</Button>
+            <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              Submit Request
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

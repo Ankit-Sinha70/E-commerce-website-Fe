@@ -42,8 +42,33 @@ const CancelledOrdersPage = () => {
   const total = subtotal + shippingCost;
   console.log("selectedOrder", selectedOrder);
 
+  // View handler with toast
+  const handleViewOrder = (order) => {
+    setSelectedOrder(order);
+    toast.info("Order details opened");
+  };
+
   useEffect(() => {
-    dispatch(getCancelledOrders({ page: currentPage, limit: itemsPerPage }));
+    const load = async () => {
+      const result = await dispatch(
+        getCancelledOrders({ page: currentPage, limit: itemsPerPage })
+      );
+      if (getCancelledOrders.fulfilled.match(result)) {
+        const payload = result.payload ?? [];
+        if (!payload || payload.length === 0) {
+          toast.info("No cancelled orders found", { className: "toast-info" });
+        } else {
+          toast.success("Cancelled orders loaded", {
+            className: "toast-success",
+          });
+        }
+      } else {
+        toast.error(result.payload?.message || "Failed to fetch cancelled orders", {
+          className: "toast-error",
+        });
+      }
+    };
+    load();
   }, [dispatch, currentPage, itemsPerPage]);
 
   const handlePageChange = (newPage) => {
@@ -52,12 +77,16 @@ const CancelledOrdersPage = () => {
     }
   };
 
-  const handleInitiateRefund = async (orderId) => {
+  const handleInitiateRefund = async(orderId) => {
     const result = await dispatch(initiateRefund(orderId));
     if (initiateRefund.fulfilled.match(result)) {
-      toast.success("Refund initiated successfully!");
+      toast.success("Refund initiated successfully!", {
+        className: "toast-success",
+      });
     } else {
-      toast.error("Failed to initiate refund.");
+      toast.error("Failed to initiate refund.", {
+        className: "toast-error",
+      });
     }
   };
 
@@ -140,7 +169,7 @@ const CancelledOrdersPage = () => {
                             variant="outline"
                             size="icon"
                             className="text-blue-300 hover:text-blue-200 hover:bg-blue-900/20 border-gray-700"
-                            onClick={() => setSelectedOrder(order)}
+                            onClick={() => handleViewOrder(order)}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -207,7 +236,7 @@ const CancelledOrdersPage = () => {
                     variant="outline"
                     size="icon"
                     className="h-8 w-8 border-gray-700 text-slate-300"
-                    onClick={() => setSelectedOrder(order)}
+                    onClick={() => handleViewOrder(order)}
                   >
                     <Eye className="h-4 w-4" />
                   </Button>

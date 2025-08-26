@@ -13,9 +13,8 @@ import { toast } from "react-toastify";
 import OrderCardList from "./OrderCardList";
 import OrderDetailsDialog from "./OrderDetailsDialog";
 import OrderFilters from "./OrderFilters";
-import OrderTable from "./OrderTable";
-import OrderSummary from "./OrderSummary";
 import OrderStatusDialog from "./OrderStatusDialog";
+import OrderTable from "./OrderTable";
 
 const OrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");

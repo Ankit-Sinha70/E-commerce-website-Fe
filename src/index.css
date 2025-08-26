@@ -186,13 +186,11 @@
 }
 
 /* Force supported color formats for PDF export */
-.pdf-export, .pdf-export * {
+/* .pdf-export, .pdf-export * {
   color: #222 !important;
   background-color: #fff !important;
-  /* If you want to override borders or other color properties, add them here */
   border-color: #ddd !important;
-  /* Add more overrides as needed */
-}
+} */
 
 @media print {
   .pdf-export {

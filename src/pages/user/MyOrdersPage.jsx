@@ -1,6 +1,7 @@
 import Loader from "@/component/Common/Loader";
 import PaginationDemo from "@/component/Common/Pagination";
 import ReturnRequest from "@/component/ReturnRequest";
+import ReturnRequestModal from "@/component/ReturnRequestModal";
 import TrackOrderDialog from "@/component/TrackOrderDialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,7 +47,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
-import ReturnRequestModal from "@/component/ReturnRequestModal";
 
 const getStatusClasses = (status) => {
   switch (status?.toLowerCase()) {
@@ -130,7 +130,6 @@ export const OrderItemDetails = ({ item }) => {
   );
 };
 
-// Order Card Component for Mobile/Desktop
 const OrderCard = ({
   order,
   onViewDetails,
@@ -141,6 +140,9 @@ const OrderCard = ({
 }) => {
   const orderDate = new Date(order.createdAt);
   const numberOfItems = order.items ? order.items.length : 0;
+
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   return (
     <div className="group relative overflow-hidden rounded-2xl bg-gray-800 border border-gray-700 hover:border-blue-500 shadow-md hover:shadow-lg transition-all duration-300">
@@ -216,7 +218,7 @@ const OrderCard = ({
               variant="outline"
               size="sm"
               onClick={() => onViewDetails(order)}
-              className="flex-1 min-w-[120px] bg-blue-900 border-blue-700 text-blue-300 hover:bg-blue-800 hover:border-blue-600"
+              className="flex-1 min-w-[120px] bg-blue-900 border-blue-700 text-blue-300 hover:bg-blue-800 hover:border-blue-600 hover:text-slate-200"
             >
               <Eye className="w-4 h-4 mr-2" />
               View Details
@@ -224,18 +226,19 @@ const OrderCard = ({
           </DialogTrigger>
 
           {order.status?.toLowerCase() === "processing" && (
-            <AlertDialog>
+            <AlertDialog open={cancelOpen} onOpenChange={setCancelOpen}>
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-red-900 border-red-700 text-red-300 hover:bg-red-800 hover:border-red-600"
-                  onClick={() => onCancelOrder(order._id)}
+                  className="bg-red-900 border-red-700 text-red-300 hover:bg-red-800 hover:border-red-600 hover:text-slate-200"
+                  onClick={() => setCancelOpen(true)}
                 >
                   <XCircle className="w-4 h-4 mr-2" />
                   Cancel
                 </Button>
               </AlertDialogTrigger>
+
               <AlertDialogContent className="bg-gray-800 border border-gray-700">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="text-slate-300">Cancel Order</AlertDialogTitle>
@@ -245,9 +248,24 @@ const OrderCard = ({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="text-slate-300">No, keep order</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => onCancelOrder(order._id)} className="bg-red-900 text-red-300">
-                    Yes, cancel order
+                  <AlertDialogCancel onClick={() => setCancelOpen(false)} className="text-slate-300">
+                    No, keep order
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-red-900 text-red-300"
+                    onClick={async () => {
+                      setCancelling(true);
+                      try {
+                        await onCancelOrder(order._id);
+                      } catch (err) {
+                        console.log('err', err)
+                      } finally {
+                        setCancelling(false);
+                        setCancelOpen(false);
+                      }
+                    }}
+                  >
+                    {cancelling ? "Cancelling..." : "Yes, cancel order"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -272,7 +290,7 @@ const OrderCard = ({
               <Button
                 variant="outline"
                 size="sm"
-                className="bg-amber-900 border-amber-700 text-amber-300 hover:bg-amber-800 hover:border-amber-600"
+                className="bg-amber-900 border-amber-700 text-amber-300 hover:bg-amber-800 hover:border-amber-600 hover:text-slate-200"
                 onClick={() => onReturnClick(order)}
               >
                 Return
@@ -691,7 +709,7 @@ const MyOrdersComponent = () => {
                             const deliveryDate = new Date(
                               selectedOrder.deliveredAt
                             );
-                            const returnDeadline = addHours(deliveryDate, 24);
+                            const returnDeadline = addHours(deliveryDate, 24 * 7);
                             return (
                               <div className="bg-green-900 border border-green-700 p-3 rounded-lg">
                                 <p>
@@ -719,7 +737,7 @@ const MyOrdersComponent = () => {
 
               <DialogFooter className="border-t border-gray-700 pt-4">
                 <DialogClose asChild>
-                  <Button variant="outline" className="px-6 text-slate-300">
+                  <Button variant="ghost" className="px-6 text-slate-300 border border-gray-200">
                     Close
                   </Button>
                 </DialogClose>

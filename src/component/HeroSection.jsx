@@ -9,8 +9,13 @@ import smartphones from "./../assets/images/smartphones.jpg";
 import homeAppliances from "./../assets/images/home-appliance.jpg";
 import { ArrowRight, ChevronLeft, ChevronRight, ShoppingBag, Smartphone, Zap, Percent } from "lucide-react";
 
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBestDeals } from "@/features/order/orderSlice";
+
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const dispatch = useDispatch();
+  const { bestDeals, loading } = useSelector((state) => state.order || { bestDeals: [], loading: false });
 
   // Slider data
   const slides = [
@@ -75,6 +80,10 @@ const HeroSection = () => {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
+
+  useEffect(() => {
+    dispatch(fetchBestDeals());
+  }, [dispatch]);
 
   return (
     <section className="relative min-h-screen max-w-full overflow-hidden bg-[#111827] pt-16 md:pt-20 m-1 md:m-2 lg:m-3 rounded-xl">
@@ -182,74 +191,47 @@ const HeroSection = () => {
           </p>
         </div>
 
-        {/* Product Grid */}
+        {/* Product Grid (dynamic) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Product Card 1 */}
-          <div className="bg-gradient-to-br from-yellow-100 to-green-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg md:text-xl font-bold text-gray-800">Audio Systems</h3>
-              <div className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                60% OFF
-              </div>
-            </div>
-            <div className="relative mb-4">
-              <img
-                src={Audiosystem}
-                alt="Audio System"
-                className="w-full h-40 object-cover rounded-lg" // Adjusted height here
-              />
-            </div>
-            <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 rounded-full">
-              View Products
-            </Button>
-          </div>
+          {loading && (
+            <>
+              <div className="h-48 bg-gray-800/30 rounded-2xl animate-pulse" />
+              <div className="h-48 bg-gray-800/30 rounded-2xl animate-pulse" />
+              <div className="h-48 bg-gray-800/30 rounded-2xl animate-pulse" />
+            </>
+          )}
 
-          {/* Product Card 2 */}
-          <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg md:text-xl font-bold text-gray-800">Smartphones</h3>
-              <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                40% OFF
-              </div>
-            </div>
-            <div className="relative mb-4 flex justify-center">
-              <div className="grid grid-cols-2 gap-2">
-                <img
-                  src={smartphones}
-                  alt="Phone 1"
-                  className="w-20 md:w-24 h-28 md:h-32 object-cover rounded-lg transform rotate-12"
-                />
-                <img
-                  src={smartphones}
-                  alt="Phone 2"
-                  className="w-20 md:w-24 h-28 md:h-32 object-cover rounded-lg transform -rotate-12"
-                />
-              </div>
-            </div>
-            <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 rounded-full">
-              View Products
-            </Button>
-          </div>
+          {!loading && (bestDeals || []).slice(0, 3).map((product, idx) => {
+            const image =
+              product.image ||
+              product.images?.[0] ||
+              (product.category === "audio" ? Audiosystem : product.category === "smartphone" ? smartphones : homeAppliances);
+            const discountLabel = product.discountPercentage ? `${product.discountPercentage}% OFF` : "Deal";
 
-          {/* Product Card 3 */}
-          <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 md:col-span-2 lg:col-span-1">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg md:text-xl font-bold text-gray-800">Home Appliances</h3>
-              <div className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                22% OFF
+            return (
+              <div
+                key={product._id || idx}
+                className="bg-gradient-to-br from-white/60 to-white/40 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800">{product.brand || product.name || "Product"}</h3>
+                  <div className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                    {discountLabel}
+                  </div>
+                </div>
+                <div className="relative mb-4">
+                  <img
+                    src={image}
+                    alt={product.name}
+                    className="w-full h-40 object-cover rounded-lg"
+                  />
+                </div>
+                <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 rounded-full">
+                  View Products
+                </Button>
               </div>
-            </div>
-            <div className="relative mb-4">
-              <img
-                src={homeAppliances}
-                alt="Home Appliance"
-                className="w-full h-40 object-cover rounded-lg" // Adjusted height here
-              />
-            </div>
-            <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 rounded-full">
-              View Products
-            </Button>
-          </div>
+            );
+          })}
         </div>
       </div>
 

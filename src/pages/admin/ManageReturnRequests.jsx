@@ -25,7 +25,6 @@ const ManageReturnRequests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedReturnRequest, setSelectedReturnRequest] = useState(null);
-  console.log("selectedReturnRequest", selectedReturnRequest);
 
   useEffect(() => {
     dispatch(fetchAllReturnRequests({ page: currentPage }));
@@ -64,7 +63,7 @@ const ManageReturnRequests = () => {
   };
 
   return (
-    <div className="bg-[#0f172a] text-slate-300 relative px-4 py-4">
+    <div className="bg-[#0f172a] min-h-screen text-slate-300 relative px-4 py-4">
       {returnRequestsLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
           <Loader message="Fetching return requests..." />
@@ -107,7 +106,7 @@ const ManageReturnRequests = () => {
       <ReturnRequestDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => setDetailsModalOpen(false)}
-        returnRequest={selectedReturnRequest}
+        returnRequest={returnRequests}
         onUpdateStatus={handleStatusChange}
       />
     </div>

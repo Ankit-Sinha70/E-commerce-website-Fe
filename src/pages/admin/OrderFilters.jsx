@@ -32,7 +32,6 @@ const OrderFilters = ({
   onReset,
 }) => (
   <div className="mb-6 space-y-4 text-slate-300">
-    {/* Search Bar */}
 
     {/* Desktop Filters */}
     <div className="w-full space-y-4">
@@ -59,7 +58,6 @@ const OrderFilters = ({
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 flex-wrap lg:flex-nowrap">
-          {/* Status */}
           <div className="flex-1 min-w-[150px]">
             <label className="block text-sm font-medium text-gray-300 mb-1">
               Status
@@ -98,7 +96,6 @@ const OrderFilters = ({
             </div>
           </div>
 
-          {/* Reset */}
           <div className="flex items-end">
             <Button
               onClick={onReset}
@@ -110,7 +107,7 @@ const OrderFilters = ({
           </div>
 
           {/* Export */}
-          {/* <div className="flex items-end">
+          <div className="flex items-end">
             <Button
               onClick={() => alert("Export to PDF not implemented")}
               className="bg-green-600 hover:bg-green-700 text-white w-full"
@@ -118,7 +115,7 @@ const OrderFilters = ({
               <FileText className="mr-2 h-4 w-4" />
               Export PDF
             </Button>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

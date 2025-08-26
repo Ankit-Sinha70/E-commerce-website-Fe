@@ -317,6 +317,45 @@ export const initiateReturnRefund = createAsyncThunk(
     }
   }
 );
+// fetch best deals (REPLACED: use axios + cache-buster + proper return shape)
+export const fetchBestDeals = createAsyncThunk(
+  "order/fetchBestDeals",
+  async (_, { rejectWithValue }) => {
+    try {
+      const makeRequest = async () =>
+        await axios.get(`${API_URL}/api/product/best-deals`, {
+          params: { _ts: Date.now() },
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+          validateStatus: (status) => status === 200 || status === 304,
+        });
+
+      let response = await makeRequest();
+
+      // If server returns 304 (not modified) with no body, retry once with a different ts
+      if (response.status === 304 || !response.data || (response.data && !response.data.data && Array.isArray(response.data) && response.data.length === 0)) {
+        // small delay optional
+        response = await axios.get(`${API_URL}/api/product/best-deals`, {
+          params: { _ts: Date.now() + 1 },
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        });
+      }
+
+      // Normalize returned shape: backend returns { success, message, data }
+      const payload = response.data?.data ?? response.data ?? [];
+      return payload;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
 
 const orderSlice = createSlice({
   name: "order",
@@ -325,8 +364,6 @@ const orderSlice = createSlice({
     order: null, // for single order view
     loading: false,
     error: null,
-    cancelLoading: false,
-    cancelError: null,
     fetchOrderLoading: false,
     fetchOrderError: null,
     updateStatusLoading: false,
@@ -367,6 +404,9 @@ const orderSlice = createSlice({
     myOrdersCurrentPage: 1,
     myOrdersLimit: 10,
     myOrdersTotalItems: 0,
+    bestDeals: [],
+    bestDealsLoading: false,
+    bestDealsError: null,
   },
   reducers: {
     clearOrders: (state) => {
@@ -682,7 +722,20 @@ const orderSlice = createSlice({
       .addCase(initiateReturnRefund.rejected, (state, action) => {
         state.initiateReturnRefundLoading = false;
         state.initiateReturnRefundError = action.payload;
-      });      
+      })
+      // Fetch best deals
+      .addCase(fetchBestDeals.pending, (state) => {
+        state.bestDealsLoading = true;
+        state.bestDealsError = null;
+      })
+      .addCase(fetchBestDeals.fulfilled, (state, action) => {
+        state.bestDealsLoading = false;
+        state.bestDeals = action.payload || [];
+      })
+      .addCase(fetchBestDeals.rejected, (state, action) => {
+        state.bestDealsLoading = false;
+        state.bestDealsError = action.payload || action.error?.message || "Failed to load best deals";
+      })
   },
 });
 

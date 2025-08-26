@@ -13,6 +13,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Eye } from "lucide-react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const statusClasses = {
   Approved: "bg-green-400 text-green-800 border-green-200",
@@ -36,7 +38,6 @@ function getStatusBadge(status, refundStatus) {
       {refundStatus && (
         <span
           className={`px-2 py-1 rounded-full text-xs font-semibold border ${
-            // map common refundStatus values to styles
             refundStatus.toLowerCase() === "initiated"
               ? "bg-purple-200 text-purple-800"
               : refundStatus.toLowerCase() === "succeeded"
@@ -56,10 +57,6 @@ function getStatusBadge(status, refundStatus) {
 const ReturnRequestTable = ({
   returnRequests,
   onStatusChange,
-  /**
-   * Optional: function fetchUpdatedRequest(id) => Promise<updatedRequest>
-   * Parent should provide this if status changes may be completed asynchronously (e.g. webhook).
-   */
   fetchUpdatedRequest,
   onViewDetails,
 }) => {
@@ -70,27 +67,24 @@ const ReturnRequestTable = ({
     setLocalRequests(returnRequests || []);
   }, [returnRequests]);
 
-  // small helper to poll for an updated request (used when refund is async)
   const pollForUpdate = async (id, tries = 6, interval = 1000) => {
     if (typeof fetchUpdatedRequest !== "function") return null;
     for (let i = 0; i < tries; i++) {
       try {
         const updated = await fetchUpdatedRequest(id);
         if (updated) {
-          // consider refund finished if refundStatus indicates succeeded/refunded
           const rs = (updated.refundStatus || "").toLowerCase();
           if (rs === "succeeded" || rs === "refunded" || updated.status === "Refunded") {
             return updated;
           }
-          // also return if status changed (non-refund paths)
           if (updated.status && updated.status !== localRequests.find(r=>r._id===id)?.status) {
             return updated;
           }
         }
       } catch (err) {
+        console.error('err', err)
         // ignore and retry
       }
-      // wait
       await new Promise((res) => setTimeout(res, interval));
     }
     return null;
@@ -124,6 +118,13 @@ const ReturnRequestTable = ({
       })
     );
 
+    // show initial toast (no toastId)
+    const initialMessage =
+      value === "InitiateRefund"
+        ? "Initiating refund..."
+        : `Updating status to ${value}...`;
+    toast.info(initialMessage, { className: "toast-info", autoClose: 3000 });
+
     if (typeof onStatusChange === "function") {
       try {
         // onStatusChange should ideally return the updated request from server
@@ -133,6 +134,10 @@ const ReturnRequestTable = ({
           // merge server-updated object immediately
           setLocalRequests((prevList) =>
             prevList.map((r) => (r._id === res._id ? { ...r, ...res } : r))
+          );
+          toast.success(
+            value === "InitiateRefund" ? "Refund initiated" : "Status updated successfully",
+            { className: "toast-success", autoClose: 3000 }
           );
           return;
         }
@@ -145,15 +150,32 @@ const ReturnRequestTable = ({
             setLocalRequests((prevList) =>
               prevList.map((r) => (r._id === updated._id ? { ...r, ...updated } : r))
             );
+            const finalMsg =
+              (updated.refundStatus || "").toLowerCase() === "succeeded" ||
+              (updated.status || "").toLowerCase() === "refunded"
+                ? "Refund completed"
+                : "Refund initiated";
+            toast.success(finalMsg, { className: "toast-success", autoClose: 3000 });
             return;
           }
+          // if polling failed to find final, still show initiated state
+          toast.info("Refund initiated (pending confirmation)", {
+            className: "toast-info",
+            autoClose: 4000,
+          });
+          return;
         }
 
         // otherwise assume success; you may rely on parent to refresh props
+        toast.success("Status updated", { className: "toast-success", autoClose: 2500 });
       } catch (err) {
         // rollback on error
         console.error("Failed to update status/refund:", err);
         setLocalRequests(prev);
+        toast.error("Failed to update. See console for details.", {
+          className: "toast-error",
+          autoClose: 4000,
+        });
       }
     }
   };
@@ -247,6 +269,10 @@ const ReturnRequestTable = ({
                         </SelectItem>
                         <SelectItem
                           value="InitiateRefund"
+                           disabled={isStatusDisabled(
+                            returnRequest.status,
+                            "InitiateRefund"
+                          )}
                           className="hover:bg-gray-600"
                         >
                           Initiate Refund
