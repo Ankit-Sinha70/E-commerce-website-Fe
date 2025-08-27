@@ -4,18 +4,21 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { Provider } from "react-redux";
 import { persistor, store } from "./app/store";
 import axios from "axios";
 import { logout, refreshToken } from "./features/auth/authSlice.js";
 import { PersistGate } from "redux-persist/integration/react";
 import { ToastContainer } from "react-toastify";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const API_URL = import.meta.env.VITE_API_URL;
 const axiosToIntercept = axios;
 let isRefreshing = false;
 let failedQueue = [];
+
+const GOOGLE_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const FACEBOOK_ID = import.meta.env.VITE_FACEBOOK_CLIENT_ID;
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
@@ -117,7 +120,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
+          <GoogleOAuthProvider clientId={GOOGLE_ID}>
+            <App />
+          </GoogleOAuthProvider>
         </PersistGate>
       </Provider>
     </BrowserRouter>

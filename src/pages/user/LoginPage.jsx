@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { loginUser, logout } from "../../features/auth/authSlice";
-import { registerUser } from "../../features/auth/authSlice";
+import { loginUser, logout, registerUser, setCredentials } from "../../features/auth/authSlice";
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 import { mergeCartItems } from "@/features/cart/cartSlice";
+import googleIcon from "../../assets/icons/googleIcon.svg";
+import facebookIcon from "@/assets/icons/facebookIcon.svg";
+import { GoogleLogin } from "@react-oauth/google";
+
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+const FB_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID
+
 
 const AuthTogglePage = () => {
   const dispatch = useDispatch();
@@ -15,16 +21,17 @@ const AuthTogglePage = () => {
     (state) => state.auth
   );
   const { items: cartItems } = useSelector((state) => state.cart);
-  const { loading: userLoading, error: userError, registrationSuccess } = useSelector(
-    (state) => state.user
-  );
+  const { loading: userLoading, error: userError, registrationSuccess } =
+    useSelector((state) => state.user);
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [fbReady, setFbReady] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    address: "", 
+    address: "",
   });
 
   const toggleMode = () => {
@@ -39,8 +46,10 @@ const AuthTogglePage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try { 
-      const resultAction = await dispatch(loginUser({ email: formData.email, password: formData.password }));
+    try {
+      const resultAction = await dispatch(
+        loginUser({ email: formData.email, password: formData.password })
+      );
 
       if (loginUser.fulfilled.match(resultAction)) {
         const accessToken = resultAction.payload.accessToken;
@@ -49,15 +58,22 @@ const AuthTogglePage = () => {
         }
         const role = resultAction.payload.user?.role;
         toast.success(
-          role === 'admin' ? 'Welcome to the Admin Dashboard!' : 'Welcome to the Website!',
-          { className: 'toast-success' }
+          role === "admin"
+            ? "Welcome to the Admin Dashboard!"
+            : "Welcome to the Website!",
+          { className: "toast-success" }
         );
       } else {
-        const errorMsg = resultAction.payload || resultAction.error?.message || 'Login failed. Please try again.';
-        toast.error(errorMsg, { className: 'toast-danger' });
+        const errorMsg =
+          resultAction.payload ||
+          resultAction.error?.message ||
+          "Login failed. Please try again.";
+        toast.error(errorMsg, { className: "toast-danger" });
       }
     } catch (error) {
-      toast.error(error?.message || "Login failed. Please try again.", { className: "toast-danger" });
+      toast.error(error?.message || "Login failed. Please try again.", {
+        className: "toast-danger",
+      });
     }
   };
 
@@ -65,47 +81,169 @@ const AuthTogglePage = () => {
     e.preventDefault();
     const resultAction = await dispatch(registerUser(formData));
     if (registerUser.fulfilled.match(resultAction)) {
-      const msg = resultAction.payload?.message || 'Registration successful!';
-      toast.success(msg, { className: 'toast-success' });
+      const msg = resultAction.payload?.message || "Registration successful!";
+      toast.success(msg, { className: "toast-success" });
       setIsSignUp(false);
-      setFormData({ name: '', email: '', password: '', address: '' });
+      setFormData({ name: "", email: "", password: "", address: "" });
     } else {
-      const errorMsg = resultAction.payload || resultAction.error?.message || 'Registration failed';
-      toast.error(errorMsg, { className: 'toast-danger' });
+      const errorMsg =
+        resultAction.payload ||
+        resultAction.error?.message ||
+        "Registration failed";
+      toast.error(errorMsg, { className: "toast-danger" });
     }
   };
 
   useEffect(() => {
-    if (user?.role === 'admin') {
-      navigate('/admin');
-    } else if (user?.role === 'user') {
-      navigate('/');
+    if (user?.role === "admin") {
+      navigate("/admin");
+    } else if (user?.role === "user") {
+      navigate("/");
     }
 
     if (error) {
       dispatch(logout());
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
     }
   }, [accessToken, user, error, loading, navigate, dispatch]);
 
-  // Effect for handling registration (userSlice)
   useEffect(() => {
     if (registrationSuccess) {
       toast.success("Registration Successful!", {
         className: "toast-success",
-        description: "You can now sign in with your new account.",
       });
-      setIsSignUp(false); 
-      setFormData({ name: "", email: "", password: "", address: "" }); 
+      setIsSignUp(false);
+      setFormData({ name: "", email: "", password: "", address: "" });
     }
     if (userError) {
       toast.error("Registration Failed", {
         className: "toast-danger",
-        description: userError || "An unknown error occurred during registration.",
       });
     }
   }, [registrationSuccess, userError, dispatch]);
+
+  // --- Google login handler (robust) ---
+  const onGoogleSuccess = async (resp) => {
+    // resp can contain credential (id_token) or access_token/id_token depending on flow
+    const tokenCandidate = resp?.credential || resp?.id_token || resp?.access_token;
+    if (!tokenCandidate) {
+      toast.error("No Google token returned", { className: "toast-danger" });
+      return;
+    }
+
+    try {
+      const payload = { credential: tokenCandidate };
+      // include a hint for the backend if this is an access_token
+      if (resp?.access_token && !resp?.credential) payload.source = "access_token";
+
+      const res = await fetch(`${API}/api/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      // try to parse JSON safely
+      const text = await res.text();
+      let data;
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        throw new Error(`Invalid response from server (${res.status})`);
+      }
+
+      if (!res.ok) throw new Error(data?.message || `Google login failed (${res.status})`);
+
+      const token = data?.token || data?.accessToken || data?.access_token;
+      const userObj = data?.user || data?.userInfo || null;
+
+      if (!token) throw new Error("No token returned from server");
+
+      // persist and update store
+      localStorage.setItem("accessToken", token);
+      if (userObj) localStorage.setItem("user", JSON.stringify(userObj));
+
+      // merge cart and update redux auth state
+      dispatch(mergeCartItems({ accessToken: token, cartItems }));
+      // use slice action if available
+      try {
+        dispatch(setCredentials({ accessToken: token, user: userObj }));
+      } catch (err) {
+        console.log('err', err)
+        // fallback: attempt legacy action shape
+        try {
+          dispatch({ type: "auth/setCredentials", payload: { accessToken: token, user: userObj } });
+        } catch {
+          console.warn("No suitable auth action found to set credentials");
+        }
+      }
+
+      toast.success("Google login successful!", { className: "toast-success" });
+      navigate("/");
+    } catch (err) {
+      console.error("Google login error:", err);
+      toast.error(err.message || "Google login failed", { className: "toast-danger" });
+    }
+  };
+
+  // --- Facebook SDK load ---
+  useEffect(() => {
+    if (window.FB) {
+      setFbReady(true);
+      return;
+    }
+    window.fbAsyncInit = function () {
+      window.FB.init({
+        appId: FB_APP_ID,
+        cookie: true,
+        xfbml: false,
+        version: "v19.0",
+      });
+      setFbReady(true);
+    };
+    const id = "facebook-jssdk";
+    if (document.getElementById(id)) return;
+    const js = document.createElement("script");
+    js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    js.async = true;
+    document.body.appendChild(js);
+  }, []);
+
+const loginWithFacebook = () => {
+  if (!fbReady) return;
+  window.FB.login(
+    async (response) => {
+      if (response.authResponse?.accessToken) {
+        try {
+          const res = await fetch(`${API}/api/auth/facebook`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              accessToken: response.authResponse.accessToken,
+            }),
+          });
+          const data = await res.json();
+          if (data?.token) {
+            toast.success("Facebook login successful!", {
+              className: "toast-success",
+            });
+            dispatch(
+              mergeCartItems({ accessToken: data.token, cartItems })
+            );
+            navigate("/");
+          }
+        } catch (err) {
+          console.log("err", err);
+          toast.error("Facebook login failed", { className: "toast-danger" });
+        }
+      }
+    },
+    { scope: "public_profile,email" }
+  );
+};
 
 
   return (
@@ -157,9 +295,7 @@ const AuthTogglePage = () => {
                   </p>
                 </div>
 
-                <form
-                  onSubmit={isSignUp ? handleRegister : handleLogin}
-                >
+                <form onSubmit={isSignUp ? handleRegister : handleLogin}>
                   <div className="space-y-6">
                     {isSignUp && (
                       <div className="relative">
@@ -277,22 +413,45 @@ const AuthTogglePage = () => {
                   </div>
 
                   <div className="mt-6 flex justify-center gap-4">
-                    {["google", "facebook", "github"].map((icon) => (
-                      <button
-                        key={icon}
-                        onClick={() =>
-                          toast.info(`Attempting ${icon} login...`)
-                        }
-                        className="w-12 h-12 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-110 transition"
-                        title={`Sign in with ${icon}`}
-                      >
-                        <img
-                          src={`/${icon}.svg`}
-                          alt={icon}
-                          className="w-6 h-6"
-                        />
-                      </button>
-                    ))}
+                    {/* Google */}
+                    <GoogleLogin
+                      onSuccess={onGoogleSuccess}
+                      onError={() =>
+                        toast.error("Google login failed", {
+                          className: "toast-danger",
+                        })
+                      }
+                    />
+
+                    {/* Facebook */}
+                    <button
+                      onClick={loginWithFacebook}
+                      className="w-12 h-12 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-110 transition"
+                      title="Sign in with Facebook"
+                    >
+                      <img
+                        src={facebookIcon}
+                        alt="Facebook"
+                        className="w-6 h-6"
+                      />
+                    </button>
+
+                    {/* Instagram (future) */}
+                    {/* <button
+                      onClick={() =>
+                        toast.info("Instagram login not yet implemented", {
+                          className: "toast-info",
+                        })
+                      }
+                      className="w-12 h-12 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-110 transition"
+                      title="Sign in with Instagram"
+                    >
+                      <img
+                        src={instagramIcon}
+                        alt="Instagram"
+                        className="w-6 h-6"
+                      />
+                    </button> */}
                   </div>
                 </div>
               </Motion.div>

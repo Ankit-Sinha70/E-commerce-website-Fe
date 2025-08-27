@@ -4,33 +4,42 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Helper to get initial state from localStorage
-const loadAuthFromLocalStorage = () => {
-  try {
-    const userString = localStorage.getItem("user");
-    const accessTokenString = localStorage.getItem("accessToken");
-    if (userString) {
-      localStorage.removeItem("guestId");
-    }
+// const loadAuthFromLocalStorage = () => {
+//   try {
+//     const userString = localStorage.getItem("user");
+//     const accessTokenString = localStorage.getItem("accessToken");
+//     if (userString) {
+//       localStorage.removeItem("guestId");
+//     }
 
-    const user = userString ? JSON.parse(userString) : null;
-    const accessToken = accessTokenString || null;
-    return {
-      user: user,
-      accessToken: accessToken,
-      isAdmin: user?.role === "admin" || false,
-    };
-  } catch (e) {
-    console.error("Failed to load auth state from localStorage:", e);
-    return {
-      user: null,
-      accessToken: null,
-      isAdmin: false,
-    };
-  }
-};
+//     const user = userString ? JSON.parse(userString) : null;
+//     const accessToken = accessTokenString || null;
+//     return {
+//       user: user,
+//       accessToken: accessToken,
+//       isAdmin: user?.role === "admin" || false,
+//     };
+//   } catch (e) {
+//     console.error("Failed to load auth state from localStorage:", e);
+//     return {
+//       user: null,
+//       accessToken: null,
+//       isAdmin: false,
+//     };
+//   }
+// };
 
+// add / replace initialState to read from localStorage
 const initialState = {
-  ...loadAuthFromLocalStorage(),
+  accessToken: localStorage.getItem("accessToken") || null,
+  user: (() => {
+    try {
+      const u = localStorage.getItem("user");
+      return u ? JSON.parse(u) : null;
+    } catch {
+      return null;
+    }
+  })(),
   loading: false,
   error: null,
   changePasswordStatus: "idle",
@@ -83,7 +92,6 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
-
 
 // logging out a user
 export const logoutUser = createAsyncThunk(
@@ -276,6 +284,28 @@ const authSlice = createSlice({
       state.changePasswordError = null;
       state.changePasswordSuccess = null;
     },
+    // set credentials when login/register via external flows (Google/Facebook)
+    setCredentials(state, action) {
+      const { accessToken, user } = action.payload || {};
+      if (accessToken) {
+        state.accessToken = accessToken;
+        localStorage.setItem("accessToken", accessToken);
+      }
+      if (user) {
+        state.user = user;
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+      state.loading = false;
+      state.error = null;
+    },
+    clearCredentials(state) {
+      state.accessToken = null;
+      state.user = null;
+      state.loading = false;
+      state.error = null;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -309,7 +339,7 @@ const authSlice = createSlice({
         state.accessToken = null;
         state.isAdmin = false;
       })
-      
+
       // Handlers for logoutUser
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
@@ -405,7 +435,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      
+
       // Handlers for changePassword
       .addCase(changePassword.pending, (state) => {
         state.changePasswordStatus = "loading";
@@ -419,9 +449,15 @@ const authSlice = createSlice({
       .addCase(changePassword.rejected, (state, action) => {
         state.changePasswordStatus = "failed";
         state.changePasswordError = action.payload;
-      })
+      });
   },
 });
 
-export const { logout, setSuperAdminStatus, clearChangePasswordState} = authSlice.actions;
+export const {
+  logout,
+  setSuperAdminStatus,
+  clearChangePasswordState,
+  setCredentials,
+  clearCredentials,
+} = authSlice.actions;
 export default authSlice.reducer;

@@ -295,7 +295,6 @@
 }
 
 
-/* React-Toastify icon colors - force icons to white for all variants */
 .Toastify__toast .Toastify__toast-icon {
   color: #ffffff !important;
 }
@@ -315,7 +314,7 @@
 .magnifier-container {
   position: relative;
   display: inline-block;
-  width: 100%; /* Ensure it takes up the grid space */
+  width: 100%;
 }
 
 .image-preview {
