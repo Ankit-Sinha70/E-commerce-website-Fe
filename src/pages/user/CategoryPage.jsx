@@ -78,10 +78,10 @@ const CategoryPage = () => {
 
     if (newExpanded.has(categoryId)) {
       newExpanded.delete(categoryId);
-      setExpandedCategories(newExpanded); // collapse immediately
+      setExpandedCategories(newExpanded); 
     } else {
       newExpanded.add(categoryId);
-      setExpandedCategories(newExpanded); // expand immediately
+      setExpandedCategories(newExpanded);
       setLoadingCategories((prev) => new Set(prev).add(categoryId));
       await fetchCategoryDetails(categoryId);
       setLoadingCategories((prev) => {

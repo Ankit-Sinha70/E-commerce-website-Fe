@@ -61,7 +61,7 @@ const FeaturedBrandsSlider = () => {
       accent: "text-blue-400",
     },
     {
-      id: 6,
+      id: 12,
       brand: "BOAT",
       title: "Airdopes 141",
       subtitle: "Wireless Earbuds",
@@ -93,7 +93,7 @@ const FeaturedBrandsSlider = () => {
       price: "From ₹20,999",
       bgColor: "bg-gradient-to-r from-gray-800 to-gray-900",
       textColor: "text-white",
-      image: AppleAirpods, // Make sure to import the image like: import AppleAirpods from 'path-to-image';
+      image: AppleAirpods,
       accent: "text-blue-400",
     },
   ];

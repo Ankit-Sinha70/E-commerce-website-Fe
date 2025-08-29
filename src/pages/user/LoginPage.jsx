@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { loginUser, logout, registerUser, setCredentials } from "../../features/auth/authSlice";
+import {
+  loginUser,
+  logout,
+  registerUser,
+  setCredentials,
+} from "../../features/auth/authSlice";
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 import { mergeCartItems } from "@/features/cart/cartSlice";
-import googleIcon from "../../assets/icons/googleIcon.svg";
 import facebookIcon from "@/assets/icons/facebookIcon.svg";
 import { GoogleLogin } from "@react-oauth/google";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
-const FB_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID
-
+const FB_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID;
 
 const AuthTogglePage = () => {
   const dispatch = useDispatch();
@@ -21,8 +24,11 @@ const AuthTogglePage = () => {
     (state) => state.auth
   );
   const { items: cartItems } = useSelector((state) => state.cart);
-  const { loading: userLoading, error: userError, registrationSuccess } =
-    useSelector((state) => state.user);
+  const {
+    loading: userLoading,
+    error: userError,
+    registrationSuccess,
+  } = useSelector((state) => state.user);
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -125,8 +131,9 @@ const AuthTogglePage = () => {
 
   // --- Google login handler (robust) ---
   const onGoogleSuccess = async (resp) => {
-    // resp can contain credential (id_token) or access_token/id_token depending on flow
-    const tokenCandidate = resp?.credential || resp?.id_token || resp?.access_token;
+    // resp can contain credential
+    const tokenCandidate =
+      resp?.credential || resp?.id_token || resp?.access_token;
     if (!tokenCandidate) {
       toast.error("No Google token returned", { className: "toast-danger" });
       return;
@@ -135,7 +142,8 @@ const AuthTogglePage = () => {
     try {
       const payload = { credential: tokenCandidate };
       // include a hint for the backend if this is an access_token
-      if (resp?.access_token && !resp?.credential) payload.source = "access_token";
+      if (resp?.access_token && !resp?.credential)
+        payload.source = "access_token";
 
       const res = await fetch(`${API}/api/auth/google`, {
         method: "POST",
@@ -153,7 +161,8 @@ const AuthTogglePage = () => {
         throw new Error(`Invalid response from server (${res.status})`);
       }
 
-      if (!res.ok) throw new Error(data?.message || `Google login failed (${res.status})`);
+      if (!res.ok)
+        throw new Error(data?.message || `Google login failed (${res.status})`);
 
       const token = data?.token || data?.accessToken || data?.access_token;
       const userObj = data?.user || data?.userInfo || null;
@@ -163,17 +172,16 @@ const AuthTogglePage = () => {
       // persist and update store
       localStorage.setItem("accessToken", token);
       if (userObj) localStorage.setItem("user", JSON.stringify(userObj));
-
-      // merge cart and update redux auth state
       dispatch(mergeCartItems({ accessToken: token, cartItems }));
-      // use slice action if available
       try {
         dispatch(setCredentials({ accessToken: token, user: userObj }));
       } catch (err) {
-        console.log('err', err)
-        // fallback: attempt legacy action shape
+        console.log("err", err);
         try {
-          dispatch({ type: "auth/setCredentials", payload: { accessToken: token, user: userObj } });
+          dispatch({
+            type: "auth/setCredentials",
+            payload: { accessToken: token, user: userObj },
+          });
         } catch {
           console.warn("No suitable auth action found to set credentials");
         }
@@ -183,7 +191,9 @@ const AuthTogglePage = () => {
       navigate("/");
     } catch (err) {
       console.error("Google login error:", err);
-      toast.error(err.message || "Google login failed", { className: "toast-danger" });
+      toast.error(err.message || "Google login failed", {
+        className: "toast-danger",
+      });
     }
   };
 
@@ -211,40 +221,43 @@ const AuthTogglePage = () => {
     document.body.appendChild(js);
   }, []);
 
-const loginWithFacebook = () => {
-  if (!fbReady) return;
-  window.FB.login(
-    async (response) => {
-      if (response.authResponse?.accessToken) {
-        try {
-          const res = await fetch(`${API}/api/auth/facebook`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              accessToken: response.authResponse.accessToken,
-            }),
-          });
-          const data = await res.json();
-          if (data?.token) {
-            toast.success("Facebook login successful!", {
-              className: "toast-success",
+  const loginWithFacebook = () => {
+    if (!fbReady) return;
+    window.FB.login(
+      async (response) => {
+        console.log("Facebook SDK response:", response); 
+        if (response.authResponse?.accessToken) {
+          try {
+            const res = await fetch(`${API}/api/auth/facebook`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({
+                accessToken: response.authResponse.accessToken,
+              }),
             });
-            dispatch(
-              mergeCartItems({ accessToken: data.token, cartItems })
-            );
-            navigate("/");
+            const data = await res.json();
+            console.log("Backend response for Facebook login:", data); 
+            if (data?.token) {
+              toast.success("Facebook login successful!", {
+                className: "toast-success",
+              });
+              dispatch(mergeCartItems({ accessToken: data.token, cartItems }));
+              navigate("/");
+            } else {
+              toast.error(data?.message || "Facebook login failed: No token from backend", { className: "toast-danger" });
+            }
+          } catch (err) {
+            console.error("Error during Facebook login backend call:", err);
+            toast.error(err.message || "Facebook login failed", { className: "toast-danger" });
           }
-        } catch (err) {
-          console.log("err", err);
-          toast.error("Facebook login failed", { className: "toast-danger" });
+        } else {
+          toast.error("Facebook login failed: No access token received from Facebook", { className: "toast-danger" });
         }
-      }
-    },
-    { scope: "public_profile,email" }
-  );
-};
-
+      },
+      { scope: "public_profile,email" }
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
@@ -426,14 +439,11 @@ const loginWithFacebook = () => {
                     {/* Facebook */}
                     <button
                       onClick={loginWithFacebook}
-                      className="w-12 h-12 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-110 transition"
+                      className="flex items-center justify-center space-x-2 px-4 py-2 bg-white text-gray-700 rounded-sm shadow-sm hover:shadow-md hover:scale-105 transition"
                       title="Sign in with Facebook"
                     >
-                      <img
-                        src={facebookIcon}
-                        alt="Facebook"
-                        className="w-6 h-6"
-                      />
+                      <img src={facebookIcon} alt="Facebook" className="w-6 h-6" />
+                      <span>Sign in with Facebook</span>
                     </button>
 
                     {/* Instagram (future) */}
