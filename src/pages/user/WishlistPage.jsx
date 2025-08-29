@@ -1,4 +1,3 @@
-import Loader from "@/component/Common/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,13 +18,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { addItemToCart } from "../../features/cart/cartSlice";
+import Loader from "@/component/Common/Loader";
 
 const WishlistPage = () => {
   const dispatch = useDispatch();
   const { user, accessToken } = useSelector((state) => state.auth);
   const { wishlist, loading, error } = useSelector((state) => state.wishlist);
-  console.log('wishlist', wishlist)
-
   const [showAddToCartDialog, setShowAddToCartDialog] = useState(false);
   const [dialogProductName, setDialogProductName] = useState("");
   const [dialogProductQuantity, setDialogProductQuantity] = useState(0);

@@ -21,7 +21,7 @@ import {
   YAxis,
 } from "recharts";
 import { formatCurrency } from "@/lib/currency";
-import Loader from "../../component/Common/Loader";
+import Loader from "../../component/Common/Loader.jsx";
 
 const DashboardHomePage = () => {
   const dispatch = useDispatch();
