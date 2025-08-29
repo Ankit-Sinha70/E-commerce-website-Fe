@@ -1,5 +1,3 @@
-// File: src/pages/DashboardHomePage.jsx
-import Loader from "@/component/Common/Loader";
 import {
   fetchRecentOrders,
   fetchYearlyRevenue, getSalesOverview
@@ -23,6 +21,7 @@ import {
   YAxis,
 } from "recharts";
 import { formatCurrency } from "@/lib/currency";
+import Loader from "../../component/Common/Loader";
 
 const DashboardHomePage = () => {
   const dispatch = useDispatch();
@@ -141,9 +140,6 @@ const DashboardHomePage = () => {
           </div>
           <div className="h-64">
             {salesOverviewLoading ? (
-              // <div className="flex items-center justify-center h-full text-gray-500">
-              //   Loading sales overview...
-              // </div>
               <Loader message={"Loading sales overview..."}/>
             ) : salesOverviewError ? (
               <div className="flex items-center justify-center h-full text-red-500">

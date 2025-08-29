@@ -25,6 +25,7 @@
         "@react-oauth/google": "^0.12.2",
         "@reduxjs/toolkit": "^2.2.5",
         "@tailwindcss/vite": "^4.1.10",
+        "@vitejs/plugin-basic-ssl": "^2.1.0",
         "axios": "^1.7.2",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -64,6 +65,7 @@
         "globals": "^16.2.0",
         "tw-animate-css": "^1.3.4",
         "vite": "^6.0.0",
+        "vite-plugin-imagemin": "^0.6.1",
         "vite-plugin-mkcert": "^1.17.8"
     }
 }
