@@ -275,7 +275,7 @@ const ProductCatalogue = ({ products, loading }) => {
               No products available
             </h3>
             <p className="text-slate-500 text-sm sm:text-base">
-              Check back soon for our premium ice collection
+              Check back soon for our premium collection
             </p>
           </div>
         )}

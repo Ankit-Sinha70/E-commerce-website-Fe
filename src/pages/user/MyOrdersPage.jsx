@@ -1,4 +1,4 @@
-import Loader from "@/component/Common/Loader";
+import Loader from "../../component/Common/Loader";
 import PaginationDemo from "@/component/Common/Pagination";
 import ReturnRequest from "@/component/ReturnRequest";
 import ReturnRequestModal from "@/component/ReturnRequestModal";

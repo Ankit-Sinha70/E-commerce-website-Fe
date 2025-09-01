@@ -11,8 +11,8 @@ const AboutAllFixPage = () => {
         company background, or highlight unique selling points.
       </p>
       <p className="text-gray-600">
-        Natural Ice Industry LLC is committed to delivering premium ice products across Dubai and beyond.
-        Contact us to learn more about our services, products, and special packages.
+      Trendiya E-commerce is dedicated to offering high-quality products and a seamless shopping experience across Dubai and beyond.
+      Contact us today to explore our wide range of products, exclusive deals, and special packages.
       </p>
     </div>
   );
