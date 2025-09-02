@@ -41,7 +41,7 @@ import {
   getSubcategories,
   updateSubcategory,
 } from "@/features/subcategory/subcategorySlice";
-import { Loader } from "@/component/Common/Loader.jsx";
+import { Loader } from "../../component/Common/Loader.jsx";
 
 const ManageSubcategory = () => {
   const dispatch = useDispatch();

@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "react-toastify";
 import useDebounce from "@/lib/useDebounce";
-import { Loader } from "@/component/Common/Loader.jsx";
+import { Loader } from "../../component/Common/Loader.jsx";
 
 const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
   const handlePrevious = () => {

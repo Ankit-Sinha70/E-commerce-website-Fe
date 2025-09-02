@@ -6,7 +6,7 @@ import {
   initiateReturnRefund,
   updateReturnRequestStatus,
 } from "@/features/order/orderSlice";
-import { Loader } from "@/component/Common/Loader.jsx";
+import { Loader } from "../../component/Common/Loader.jsx";
 import ReturnRequestDetailsModal from "@/component/admin/ReturnRequestDetailsModal";
 import ReturnRequestTable from "@/pages/admin/ReturnRequestTable";
 import { toast } from "sonner";

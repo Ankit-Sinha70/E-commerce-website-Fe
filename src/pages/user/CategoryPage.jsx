@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getCategories } from "../../features/category/categorySlice";
-import { Loader } from "@/component/Common/Loader.jsx";
+import { Loader } from "../../component/Common/Loader.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

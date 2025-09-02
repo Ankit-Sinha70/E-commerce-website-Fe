@@ -47,7 +47,7 @@ import {
   updateCategory,
 } from "../../features/category/categorySlice";
 import useDebounce from "../../lib/useDebounce";
-import { Loader } from "@/component/Common/Loader.jsx";
+import { Loader } from "../../component/Common/Loader.jsx";
 
 const buildCategoryTree = (categories, parentId = null, level = 0) => {
   const nestedCategories = [];

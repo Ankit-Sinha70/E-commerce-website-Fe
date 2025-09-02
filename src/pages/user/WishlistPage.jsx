@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { addItemToCart } from "../../features/cart/cartSlice";
-import { Loader } from "@/component/Common/Loader.jsx";
+import { Loader } from "../../component/Common/Loader.jsx";
 
 const WishlistPage = () => {
   const dispatch = useDispatch();
