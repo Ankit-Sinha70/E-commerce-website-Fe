@@ -1,4 +1,3 @@
-import Loader from "../../component/Common/Loader";
 import PaginationDemo from "@/component/Common/Pagination";
 import ReturnRequest from "@/component/ReturnRequest";
 import ReturnRequestModal from "@/component/ReturnRequestModal";
@@ -19,6 +18,7 @@ import { fetchPaymentDetailsByOrderId } from "@/features/payment/paymentSlice";
 import { formatCurrency } from "@/lib/currency";
 import { capitalizeFirstLetter } from "@/lib/orderUtils";
 import { addHours, format } from "date-fns";
+import Loader from "./../../component/Common/Loader";
 import {
   ArrowRight,
   Calendar,
