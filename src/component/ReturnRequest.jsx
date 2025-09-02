@@ -1,4 +1,4 @@
-import PaginationDemo from "@/component/Common/Pagination";
+import PaginationDemo from "./Common/Pagination.jsx";
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,5 +1,5 @@
 import CategoryRow from "@/component/CategoryRow";
-import PaginationDemo from "@/component/Common/Pagination";
+import PaginationDemo from "../../component/Common/Pagination.jsx";
 import {
   PackageOpen,
   Plus,
