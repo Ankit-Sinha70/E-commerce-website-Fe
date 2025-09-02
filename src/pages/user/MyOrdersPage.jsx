@@ -1,4 +1,4 @@
-import PaginationDemo from "@/component/Common/Pagination";
+import PaginationDemo from "@/component/Common/Pagination.jsx";
 import ReturnRequest from "@/component/ReturnRequest";
 import ReturnRequestModal from "@/component/ReturnRequestModal";
 import TrackOrderDialog from "@/component/TrackOrderDialog";
