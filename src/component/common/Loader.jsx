@@ -1,6 +1,6 @@
 import React from "react";
 
-const Loader = ({message}) => {
+export const Loader = ({message}) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div className="text-center">
@@ -10,5 +10,3 @@ const Loader = ({message}) => {
     </div>
   );
 };
-
-export default Loader; 

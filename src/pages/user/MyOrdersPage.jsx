@@ -18,7 +18,6 @@ import { fetchPaymentDetailsByOrderId } from "@/features/payment/paymentSlice";
 import { formatCurrency } from "@/lib/currency";
 import { capitalizeFirstLetter } from "@/lib/orderUtils";
 import { addHours, format } from "date-fns";
-import Loader from "./../../component/Common/Loader";
 import {
   ArrowRight,
   Calendar,
@@ -47,6 +46,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
+import { Loader } from "@/component/Common/Loader";
 
 const getStatusClasses = (status) => {
   switch (status?.toLowerCase()) {
