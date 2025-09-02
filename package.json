@@ -3,6 +3,9 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
+    "engines": {
+    "node": "20.x"
+  },
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -55,6 +58,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.29.0",
+        "@rollup/wasm-node": "^4.50.0",
         "@types/react": "^18.2.0",
         "@types/react-dom": "^18.2.0",
         "@vitejs/plugin-react": "^4.3.1",
