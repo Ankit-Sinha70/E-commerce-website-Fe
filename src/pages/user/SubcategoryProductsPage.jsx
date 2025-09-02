@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useParams } from "react-router-dom";
-import Loader from "@/component/Common/Loader";
 import { fetchProducts } from "@/features/product/productSlice";
 import { formatCurrency } from "@/lib/currency";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

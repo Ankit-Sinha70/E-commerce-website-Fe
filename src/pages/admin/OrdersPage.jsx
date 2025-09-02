@@ -1,4 +1,3 @@
-import Loader from "@/component/Common/Loader";
 import PaginationDemo from "@/component/Common/Pagination";
 import {
   deleteOrder,
@@ -15,6 +14,7 @@ import OrderDetailsDialog from "./OrderDetailsDialog";
 import OrderFilters from "./OrderFilters";
 import OrderStatusDialog from "./OrderStatusDialog";
 import OrderTable from "./OrderTable";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 const OrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");

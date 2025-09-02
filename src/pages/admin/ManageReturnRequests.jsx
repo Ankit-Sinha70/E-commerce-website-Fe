@@ -6,12 +6,12 @@ import {
   initiateReturnRefund,
   updateReturnRequestStatus,
 } from "@/features/order/orderSlice";
-import Loader from "@/component/Common/Loader";
+import { Loader } from "@/component/Common/Loader.jsx";
 import ReturnRequestDetailsModal from "@/component/admin/ReturnRequestDetailsModal";
 import ReturnRequestTable from "@/pages/admin/ReturnRequestTable";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import PaginationDemo from "@/component/Common/Pagination";
+import PaginationDemo from "@/component/Common/Pagination.jsx";
 
 const ManageReturnRequests = () => {
   const dispatch = useDispatch();

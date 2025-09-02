@@ -25,7 +25,6 @@ import {
 } from "../../features/shippingAddress/shippingAddressSlice";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import Loader from "@/component/Common/Loader";
 import {
   Select,
   SelectContent,
@@ -37,6 +36,7 @@ import AddressDialog from "@/component/AddressDialog";
 import { formatCurrency } from "@/lib/currency";
 import { toast } from "react-toastify";
 import LoginRequiredPopup from "@/component/LoginRequiredPopup";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 export default function CartPage() {
   const dispatch = useDispatch();

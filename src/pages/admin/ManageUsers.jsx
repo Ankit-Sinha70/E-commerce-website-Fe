@@ -3,7 +3,6 @@ import { useDispatch, useSelector }  from "react-redux";
 import { fetchAllUsers, deleteUser } from "../../features/user/userSlice";
 import { Button } from "@/components/ui/button";
 import { Search, RotateCw, Trash2, Eye } from "lucide-react";
-import Loader from "@/component/Common/Loader";
 import {
   Tooltip,
   TooltipContent,
@@ -27,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "react-toastify";
 import useDebounce from "@/lib/useDebounce";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
   const handlePrevious = () => {

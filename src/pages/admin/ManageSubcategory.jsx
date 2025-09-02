@@ -1,4 +1,3 @@
-import Loader from "@/component/Common/Loader";
 import PaginationDemo from "@/component/Common/Pagination";
 import { PackageOpen, Plus, RotateCcw, Search } from "lucide-react";
 import React, { useCallback, useEffect } from "react";
@@ -42,10 +41,11 @@ import {
   getSubcategories,
   updateSubcategory,
 } from "@/features/subcategory/subcategorySlice";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 const ManageSubcategory = () => {
   const dispatch = useDispatch();
-  const { items, loading, error, totalPages } = useSelector((s) => s.subcategory);
+  const { items, loading, totalPages } = useSelector((s) => s.subcategory);
   const { categories } = useSelector((s) => s.category);
 
   const [isAddEditModalOpen, setIsAddEditModalOpen] = React.useState(false);

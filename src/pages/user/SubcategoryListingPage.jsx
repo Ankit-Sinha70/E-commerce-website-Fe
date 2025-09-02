@@ -1,6 +1,6 @@
+import { Loader } from "@/component/Common/Loader.jsx";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import Loader from "@/component/Common/Loader";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

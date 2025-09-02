@@ -1,4 +1,3 @@
-import Loader from "@/component/Common/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +12,7 @@ import html2pdf from "html2pdf.js";
 import { FileText, MapPin, Package, User } from "lucide-react";
 import { useRef, useState } from "react";
 import { getStatusBadge } from "../../lib/orderUtils";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 const OrderDetailsDialog = ({ open, onOpenChange, order }) => {
   const orderDetailsRef = useRef(null);

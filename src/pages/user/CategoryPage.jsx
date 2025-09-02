@@ -1,4 +1,3 @@
-import Loader from "@/component/Common/Loader";
 import PaginationDemo from "@/component/Common/Pagination";
 import axios from "axios";
 import { PackageOpen, SlidersHorizontal, ChevronRight, ChevronDown } from "lucide-react";
@@ -6,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getCategories } from "../../features/category/categorySlice";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

@@ -1,4 +1,3 @@
-import Loader from "@/component/Common/Loader";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -39,6 +38,7 @@ import {
 import useDebounce from "../../lib/useDebounce";
 import { formatCurrency } from "@/lib/currency";
 import PaginationDemo from "@/component/Common/Pagination";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

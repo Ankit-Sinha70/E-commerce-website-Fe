@@ -19,7 +19,7 @@ import {
   clearShippingAddressError,
   clearShippingAddressSuccess,
 } from "../../features/shippingAddress/shippingAddressSlice";
-import Loader from "@/component/Common/Loader";
+
 import {
   Dialog,
   DialogContent,
@@ -42,6 +42,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Loader } from "@/component/Common/Loader.jsx";
 
 // Address type options - make this dynamic
 const ADDRESS_TYPES = [
