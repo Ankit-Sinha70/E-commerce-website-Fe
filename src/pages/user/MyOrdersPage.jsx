@@ -46,7 +46,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
-import { Loader } from "../../component/Common/Loader";
+import { Loader } from "@/component/Common/Loader";
 
 const getStatusClasses = (status) => {
   switch (status?.toLowerCase()) {
