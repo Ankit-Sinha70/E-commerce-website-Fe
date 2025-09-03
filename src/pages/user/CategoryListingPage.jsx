@@ -1,6 +1,9 @@
-import { Loader } from "../../component/Common/Loader.jsx";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { fetchCategories } from "@/features/category/categorySlice";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Loader } from "@/component/Common/Loader";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,6 +16,7 @@ const slugify = (s = "") =>
     .replace(/(^-|-$)+/g, "");
 
 const CategoryListingPage = () => {
+  const dispatch = useDispatch();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

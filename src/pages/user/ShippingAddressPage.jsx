@@ -42,7 +42,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader } from "../../component/Common/Loader.jsx";
+import { Loader } from "@/component/Common/Loader";
 
 // Address type options - make this dynamic
 const ADDRESS_TYPES = [

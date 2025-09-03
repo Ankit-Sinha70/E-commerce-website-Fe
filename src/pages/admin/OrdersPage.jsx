@@ -14,7 +14,7 @@ import OrderDetailsDialog from "./OrderDetailsDialog";
 import OrderFilters from "./OrderFilters";
 import OrderStatusDialog from "./OrderStatusDialog";
 import OrderTable from "./OrderTable";
-import { Loader } from "../../component/Common/Loader.jsx";
+import { Loader } from "@/component/Common/Loader";
 
 const OrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");

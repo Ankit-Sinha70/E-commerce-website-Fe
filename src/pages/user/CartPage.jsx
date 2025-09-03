@@ -36,7 +36,7 @@ import AddressDialog from "@/component/AddressDialog";
 import { formatCurrency } from "@/lib/currency";
 import { toast } from "react-toastify";
 import LoginRequiredPopup from "@/component/LoginRequiredPopup";
-import { Loader } from "../../component/Common/Loader.jsx";
+import { Loader } from "@/component/Common/Loader";
 
 export default function CartPage() {
   const dispatch = useDispatch();
