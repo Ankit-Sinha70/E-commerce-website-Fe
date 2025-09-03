@@ -7,11 +7,11 @@ import {
   initiateReturnRefund,
   updateReturnRequestStatus,
 } from "@/features/order/orderSlice";
-import { Loader } from "@/component/Common/Loader";
+import { Loader } from "@/component/common/Loader";
 import ReturnRequestDetailsModal from "@/component/admin/ReturnRequestDetailsModal";
 import ReturnRequestTable from "@/pages/admin/ReturnRequestTable";
 import { toast } from "sonner";
-import PaginationDemo from "@/component/Common/Pagination";
+import PaginationDemo from "@/component/common/Pagination";
 
 const ManageReturnRequests = () => {
   const dispatch = useDispatch();

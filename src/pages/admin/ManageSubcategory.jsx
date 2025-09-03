@@ -1,4 +1,4 @@
-import PaginationDemo from "@/component/Common/Pagination";
+import PaginationDemo from "@/component/common/Pagination";
 import { PackageOpen, Plus, RotateCcw, Search } from "lucide-react";
 import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +41,7 @@ import {
   getSubcategories,
   updateSubcategory,
 } from "@/features/subcategory/subcategorySlice";
-import { Loader } from "@/component/Common/Loader";
+import { Loader } from "@/component/common/Loader";
 
 const ManageSubcategory = () => {
   const dispatch = useDispatch();

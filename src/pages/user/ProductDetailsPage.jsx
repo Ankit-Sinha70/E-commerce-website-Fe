@@ -23,7 +23,7 @@ import ReviewList from "@/component/ReviewList/ReviewList";
 import ReviewForm from "@/component/ReviewForm/ReviewForm";
 import RatingsSummary from "@/component/RatingsSummary/RatingsSummary";
 import { formatCurrency } from "@/lib/currency";
-import { Loader } from "@/component/Common/Loader";
+import { Loader } from "@/component/common/Loader";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();

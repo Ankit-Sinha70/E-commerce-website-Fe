@@ -3,7 +3,7 @@ import { fetchCategories } from "@/features/category/categorySlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { Loader } from "@/component/Common/Loader";
+import { Loader } from "@/component/common/Loader";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

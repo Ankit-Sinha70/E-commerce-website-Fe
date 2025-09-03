@@ -1,4 +1,4 @@
-import PaginationDemo from "@/component/Common/Pagination";
+import PaginationDemo from "@/component/common/Pagination";
 import ReturnRequest from "@/component/ReturnRequest";
 import ReturnRequestModal from "@/component/ReturnRequestModal";
 import TrackOrderDialog from "@/component/TrackOrderDialog";
@@ -46,7 +46,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
-import { Loader } from "@/component/Common/Loader";
+import { Loader } from "@/component/common/Loader";
 
 const getStatusClasses = (status) => {
   switch (status?.toLowerCase()) {
