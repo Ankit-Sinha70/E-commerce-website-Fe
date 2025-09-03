@@ -1,4 +1,4 @@
-import PaginationDemo from "../../component/Common/Pagination.jsx";
+import PaginationDemo from "@/component/Common/Pagination";
 import { PackageOpen, Plus, RotateCcw, Search } from "lucide-react";
 import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";

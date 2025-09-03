@@ -1,5 +1,5 @@
 import CategoryRow from "@/component/CategoryRow";
-import PaginationDemo from "../../component/Common/Pagination.jsx";
+import PaginationDemo from "@/component/Common/Pagination";
 import {
   PackageOpen,
   Plus,
@@ -47,7 +47,7 @@ import {
   updateCategory,
 } from "../../features/category/categorySlice";
 import useDebounce from "../../lib/useDebounce";
-import { Loader } from "../../component/Common/Loader.jsx";
+import { Loader } from "@/component/Common/Loader";
 
 const buildCategoryTree = (categories, parentId = null, level = 0) => {
   const nestedCategories = [];

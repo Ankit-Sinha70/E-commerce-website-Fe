@@ -1,4 +1,4 @@
-import PaginationDemo from "../../component/Common/Pagination.jsx";
+import PaginationDemo from "@/component/Common/Pagination";
 import {
   deleteOrder,
   fetchOrders,

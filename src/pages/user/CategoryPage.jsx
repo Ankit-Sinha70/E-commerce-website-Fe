@@ -1,4 +1,4 @@
-import PaginationDemo from "../../component/Common/Pagination.jsx";
+import PaginationDemo from "@/component/Common/Pagination";
 import axios from "axios";
 import { PackageOpen, SlidersHorizontal, ChevronRight, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";

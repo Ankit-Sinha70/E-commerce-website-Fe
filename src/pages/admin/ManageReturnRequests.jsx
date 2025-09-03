@@ -11,7 +11,7 @@ import { Loader } from "@/component/Common/Loader";
 import ReturnRequestDetailsModal from "@/component/admin/ReturnRequestDetailsModal";
 import ReturnRequestTable from "@/pages/admin/ReturnRequestTable";
 import { toast } from "sonner";
-import PaginationDemo from "../../component/Common/Pagination.jsx";
+import PaginationDemo from "@/component/Common/Pagination";
 
 const ManageReturnRequests = () => {
   const dispatch = useDispatch();

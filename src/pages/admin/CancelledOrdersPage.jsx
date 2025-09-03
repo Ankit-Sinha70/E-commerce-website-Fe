@@ -23,7 +23,7 @@ import {
   initiateRefund,
   setCurrentPage,
 } from "../../features/order/cancelledOrderSlice";
-import PaginationDemo from "../../component/Common/Pagination.jsx";
+import PaginationDemo from "@/component/Common/Pagination";
 
 const CancelledOrdersPage = () => {
   const dispatch = useDispatch();

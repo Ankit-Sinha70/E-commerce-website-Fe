@@ -37,7 +37,7 @@ import {
 } from "../../features/product/productSlice";
 import useDebounce from "../../lib/useDebounce";
 import { formatCurrency } from "@/lib/currency";
-import PaginationDemo from "../../component/Common/Pagination.jsx";
+import PaginationDemo from "@/component/Common/Pagination";
 import { Loader } from "@/component/Common/Loader";
 
 const API_URL = import.meta.env.VITE_API_URL;
