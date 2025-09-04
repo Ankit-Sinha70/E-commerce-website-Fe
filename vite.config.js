@@ -10,9 +10,6 @@ const __dirname = dirname(__filename)
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), ],
-  server: {
-    historyApiFallback: true
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
