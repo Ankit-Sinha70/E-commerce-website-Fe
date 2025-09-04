@@ -20,7 +20,6 @@ const CategoryPage = () => {
   const { accessToken } = useSelector((state) => state.auth);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
   const [selectedCategory, setSelectedCategory] = useState(null);
-  console.log('selectedCategory', selectedCategory)
   const [categoryDetails, setCategoryDetails] = useState({});
   const [loadingCategories, setLoadingCategories] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);

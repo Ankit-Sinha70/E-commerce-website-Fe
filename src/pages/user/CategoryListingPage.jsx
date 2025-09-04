@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { fetchCategories } from "@/features/category/categorySlice";
+import { getCategories } from "@/features/category/categorySlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";

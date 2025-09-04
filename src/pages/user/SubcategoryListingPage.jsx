@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { fetchSubcategories } from "@/features/subcategory/subcategorySlice";
+import { getSubcategories } from "@/features/subcategory/subcategorySlice";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Loader } from "@/component/common/Loader";
